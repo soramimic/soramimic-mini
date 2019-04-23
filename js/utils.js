@@ -9,3 +9,7 @@ function ld_outer(cost){
 }
 const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
 
+function orgRound(value, base) {
+    return Math.round(value * base) / base;
+}
+

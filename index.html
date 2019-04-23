@@ -9,6 +9,66 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="js/utils.js"></script>
 </head>
+<script>
+function makeKanaDist_outer(){
+	var configs = {}
+	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
+	$.when(
+		$.getJSON("conf/allkanaBi.json"),
+		$.getJSON("conf/simConsonantsSimple.json"),
+		$.getJSON("conf/simVowelsSimple.json")
+	)
+	.done(function(allkana, cCost, vCost){
+		zip(["allkana","cCost","vCost"],[allkana,cCost,vCost]).forEach(function([v1,v2]){
+			configs[v1]=v2[0];
+		});
+		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
+
+		var k = {}
+		Object.keys(allkana).forEach(function(v1){
+			s1 = allkana[v1];
+			k[v1] = {}
+			Object.keys(allkana).forEach(function(v2){
+				s2 = allkana[v2]
+				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
+			});
+		});
+		configs["kanaCostElement"] = k;
+		//console.log(configs["kanaCostElement"]);
+	})
+	.fail(function(){
+		console.log("error");
+	})
+
+	function makeKanaDist_inner(param){
+		var w = [param["consonant"],param["vowel"]],
+			sameChar = param["sameChar"],
+			sameVowel = param["sameVowel"],
+			single = configs["single"];
+		var costKanaBi = {},
+			k = configs["kanaCostElement"];
+		Object.keys(k).forEach(function(v1){
+			var s1 = k[v1];
+			costKanaBi[v1] = {}
+			Object.keys(k).forEach(function(v2){
+				var s2 = s1[v2],
+					m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
+				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 )
+					m = s2[1];
+				costKanaBi[v1][v2] = Math.round(m*100)/100;
+			});
+		});
+		return costKanaBi;
+	}
+	return makeKanaDist_inner;
+}
+a = makeKanaDist_outer();
+setTimeout(function(){
+	cost = a({"consonants":1,"vowels":1});
+	console.log(cost["ア"]);
+},1000);
+
+</script>
 <body>
 	<div class="container-fluid">
 		<div class="row">
