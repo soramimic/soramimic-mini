@@ -17,8 +17,16 @@ function loadDatabaseText(text){
 		val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 		words.push(val);
 	});
-	words.forEach(function(val, index){
+	kuromoji.builder({dictPath: "js/kuromoji/dict/"}).build(function (err, tokenizer) {
+		words.forEach(function(val, index){
+			switch(val.length){
+			case 0:
+				break;
+			case 1:
+				val.push(val[0]);
+			}
 
+		});
 	});
 }
 
@@ -27,7 +35,6 @@ kuromoji.builder({ dicPath: "js/kuromoji/dict/" }).build(function (err, tokenize
     var path = tokenizer.tokenize("すもももももももものうち");
     console.log(path);
 });
-
 </script>
 <body>
 	<div class="container-fluid">
