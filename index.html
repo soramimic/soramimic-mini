@@ -11,30 +11,90 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
+function MorphologicalAnalyzer(){
+	this.tokenizer;
+	this.getYomi = function(strVal){
+		var yomi = "";
+		this.tokenizer.tokenize(strVal).forEach(function(val){
+			yomi += val.pronunciation;
+		});
+		return yomi;
+	}
+}
 function loadDatabaseText(text){
 	var words = [];
 	text.split("\n").forEach(function(val){
+		val = val.replace(/\u200B/g, "");//エスケープ処理
 		val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 		words.push(val);
 	});
-	kuromoji.builder({dictPath: "js/kuromoji/dict/"}).build(function (err, tokenizer) {
-		words.forEach(function(val, index){
-			switch(val.length){
-			case 0:
-				break;
-			case 1:
+	var ma = new MorphologicalAnalyzer(),
+		result = {}
+	words.forEach(function(val,index){
+		if(val.length == 0){
+			
+		}
+		else{
+			if(val.length == 1){
 				val.push(val[0]);
 			}
+			var title = val[0];
+			val.slice(1).forEach(function(val2){
+				var yomi = ma.getYomi(val2);
+				if(!(yomi.length in result)){
+					result[yomi.length]=[];
+				}
+				result[yomi.length].push(yomi);
+			});
+		}
+	});	
+}
 
-		});
+
+/**
+ * 全角から半角への変革関数
+ * 入力値の英数記号を半角変換して返却
+ * [引数]   strVal: 入力値
+ * [返却値] String(): 半角変換された文字列
+ */
+function toHalfWidth(strVal){
+  // 半角変換
+  var halfVal = strVal.replace(/[！-～]/g,
+    function( tmpStr ) {
+      // 文字コードをシフト
+      return String.fromCharCode( tmpStr.charCodeAt(0) - 0xFEE0 );
+    }
+  );
+ 
+  // 文字コードシフトで対応できない文字の変換
+  return halfVal.replace(/”/g, "\"")
+    .replace(/’/g, "'")
+    .replace(/‘/g, "`")
+    .replace(/￥/g, "\\")
+    .replace(/　/g, " ")
+    .replace(/〜/g, "~");
+}
+ var text ="[]]{（こんにちは」・？/";
+ 
+function removeSign(strVal){
+	strVal = toHalfWidth(strVal); //全角を半角に変換
+	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
+	strVal = strVal.replace(/・/g, '').replace(/「/g, '').replace(/」/g, '');
+	return strVal;
+}
+
+function toKatakana(strVal){
+	return strVal.replace(/[ぁ-ん]/g, function(s) {
+		   return String.fromCharCode(s.charCodeAt(0) + 0x60);
 	});
 }
 
-kuromoji.builder({ dicPath: "js/kuromoji/dict/" }).build(function (err, tokenizer) {
-    // tokenizer is ready
-    var path = tokenizer.tokenize("すもももももももものうち");
-    console.log(path);
-});
+function formatText(strVal){
+	strVal = removeSign(strVal);
+	strVal = toKatakana(strVal);
+	return strVal;
+}
+console.log(formatText(text));
 </script>
 <body>
 	<div class="container-fluid">
