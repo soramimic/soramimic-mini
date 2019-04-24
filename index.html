@@ -8,14 +8,26 @@
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="js/utils.js"></script>
+<script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-a = makeKanaDist_outer();
-setTimeout(function(){
-	cost = a({"consonants":1,"vowels":1});
-	console.log(cost["ア"]);
-},1000);
-console.log(setDefaultParameters({"vowels":2}));
+function loadDatabaseText(text){
+	var words = [];
+	text.split("\n").forEach(function(val){
+		val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
+		words.push(val);
+	});
+	words.forEach(function(val, index){
+
+	});
+}
+
+kuromoji.builder({ dicPath: "js/kuromoji/dict/" }).build(function (err, tokenizer) {
+    // tokenizer is ready
+    var path = tokenizer.tokenize("すもももももももものうち");
+    console.log(path);
+});
+
 </script>
 <body>
 	<div class="container-fluid">
