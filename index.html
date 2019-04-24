@@ -32,7 +32,7 @@ function loadDatabaseText(text){
 		result = {}
 	words.forEach(function(val,index){
 		if(val.length == 0){
-			
+
 		}
 		else{
 			if(val.length == 1){
@@ -47,7 +47,7 @@ function loadDatabaseText(text){
 				result[yomi.length].push(yomi);
 			});
 		}
-	});	
+	});
 }
 
 
@@ -65,7 +65,7 @@ function toHalfWidth(strVal){
       return String.fromCharCode( tmpStr.charCodeAt(0) - 0xFEE0 );
     }
   );
- 
+
   // 文字コードシフトで対応できない文字の変換
   return halfVal.replace(/”/g, "\"")
     .replace(/’/g, "'")
@@ -75,7 +75,7 @@ function toHalfWidth(strVal){
     .replace(/〜/g, "~");
 }
  var text ="[]]{（こんにちは」・？/";
- 
+
 function removeSign(strVal){
 	strVal = toHalfWidth(strVal); //全角を半角に変換
 	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
