@@ -64,7 +64,7 @@ function makeKanaDist_outer(){
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 			});
 		});
-		return costKanaBi;
+		return costKanaBi, ld_outer(costKanaBi);
 	}
 	return makeKanaDist_inner;
 }
@@ -132,4 +132,28 @@ function formatText(strVal){
 	strVal = toKatakana(strVal);
 	return strVal;
 }
+
+
+var MorphologicalAnalyzer = function(){
+	var _tokenizer;
+	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
+		if(err) { throw err; }
+		_tokenizer = tokenizer;
+	});
+	function getYomi(strVal){
+		var yomi = "";
+		path = _tokenizer.tokenize(strVal);
+		path.forEach(function(val){
+			var tYomi = val.pronunciation;
+			if(typeof tYomi === "undefined"){
+				//console.log(val);
+				tYomi = val.surface_form;
+			}
+			yomi += tYomi; 
+		});
+		return yomi;
+	}
+	return getYomi;
+}
+
 

@@ -11,30 +11,7 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-var MorphologicalAnalyzer = function(){
-	this.tokenizer;
-	this.test = "";
-	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
-		if(err) { throw err; }
-		this.tokenizer = tokenizer;
-		this.test = "a"
-		console.log(this.test);
-	});
-	this.getYomi = function(strVal){
-		var yomi = "";
-		console.log(this.test);
-		this.tokenizer.tokenize(strVal).forEach(function(val){
-			yomi += val.pronunciation;
-		});
-		return yomi;
-	}
-}
-
-var ma = new MorphologicalAnalyzer();
-var testText = "こんにちは";
-setTimeout(function(){
-	console.log(ma.getYomi(testText));	
-},5000);
+//var GetYomi = new MorphologicalAnalyzer();
 function loadDatabaseText(text){
 	var words = [];
 	text.split("\n").forEach(function(val){
@@ -42,8 +19,7 @@ function loadDatabaseText(text){
 		val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 		words.push(val);
 	});
-	var ma = new MorphologicalAnalyzer(),
-		result = {}
+	var result = {}
 	words.forEach(function(val,index){
 		if(val.length == 0){
 			
@@ -54,7 +30,7 @@ function loadDatabaseText(text){
 			}
 			var title = val[0];
 			val.slice(1).forEach(function(val2){
-				var yomi = ma.getYomi(val2);
+				var yomi = GetYomi(val2);
 				if(!(yomi.length in result)){
 					result[yomi.length]=[];
 				}
@@ -62,7 +38,103 @@ function loadDatabaseText(text){
 			});
 		}
 	});	
+	return result;
 }
+/*
+$.get("words/nations.txt",function(data){
+	setTimeout(function(){
+		var r = loadDatabaseText(data);
+		console.log(r);
+		console.log(GetYomi("アンティグア・バブーダ"));
+	},1000);
+})
+*/;
+
+function separateKana_outer(){
+	var kanalist, vowels;
+	$.ajaxSetup({async: false});
+	$.when(
+			$.getJSON("conf/allkanaBi.json"),
+			$.getJSON("conf/vowels.json")
+	)
+	.done(function(data1,data2){
+	    kanalist = data1[0];
+	    vowels = data2[0];
+	})
+	.fail(function(data){
+		console.log("error");		
+	});
+	$.ajaxSetup({async: true});
+	//適切な発音への変換に必要なオブジェクトの定義
+    S2L = {}
+    zip(["ァ","ィ","ゥ","ェ","ォ","ャ","ュ","ョ","ヮ"],["ア","イ","ウ","エ","オ","ヤ","ユ","ヨ","ワ"]).forEach(function([v1,v2]){
+    	S2L[v1] = v2;
+    });
+    edan = "ケセテネヘメエレエゲゼデベペ"
+
+	function separateKana_inner(k){
+		["ー","ッ"].forEach(function(v){
+			while( k.indexOf(v+v) >= 0 ){
+				k = k.replace(v+v,v);
+			}
+		});
+		k+="__" //(最後の2文字をうまく処理するため終端文字の追加)
+		var i = 0,
+			result = [];
+		while(i < k.length - 2){
+			var p = k.slice(i,i+3);
+			if(p[0] in S2L)
+				p = S2L[p[0]] + p.slice(1);
+			var moji = "",
+				lenmax = 2;
+			[2,1].forEach(function(si){
+				var p1 = p.slice(0,si);
+				var p2 = p[si];
+				if(p1 in kanalist){
+					if(p2 == "ー"){
+						if(vowels["エ"].indexOf(p1) && p1[p1.length-1] == "イ"){
+							moji = p1[0];
+						}
+						else if(vowels["オ"].indexOf(p1) && p1[p1.length-1] == "ウ"){
+							moji = p1[0];
+						}
+						else if(p1 == "ン"){
+							result.push(p1);
+							i+=1;
+							moji = p1;
+						}
+						else{
+							moji = p1+p2;
+						}
+					}
+					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
+						moji = p1.slice(0,-1) + "ー";
+					}
+					else if(p2 == "オ" && vowels[p2].indexOf(p1) && p1[p1.length-1] == "ウ"){
+						moji = p1.slice(0,-1) + "ー";
+					}
+					else if(p2 in vowels && vowels[p2].indexOf(p1) && p1[p1.length-1] != "ー"){
+						moji = p1+"ー";
+					}
+					else{
+						moji = p1;
+					}
+					return;
+				}
+			});
+			if(moji == ""){
+				break;
+			}
+			result.push(moji);
+			i += moji.length;
+		}
+		return result;
+	}
+    return separateKana_inner;
+}
+
+s = separateKana_outer();
+console.log(s("カンケイ"));
 
 </script>
 <body>
