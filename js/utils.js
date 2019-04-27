@@ -89,4 +89,47 @@ function setDefaultParameters(param={}){
 
 
 
+/**
+ * 全角から半角への変革関数
+ * 入力値の英数記号を半角変換して返却
+ * [引数]   strVal: 入力値
+ * [返却値] String(): 半角変換された文字列
+ */
+function toHalfWidth(strVal){
+  // 半角変換
+  var halfVal = strVal.replace(/[！-～]/g,
+    function( tmpStr ) {
+      // 文字コードをシフト
+      return String.fromCharCode( tmpStr.charCodeAt(0) - 0xFEE0 );
+    }
+  );
+ 
+  // 文字コードシフトで対応できない文字の変換
+  return halfVal.replace(/”/g, "\"")
+    .replace(/’/g, "'")
+    .replace(/‘/g, "`")
+    .replace(/￥/g, "\\")
+    .replace(/　/g, " ")
+    .replace(/〜/g, "~");
+}
+ var text ="[]]{（こんにちは」・？/";
+ 
+function removeSign(strVal){
+	strVal = toHalfWidth(strVal); //全角を半角に変換
+	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
+	strVal = strVal.replace(/・/g, '').replace(/「/g, '').replace(/」/g, '');
+	return strVal;
+}
+
+function toKatakana(strVal){
+	return strVal.replace(/[ぁ-ん]/g, function(s) {
+		   return String.fromCharCode(s.charCodeAt(0) + 0x60);
+	});
+}
+
+function formatText(strVal){
+	strVal = removeSign(strVal);
+	strVal = toKatakana(strVal);
+	return strVal;
+}
 
