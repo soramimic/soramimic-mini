@@ -6,6 +6,7 @@ function ld_outer(cost){
 		});
 		return score;
 	}
+	return ld_inner;
 }
 const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
 
@@ -23,10 +24,11 @@ function makeKanaDist_outer(){
 	$.when(
 		$.getJSON("conf/allkanaBi.json"),
 		$.getJSON("conf/simConsonantsSimple.json"),
-		$.getJSON("conf/simVowelsSimple.json")
+		$.getJSON("conf/simVowelsSimple.json"),
+		$.getJSON("conf/vowels.json")
 	)
-	.done(function(allkana, cCost, vCost){
-		zip(["allkana","cCost","vCost"],[allkana,cCost,vCost]).forEach(function([v1,v2]){
+	.done(function(allkana, cCost, vCost,vowels){
+		zip(["allkana","cCost","vCost","vowels"],[allkana,cCost,vCost,vowels]).forEach(function([v1,v2]){
 			configs[v1]=v2[0];
 		});
 		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
@@ -36,7 +38,7 @@ function makeKanaDist_outer(){
 			s1 = allkana[v1];
 			k[v1] = {}
 			Object.keys(allkana).forEach(function(v2){
-				s2 = allkana[v2]
+				s2 = allkana[v2];
 				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
 			});
 		});
@@ -47,6 +49,22 @@ function makeKanaDist_outer(){
 		console.log("error");
 	})
 	$.ajaxSetup({async: true});
+
+	function reflectParam(costkana, param){
+		var vowels = configs["vowels"];
+		var sameVowel;
+		sameVowel = param["sameVowel"];
+		if(sameVowel != 1){
+			for(v1 in vowels){
+				vowels[v1].forEach(function(v2){
+					 vowels[v1].forEach(function(v3){
+						 costkana[v2][v3] *= sameVowel;
+					 });
+				});
+			}
+		}
+		return costkana;
+	}
 
 	function makeKanaDist_inner(param){
 		var w = [param["consonant"],param["vowel"]],
@@ -66,7 +84,8 @@ function makeKanaDist_outer(){
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 			});
 		});
-		return costKanaBi, ld_outer(costKanaBi);
+		costKanaBi = reflectParam(costKanaBi,param);
+		return costKanaBi;
 	}
 	return makeKanaDist_inner;
 }
@@ -86,7 +105,7 @@ function setDefaultParameters(param={}){
 	        "sameConsonant":1,
 	        "length":1
 	}
-	return Object.assign(param,defaultParam);
+	return Object.assign(defaultParam,param);
 }
 
 
@@ -105,7 +124,7 @@ function toHalfWidth(strVal){
       return String.fromCharCode( tmpStr.charCodeAt(0) - 0xFEE0 );
     }
   );
- 
+
   // 文字コードシフトで対応できない文字の変換
   return halfVal.replace(/”/g, "\"")
     .replace(/’/g, "'")
@@ -115,7 +134,7 @@ function toHalfWidth(strVal){
     .replace(/〜/g, "~");
 }
  var text ="[]]{（こんにちは」・？/";
- 
+
 function removeSign(strVal){
 	strVal = toHalfWidth(strVal); //全角を半角に変換
 	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
@@ -170,7 +189,7 @@ function productList(list){
 
 var MorphologicalAnalyzer = function(){
 	var _tokenizer;
-	$.ajaxSetup({async: false});	
+	$.ajaxSetup({async: false});
 	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
 		if(err) { throw err; }
 		_tokenizer = tokenizer;
@@ -186,49 +205,56 @@ var MorphologicalAnalyzer = function(){
 				//console.log(val);
 				tYomi = val.surface_form;
 			}
-			yomi += tYomi; 
+			yomi += tYomi;
 		});
-		return yomi;
+		return removeSign(yomi);
 	}
 	return getYomi;
 }
 
 function loadDatabaseText_outer(){
-	var GetYomi = MorphologicalAnalyzer();
-	var separateKana = separateKana_outer();
-	var convertBar = convertBar_outer();
+	//var GetYomi = MorphologicalAnalyzer();
+	//var separateKana = separateKana_outer();
+	//var convertBar = convertBar_outer();
 	function loadDatabaseText_inner(text){
-		var words = [];
+		var words, result;
+		words = [];
 		text.split("\n").forEach(function(val){
 			val = val.replace(/\u200B/g, "");//エスケープ処理
 			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 			words.push(val);
 		});
-		var result = {}
+		result = {}
 		words.forEach(function(val,index){
 			if(val.length == 0){
-				
+
 			}
 			else{
 				if(val.length == 1){
 					val.push(val[0]);
 				}
 				var title = val[0];
-				val.slice(1).forEach(function(val2){
-					var yomi = GetYomi(val2);
-					yomi = separateKana(yomi);
-					convertBar(yomi).forEach(function(val2){
-						if(!(val2.length in result)){
-							result[val2.length]=[];
+				val.slice(1).forEach(function(val6){
+					var yomi, sep, ptn;
+					yomi = GetYomi(val6);
+					sep = separateKana(yomi);
+					ptn = convertBar(sep);
+					ptn.forEach(function(v4){
+						var v4len = v4.length;
+						if(v4len == 0){
+							return;
 						}
-						result[val2.length].push(val2);						
+						if(!(v4len in result)){
+							result[v4len]=[];
+						}
+						result[v4len].push([title,val6,v4,index]);
 					});
 				});
 			}
-		});	
+		});
 		return result;
 	}
-	return loadDatabaseText_inner;	
+	return loadDatabaseText_inner;
 }
 
 function separateKana_outer(){
@@ -243,7 +269,7 @@ function separateKana_outer(){
 	    vowels = data2[0];
 	})
 	.fail(function(data){
-		console.log("error");		
+		console.log("error");
 	});
 	$.ajaxSetup({async: true});
 	//console.log(kanalist);
@@ -331,7 +357,7 @@ function convertBar_outer(){
 	})
 	.fail(function(data){
 		console.log(data);
-		console.log("error");		
+		console.log("error");
 	});
 	$.ajaxSetup({async: true});
 	//console.log(converter);
@@ -355,7 +381,7 @@ function convertBar_outer(){
 				kanaStr = kanaStr.slice(0,-1);
 			result.push(kanaStr.split("/"));
 		});
-		return result;		
+		return result;
 	}
 	return convertBar_inner;
 }
