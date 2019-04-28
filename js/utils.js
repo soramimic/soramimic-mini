@@ -168,3 +168,194 @@ function productList(list){
 
 
 
+var MorphologicalAnalyzer = function(){
+	var _tokenizer;
+	$.ajaxSetup({async: false});	
+	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
+		if(err) { throw err; }
+		_tokenizer = tokenizer;
+	});
+	$.ajaxSetup({async: true});
+
+	function getYomi(strVal){
+		var yomi = "";
+		path = _tokenizer.tokenize(strVal);
+		path.forEach(function(val){
+			var tYomi = val.pronunciation;
+			if(typeof tYomi === "undefined"){
+				//console.log(val);
+				tYomi = val.surface_form;
+			}
+			yomi += tYomi; 
+		});
+		return yomi;
+	}
+	return getYomi;
+}
+
+function loadDatabaseText_outer(){
+	var GetYomi = MorphologicalAnalyzer();
+	var separateKana = separateKana_outer();
+	var convertBar = convertBar_outer();
+	function loadDatabaseText_inner(text){
+		var words = [];
+		text.split("\n").forEach(function(val){
+			val = val.replace(/\u200B/g, "");//エスケープ処理
+			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
+			words.push(val);
+		});
+		var result = {}
+		words.forEach(function(val,index){
+			if(val.length == 0){
+				
+			}
+			else{
+				if(val.length == 1){
+					val.push(val[0]);
+				}
+				var title = val[0];
+				val.slice(1).forEach(function(val2){
+					var yomi = GetYomi(val2);
+					yomi = separateKana(yomi);
+					convertBar(yomi).forEach(function(val2){
+						if(!(val2.length in result)){
+							result[val2.length]=[];
+						}
+						result[val2.length].push(val2);						
+					});
+				});
+			}
+		});	
+		return result;
+	}
+	return loadDatabaseText_inner;	
+}
+
+function separateKana_outer(){
+	var kanalist, vowels;
+	$.ajaxSetup({async: false});
+	$.when(
+			$.getJSON("conf/allkanaBi.json"),
+			$.getJSON("conf/vowels.json")
+	)
+	.done(function(data1,data2){
+	    kanalist = data1[0];
+	    vowels = data2[0];
+	})
+	.fail(function(data){
+		console.log("error");		
+	});
+	$.ajaxSetup({async: true});
+	//console.log(kanalist);
+	//適切な発音への変換に必要なオブジェクトの定義
+    S2L = {}
+    zip(["ァ","ィ","ゥ","ェ","ォ","ャ","ュ","ョ","ヮ"],["ア","イ","ウ","エ","オ","ヤ","ユ","ヨ","ワ"]).forEach(function([v1,v2]){
+    	S2L[v1] = v2;
+    });
+    edan = "ケセテネヘメエレエゲゼデベペ";
+    //console.log(vowels);
+
+	function separateKana_inner(k){
+		["ー","ッ"].forEach(function(v){
+			while( k.indexOf(v+v) >= 0 ){
+				k = k.replace(v+v,v);
+			}
+		});
+		k+="__" //(最後の2文字をうまく処理するため終端文字の追加)
+		var i = 0,
+			result = [];
+		while(i < k.length - 2){
+			var p = k.slice(i,i+3);
+			if(p[0] in S2L)
+				p = S2L[p[0]] + p.slice(1);
+			var moji = "",
+				lenmax = 2;
+			[2,1].forEach(function(si){
+				if(moji != "")return;
+				var p1 = p.slice(0,si);
+				var p2 = p[si];
+				//console.log(p1,p2);
+				if(p1 in kanalist){
+					if(p2 == "ー"){
+						if(vowels["エ"].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
+							moji = p1[0];
+						}
+						else if(vowels["オ"].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
+							moji = p1[0];
+						}
+						else if(p1 == "ン"){
+							result.push(p1);
+							i+=1;
+							moji = p1;
+						}
+						else{
+							moji = p1+p2;
+						}
+					}
+					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
+						moji = p1.slice(0,-1) + "ー";
+					}
+					else if(p2 == "オ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
+						moji = p1.slice(0,-1) + "ー";
+					}
+					else if(p2 in vowels && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] != "ー"){
+						moji = p1+"ー";
+					}
+					else{
+						moji = p1;
+						//console.log(p1);
+					}
+				}
+			});
+			if(moji == ""){
+				break;
+			}
+			result.push(moji);
+			i += moji.length;
+		}
+		return result;
+	}
+    return separateKana_inner;
+}
+
+
+
+function convertBar_outer(){
+	var converter;
+	$.ajaxSetup({async: false});
+	$.when(
+		$.getJSON("conf/kanaWithBar.json")
+	)
+	.done(function(data){
+	    converter = data;
+	})
+	.fail(function(data){
+		console.log(data);
+		console.log("error");		
+	});
+	$.ajaxSetup({async: true});
+	//console.log(converter);
+	function convertBar_inner(kana){
+		var count = [];
+		var count2 = [];
+		kana.forEach(function(v,i){
+			if(v in converter){
+				count.push(v);
+				count2.push(converter[v]);
+			}
+		});
+		var change = productList(count2);
+		var result = [];
+		change.forEach(function(v){
+			var kanaStr = kana.join("/");
+			zip(count,v).forEach(function([v2,v3]){
+				kanaStr = kanaStr.replace(v2,v3.join("/")).replace("//","/");
+			});
+			if(kanaStr.endsWith("/"))
+				kanaStr = kanaStr.slice(0,-1);
+			result.push(kanaStr.split("/"));
+		});
+		return result;		
+	}
+	return convertBar_inner;
+}
