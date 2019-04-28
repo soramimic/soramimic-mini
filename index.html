@@ -11,34 +11,67 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-//var GetYomi = new MorphologicalAnalyzer();
-function loadDatabaseText(text){
-	var words = [];
-	text.split("\n").forEach(function(val){
-		val = val.replace(/\u200B/g, "");//エスケープ処理
-		val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
-		words.push(val);
+var MorphologicalAnalyzer = function(){
+	var _tokenizer;
+	$.ajaxSetup({async: false});	
+	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
+		if(err) { throw err; }
+		_tokenizer = tokenizer;
 	});
-	var result = {}
-	words.forEach(function(val,index){
-		if(val.length == 0){
-			
-		}
-		else{
-			if(val.length == 1){
-				val.push(val[0]);
+	$.ajaxSetup({async: true});
+
+	function getYomi(strVal){
+		var yomi = "";
+		path = _tokenizer.tokenize(strVal);
+		path.forEach(function(val){
+			var tYomi = val.pronunciation;
+			if(typeof tYomi === "undefined"){
+				//console.log(val);
+				tYomi = val.surface_form;
 			}
-			var title = val[0];
-			val.slice(1).forEach(function(val2){
-				var yomi = GetYomi(val2);
-				if(!(yomi.length in result)){
-					result[yomi.length]=[];
+			yomi += tYomi; 
+		});
+		return yomi;
+	}
+	return getYomi;
+}
+
+function loadDatabaseText_outer(){
+	var GetYomi = MorphologicalAnalyzer();
+	var separateKana = separateKana_outer();
+	var convertBar = convertBar_outer();
+	function loadDatabaseText_inner(text){
+		var words = [];
+		text.split("\n").forEach(function(val){
+			val = val.replace(/\u200B/g, "");//エスケープ処理
+			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
+			words.push(val);
+		});
+		var result = {}
+		words.forEach(function(val,index){
+			if(val.length == 0){
+				
+			}
+			else{
+				if(val.length == 1){
+					val.push(val[0]);
 				}
-				result[yomi.length].push(yomi);
-			});
-		}
-	});	
-	return result;
+				var title = val[0];
+				val.slice(1).forEach(function(val2){
+					var yomi = GetYomi(val2);
+					yomi = separateKana(yomi);
+					convertBar(yomi).forEach(function(val2){
+						if(!(val2.length in result)){
+							result[val2.length]=[];
+						}
+						result[val2.length].push(val2);						
+					});
+				});
+			}
+		});	
+		return result;
+	}
+	return loadDatabaseText_inner;	
 }
 /*
 $.get("words/nations.txt",function(data){
@@ -65,12 +98,14 @@ function separateKana_outer(){
 		console.log("error");		
 	});
 	$.ajaxSetup({async: true});
+	//console.log(kanalist);
 	//適切な発音への変換に必要なオブジェクトの定義
     S2L = {}
     zip(["ァ","ィ","ゥ","ェ","ォ","ャ","ュ","ョ","ヮ"],["ア","イ","ウ","エ","オ","ヤ","ユ","ヨ","ワ"]).forEach(function([v1,v2]){
     	S2L[v1] = v2;
     });
-    edan = "ケセテネヘメエレエゲゼデベペ"
+    edan = "ケセテネヘメエレエゲゼデベペ";
+    //console.log(vowels);
 
 	function separateKana_inner(k){
 		["ー","ッ"].forEach(function(v){
@@ -88,14 +123,16 @@ function separateKana_outer(){
 			var moji = "",
 				lenmax = 2;
 			[2,1].forEach(function(si){
+				if(moji != "")return;
 				var p1 = p.slice(0,si);
 				var p2 = p[si];
+				//console.log(p1,p2);
 				if(p1 in kanalist){
 					if(p2 == "ー"){
-						if(vowels["エ"].indexOf(p1) && p1[p1.length-1] == "イ"){
+						if(vowels["エ"].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
 							moji = p1[0];
 						}
-						else if(vowels["オ"].indexOf(p1) && p1[p1.length-1] == "ウ"){
+						else if(vowels["オ"].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
 							moji = p1[0];
 						}
 						else if(p1 == "ン"){
@@ -110,16 +147,16 @@ function separateKana_outer(){
 					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 == "オ" && vowels[p2].indexOf(p1) && p1[p1.length-1] == "ウ"){
+					else if(p2 == "オ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 in vowels && vowels[p2].indexOf(p1) && p1[p1.length-1] != "ー"){
+					else if(p2 in vowels && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] != "ー"){
 						moji = p1+"ー";
 					}
 					else{
 						moji = p1;
+						//console.log(p1);
 					}
-					return;
 				}
 			});
 			if(moji == ""){
@@ -133,8 +170,97 @@ function separateKana_outer(){
     return separateKana_inner;
 }
 
-s = separateKana_outer();
-console.log(s("カンケイ"));
+
+function productList(list){
+	var p=1;
+	list.forEach(function(v){
+		p*=v.length;
+	});
+	var result = [];
+	for(var i=0;i<p;i++){
+		result.push([]);
+	}
+	var plist = [],
+		p2=p;
+	list.forEach(function(v){
+		p2 /= v.length;
+		plist.push([p2,p/(p2*v.length)]);
+	});
+	zip(plist,list).forEach(function([v1,v2]){
+		var tmp=0;
+		for(var i1=0;i1<v1[0];i1++){
+			v2.forEach(function(v3){
+				for(var i2 = 0;i2<v1[1];i2++){
+					result[tmp].push(v3);
+					tmp+=1;
+				}
+			});
+		}
+	});
+	return result;
+}
+
+function convertBar_outer(){
+	var converter;
+	$.ajaxSetup({async: false});
+	$.when(
+		$.getJSON("conf/kanaWithBar.json")
+	)
+	.done(function(data){
+	    converter = data;
+	})
+	.fail(function(data){
+		console.log(data);
+		console.log("error");		
+	});
+	$.ajaxSetup({async: true});
+	//console.log(converter);
+	function convertBar_inner(kana){
+		var count = [];
+		var count2 = [];
+		kana.forEach(function(v,i){
+			if(v in converter){
+				count.push(v);
+				count2.push(converter[v]);
+			}
+		});
+		var change = productList(count2);
+		var result = [];
+		change.forEach(function(v){
+			var kanaStr = kana.join("/");
+			zip(count,v).forEach(function([v2,v3]){
+				kanaStr = kanaStr.replace(v2,v3.join("/")).replace("//","/");
+			});
+			if(kanaStr.endsWith("/"))
+				kanaStr = kanaStr.slice(0,-1);
+			result.push(kanaStr.split("/"));
+		});
+		return result;		
+	}
+	return convertBar_inner;
+}
+
+var loadDB = loadDatabaseText_outer();
+var GetYomi = MorphologicalAnalyzer();
+var separateKana = separateKana_outer();
+var convertBar = convertBar_outer();
+setTimeout(function(){
+	var text;
+	$.ajaxSetup({async: false});
+	$.get("words/nations.txt",function(data){
+		text = data;
+	});
+	$.ajaxSetup({async: true});
+	var r = loadDB(text);
+	console.log(r);
+	/*
+	var yomi = "ギアツ";
+	yomi = GetYomi(yomi);
+	yomi = separateKana(yomi);
+	console.log(yomi);
+	*/	
+
+},3000);
 
 </script>
 <body>

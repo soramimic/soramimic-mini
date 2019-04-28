@@ -19,6 +19,7 @@ function orgRound(value, base) {
 function makeKanaDist_outer(){
 	var configs = {}
 	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
+	$.ajaxSetup({async: false});
 	$.when(
 		$.getJSON("conf/allkanaBi.json"),
 		$.getJSON("conf/simConsonantsSimple.json"),
@@ -45,6 +46,7 @@ function makeKanaDist_outer(){
 	.fail(function(){
 		console.log("error");
 	})
+	$.ajaxSetup({async: true});
 
 	function makeKanaDist_inner(param){
 		var w = [param["consonant"],param["vowel"]],
@@ -134,26 +136,5 @@ function formatText(strVal){
 }
 
 
-var MorphologicalAnalyzer = function(){
-	var _tokenizer;
-	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
-		if(err) { throw err; }
-		_tokenizer = tokenizer;
-	});
-	function getYomi(strVal){
-		var yomi = "";
-		path = _tokenizer.tokenize(strVal);
-		path.forEach(function(val){
-			var tYomi = val.pronunciation;
-			if(typeof tYomi === "undefined"){
-				//console.log(val);
-				tYomi = val.surface_form;
-			}
-			yomi += tYomi; 
-		});
-		return yomi;
-	}
-	return getYomi;
-}
 
 
