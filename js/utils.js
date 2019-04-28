@@ -136,5 +136,35 @@ function formatText(strVal){
 }
 
 
+//直積を求めてリストで返す
+function productList(list){
+	var p=1;
+	list.forEach(function(v){
+		p*=v.length;
+	});
+	var result = [];
+	for(var i=0;i<p;i++){
+		result.push([]);
+	}
+	var plist = [],
+		p2=p;
+	list.forEach(function(v){
+		p2 /= v.length;
+		plist.push([p2,p/(p2*v.length)]);
+	});
+	zip(plist,list).forEach(function([v1,v2]){
+		var tmp=0;
+		for(var i1=0;i1<v1[0];i1++){
+			v2.forEach(function(v3){
+				for(var i2 = 0;i2<v1[1];i2++){
+					result[tmp].push(v3);
+					tmp+=1;
+				}
+			});
+		}
+	});
+	return result;
+}
+
 
 
