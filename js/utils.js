@@ -414,13 +414,13 @@ function argsort(array) {
     return argIndices;
 }
 
-function getSimilarWord_outer(wordlist, param){
+function getSimilarWord_outer(param){
 	var kanadist, ld;
 	kanadist = makeKanaDist(param);
 	ld = ld_outer(kanadist);
 
 	var memo = {}
-	function getSimilarWord_inner(target, length = 1){
+	function getSimilarWord_inner(wordlist, target, length = 1){
 		var orglen, cand, cand2, sims, words, args, result, indexes;
 		orglen = target.length;
 		cand = convertBar(target);

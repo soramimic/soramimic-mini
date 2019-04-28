@@ -21,6 +21,7 @@ convertBar = convertBar_outer();
 
 
 
+
 setTimeout(function(){
 	var text, paramter, wordlist;
 	$.ajaxSetup({async: false});
@@ -32,7 +33,7 @@ setTimeout(function(){
 	console.log(parameter);
 	wordlist = loadDB(text);
 	console.log(wordlist);
-	getSimilarWord = getSimilarWord_outer(wordlist,parameter);
+	getSimilarWord = getSimilarWord_outer(parameter);
 
 	var yomi = "あいうえ";
 	yomi = GetYomi(yomi);
@@ -47,9 +48,9 @@ setTimeout(function(){
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-12">出力結果</div>
+			<div class="col-xs-12 div-result">出力結果</div>
 			<div class="col-xs-12"></div>
-			<div class="form-group col-xs-12">
+			<div class="form-group col-xs-12 radio-wordlist">
 				<label class="" for=>単語リストの種類</label>
 				<div>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/nations.txt" checked="checked">国名</label>
@@ -68,11 +69,25 @@ setTimeout(function(){
 	</div>
 </body>
 <script>
+var wordlist, getSimilarWord;
+wordlist = {}
+$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
+	var path = $(element).val();
+	wordlist[path] = loadDatabaseFile(path);
+});
+getSimilarWord = getSimilarWord_outer(setDefaultParamters());
 $(".btn-send").click(function(){
 	var text = $(".ipt-word").val();
 	if(text == ""){
 		return;
 	}
+	var wordfile = $("[name=wordfile]:checked").val();
+	var param = setDefaultParamters();
+	var result = getSimilarWord(wordlist,text,length=100);
+	var resulttext = "";
+
+	$(".div-result").html();
+
 
 });
 </script>
