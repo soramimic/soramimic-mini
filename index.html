@@ -11,41 +11,67 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-
-var loadDB = loadDatabaseText_outer();
-var GetYomi = MorphologicalAnalyzer();
-var separateKana = separateKana_outer();
-var convertBar = convertBar_outer();
-setTimeout(function(){
-	var text;
-	$.ajaxSetup({async: false});
-	$.get("words/nations.txt",function(data){
-		text = data;
-	});
-	$.ajaxSetup({async: true});
-	var r = loadDB(text);
-	console.log(r);
-	/*
-	var yomi = "ギアツ";
-	yomi = GetYomi(yomi);
-	yomi = separateKana(yomi);
-	console.log(yomi);
-	*/	
-
-},3000);
+var makeKanaDist, loadDB, GetYomi, separateKana, convertBar;
+//グローバルに使う関数群の宣言
+makeKanaDist = makeKanaDist_outer();
+loadDB = loadDatabaseText;
+GetYomi = MorphologicalAnalyzer();
+separateKana = separateKana_outer();
+convertBar = convertBar_outer();
 
 </script>
 <body>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-12 col-sm-6">
-				<input type = "text" class="form-control">
+			<div class="form-group col-xs-12 radio-wordlist">
+				<label class="" for=>単語リストの種類</label>
+				<div>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="words/nations.txt" checked="checked">国名</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="words/pokemon.txt">ポケモン</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="words/physicist.txt">物理学者</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="words/baseball.txt">野球選手</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="words/stations.txt">駅名</label>
+				</div>
 			</div>
-			<div class="col-xs-12 col-sm-6">
-				<textarea class="form-control"></textarea>
+
+			<div class="col-xs-12">
+				<input type = "text" class="form-control ipt-word" placeholder="変換をしたい単語">
+				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
+			<div class="col-xs-12">出力結果</div>
+			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
-
 </body>
+<script>
+var wordlist, getSimilarWord;
+wordlist = {}
+setTimeout(function(){
+	$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
+		var path = $(element).val();
+		wordlist[path] = loadDatabaseFile(path);
+	});	
+},3000);
+getSimilarWord = getSimilarWord_outer(setDefaultParameters());
+$(".btn-send").click(function(){
+	var text = $(".ipt-word").val();
+	if(text == ""){
+		return;
+	}
+	var wordfile = $("input[name=wordfile]:checked").val();
+	var param = setDefaultParameters();
+	text = GetYomi(text);
+	text = separateKana(text);
+	//console.log(text);
+	var result = getSimilarWord(wordlist[wordfile],text,length=100);
+	//console.log(result);
+	result.forEach(function(value,index){
+		result[index] = JSON.stringify(value);
+	});
+
+	$(".div-result").html(result.join("<br>"));
+
+
+});
+</script>
 </html>
