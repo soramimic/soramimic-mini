@@ -31,8 +31,8 @@
 				<input type = "text" class="form-control ipt-word" placeholder="変換をしたい単語">
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
-			<div class="col-xs-6">出力結果</div>
-			<div class="col-xs-6"><img class="loading2" src='gif/ajax-loader.gif'></div>
+			<div class="col-xs-10">出力結果(左から順位,入力読み,出力読み,出力,非類似度)</div>
+			<div class="col-xs-2"><img class="loading2" src='gif/ajax-loader.gif'></div>
 			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
@@ -90,7 +90,7 @@ $(".btn-send").click(function(){
 	var result = getSimilarWord(wordlist[wordfile],text,length=100);
 	//console.log(result);
 	result.forEach(function(value,index){
-		result[index] = JSON.stringify(value);
+		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
 	});
 
 	$(".div-result").html(result.join("<br>"));
