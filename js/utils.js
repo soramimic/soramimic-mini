@@ -185,20 +185,19 @@ function productList(list){
 	return result;
 }
 
-
-
-var MorphologicalAnalyzer = function(){
-	var _tokenizer;
-	$.ajaxSetup({async: false});
-	kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
-		if(err) { throw err; }
-		_tokenizer = tokenizer;
+function MakeTokenizer(){
+	return new Promise(function(resolve,reject){
+		kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
+			if(err) { reject(err); }
+			resolve(tokenizer);
+		});
 	});
-	$.ajaxSetup({async: true});
+}
 
+function GetYomi_outer(tokenizer){
 	function getYomi(strVal){
 		var yomi = "";
-		path = _tokenizer.tokenize(strVal);
+		path = tokenizer.tokenize(strVal);
 		path.forEach(function(val){
 			var tYomi = val.pronunciation;
 			if(typeof tYomi === "undefined"){
@@ -209,7 +208,7 @@ var MorphologicalAnalyzer = function(){
 		});
 		return removeSign(yomi);
 	}
-	return getYomi;
+	return getYomi;	
 }
 
 function loadDatabaseText(text){
@@ -227,7 +226,7 @@ function loadDatabaseText(text){
 		}
 		else{
 			if(val.length == 1){
-				val.push(val[0]);
+				val.push(GetYomi(val[0]));
 			}
 			var title = val[0];
 			val.slice(1).forEach(function(val6){

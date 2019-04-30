@@ -11,16 +11,9 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-var makeKanaDist, loadDB, GetYomi, separateKana, convertBar;
-//グローバルに使う関数群の宣言
-makeKanaDist = makeKanaDist_outer();
-loadDB = loadDatabaseText;
-GetYomi = MorphologicalAnalyzer();
-separateKana = separateKana_outer();
-convertBar = convertBar_outer();
-
 </script>
 <body>
+	<span class="loading">Loading...<img src='gif/ajax-loader.gif'></span>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="form-group col-xs-12 radio-wordlist">
@@ -38,28 +31,58 @@ convertBar = convertBar_outer();
 				<input type = "text" class="form-control ipt-word" placeholder="変換をしたい単語">
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
-			<div class="col-xs-12">出力結果</div>
+			<div class="col-xs-6">出力結果</div>
+			<div class="col-xs-6"><img class="loading2" src='gif/ajax-loader.gif'></div>
 			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
 </body>
 <script>
+var makeKanaDist, loadDB, GetYomi, separateKana, convertBar;
 var wordlist, getSimilarWord;
-wordlist = {}
-setTimeout(function(){
+//グローバルに使う関数群の宣言
+
+$("div.container-fluid").hide();
+$(".loading").show();
+$(".loading2").hide();
+
+var promise = MakeTokenizer()
+promise
+.then(function(tokenizer){
+	GetYomi = GetYomi_outer(tokenizer);
+	makeKanaDist = makeKanaDist_outer();
+	loadDB = loadDatabaseText;
+	separateKana = separateKana_outer();
+	convertBar = convertBar_outer();
+	getSimilarWord = getSimilarWord_outer(setDefaultParameters());
+
+	$(".btn-send").prop("disabled",false);
+	wordlist = {}
+	$('.radio-wordlist').find("input[type=radio]").prop("disabled",true);
 	$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
 		var path = $(element).val();
 		wordlist[path] = loadDatabaseFile(path);
+		$(element).prop("disabled",false);
 	});	
-},3000);
-getSimilarWord = getSimilarWord_outer(setDefaultParameters());
+	$(".container-fluid").show();
+	$(".loading").remove();
+
+});
+$( '.ipt-word' ).keypress( function ( e ) {
+	if ( e.which == 13 ) {
+		$(".btn-send").click();
+		return false;
+	}
+} );
+
 $(".btn-send").click(function(){
+	$(".loading2").show();
 	var text = $(".ipt-word").val();
 	if(text == ""){
 		return;
 	}
 	var wordfile = $("input[name=wordfile]:checked").val();
-	var param = setDefaultParameters();
+	var param = setDefaultParameters({"sameVowel":0.5});
 	text = GetYomi(text);
 	text = separateKana(text);
 	//console.log(text);
@@ -70,6 +93,7 @@ $(".btn-send").click(function(){
 	});
 
 	$(".div-result").html(result.join("<br>"));
+	$(".loading2").hide();
 
 
 });
