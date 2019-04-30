@@ -11,45 +11,11 @@
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
-var makeKanaDist, loadDB, GetYomi, separateKana, convertBar;
-//グローバルに使う関数群の宣言
-makeKanaDist = makeKanaDist_outer();
-loadDB = loadDatabaseText;
-GetYomi = MorphologicalAnalyzer();
-separateKana = separateKana_outer();
-convertBar = convertBar_outer();
-
-
-
-
-setTimeout(function(){
-	var text, paramter, wordlist;
-	$.ajaxSetup({async: false});
-	$.get("words/baseball.txt",function(data){
-		text = data;
-	});
-	$.ajaxSetup({async: true});
-	parameter = setDefaultParameters({"sameVowel":0.5});
-	console.log(parameter);
-	wordlist = loadDB(text);
-	console.log(wordlist);
-	getSimilarWord = getSimilarWord_outer(parameter);
-
-	var yomi = "あいうえ";
-	yomi = GetYomi(yomi);
-	yomi = separateKana(yomi);
-	var result = getSimilarWord(yomi,100);
-	console.log(result);
-
-},3000);
-
-
 </script>
 <body>
+	<span class="loading">Loading...<img src='gif/ajax-loader.gif'></span>
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-xs-12 div-result">出力結果</div>
-			<div class="col-xs-12"></div>
 			<div class="form-group col-xs-12 radio-wordlist">
 				<label class="" for=>単語リストの種類</label>
 				<div>
@@ -66,28 +32,70 @@ setTimeout(function(){
 				<input type = "text" class="form-control ipt-word" placeholder="変換をしたい単語">
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
+			<div class="col-xs-10">出力結果(左から順位,入力読み,出力読み,出力,非類似度)</div>
+			<div class="col-xs-2"><img class="loading2" src='gif/ajax-loader.gif'></div>
+			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
 </body>
 <script>
+var makeKanaDist, loadDB, GetYomi, separateKana, convertBar;
 var wordlist, getSimilarWord;
-wordlist = {}
-$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
-	var path = $(element).val();
-	wordlist[path] = loadDatabaseFile(path);
+//グローバルに使う関数群の宣言
+
+$("div.container-fluid").hide();
+$(".loading").show();
+$(".loading2").hide();
+
+var promise = MakeTokenizer()
+promise
+.then(function(tokenizer){
+	GetYomi = GetYomi_outer(tokenizer);
+	makeKanaDist = makeKanaDist_outer();
+	loadDB = loadDatabaseText;
+	separateKana = separateKana_outer();
+	convertBar = convertBar_outer();
+	getSimilarWord = getSimilarWord_outer(setDefaultParameters());
+
+	$(".btn-send").prop("disabled",false);
+	wordlist = {}
+	$('.radio-wordlist').find("input[type=radio]").prop("disabled",true);
+	$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
+		var path = $(element).val();
+		wordlist[path] = loadDatabaseFile(path);
+		$(element).prop("disabled",false);
+	});	
+	$(".container-fluid").show();
+	$(".loading").remove();
+
 });
-getSimilarWord = getSimilarWord_outer(setDefaultParamters());
+$( '.ipt-word' ).keypress( function ( e ) {
+	if ( e.which == 13 ) {
+		$(".btn-send").click();
+		return false;
+	}
+} );
+
+
 $(".btn-send").click(function(){
+	$(".loading2").show();
 	var text = $(".ipt-word").val();
 	if(text == ""){
 		return;
 	}
-	var wordfile = $("[name=wordfile]:checked").val();
-	var param = setDefaultParamters();
-	var result = getSimilarWord(wordlist,text,length=100);
-	var resulttext = "";
+	var wordfile = $("input[name=wordfile]:checked").val();
+	var param = setDefaultParameters({"sameVowel":0.5});
+	text = GetYomi(text);
+	text = separateKana(text);
+	//console.log(text);
+	var result = getSimilarWord(wordlist[wordfile],text,length=100);
+	//console.log(result);
+	result.forEach(function(value,index){
+		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
+	});
 
-	$(".div-result").html();
+	$(".div-result").html(result.join("<br>"));
+	$(".loading2").hide();
 
 
 });
