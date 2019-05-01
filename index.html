@@ -7,6 +7,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
@@ -18,13 +20,16 @@
 		<div class="row">
 			<div class="form-group col-xs-12 radio-wordlist">
 				<label class="" for=>単語リストの種類</label>
-				<div>
+				<div class="radio-file">
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/baseball.txt" checked="checked">野球選手</label>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/stations.txt">駅名</label>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/nations.txt">国名</label>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/sekitsui.txt">動物</label>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/pokemon.txt">ポケモン</label>
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/physicist.txt">物理学者</label>
+				</div>
+				<div>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="original">自作の単語リストを使用</label>
 				</div>
 			</div>
 
@@ -58,8 +63,8 @@ promise
 	getSimilarWord = getSimilarWord_outer(setDefaultParameters());
 
 	wordlist = {}
-	$('.radio-wordlist').find("input[type=radio]").prop("disabled",true);
-	$('.radio-wordlist').find("input[type=radio]").each(function(index, element){
+	$('.radio-file').find("input[type=radio]").prop("disabled",true);
+	$('.radio-file').find("input[type=radio]").each(function(index, element){
 		var path = $(element).val();
 		wordlist[path] = loadDatabaseFile(path);
 		$(element).prop("disabled",false);
@@ -75,7 +80,46 @@ $( '.ipt-word' ).keypress( function ( e ) {
 	}
 } );
 
+function makeDialog(){
+	var div = $("<div></div>");
+	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
 
+
+	div.dialog({
+		//autoOpen: true,
+		modal:true,
+		title: "単語リストの登録",
+		width: $(window).width()*0.9,
+		height: $(window).height()*0.9,
+		buttons: [
+			{
+				text: "キャンセル",
+				class: "btn-cancel",
+				click: function(){
+					$(this).dialog("close");
+				}
+			},
+			{
+				text: "登録",
+				class: "btn-register",
+				click: function(){
+					alert($(".ta-original-wordlist").val());
+					$(this).dialog("close");
+				}
+			},
+		]
+	});
+	var initVal = [];
+	initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
+	initVal.push("#ひとつの単語に複数の読み方を登録可能です");
+	initVal.push("#読み方を省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
+	initVal.push("#半角シャープ(#)でコメントアウトできます");
+
+
+	$(".ta-original-wordlist").height("99%");
+	$(".ta-original-wordlist").val(initVal.join("\n"));
+}
+makeDialog();
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
@@ -99,8 +143,6 @@ $(".btn-send").click(function(){
 
 	$(".div-result").html(result.join("<br>"));
 	$(".loading2").hide();
-
-
 });
 </script>
 </html>
