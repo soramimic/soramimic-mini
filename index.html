@@ -29,7 +29,7 @@
 					<label class="radio-inline"><input type="radio" name="wordfile" value="words/physicist.txt">物理学者</label>
 				</div>
 				<div>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="original">自作の単語リストを使用</label>
+					<label class="radio-inline radio-original"><input type="radio" name="wordfile" value="original">自作の単語リストを使用</label>
 				</div>
 			</div>
 
@@ -81,12 +81,12 @@ $( '.ipt-word' ).keypress( function ( e ) {
 } );
 
 function makeDialog(){
-	var div = $("<div></div>");
+	var div = $("<div class='dialog-original'></div>");
 	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
 
 
 	div.dialog({
-		//autoOpen: true,
+		autoOpen: false,
 		modal:true,
 		title: "単語リストの登録",
 		width: $(window).width()*0.9,
@@ -103,23 +103,33 @@ function makeDialog(){
 				text: "登録",
 				class: "btn-register",
 				click: function(){
-					alert($(".ta-original-wordlist").val());
+					var text = $(".ta-original-wordlist").val();
+					wordlist["original"] = loadDatabaseText(text);
+					localStorage.setItem("originalWordlist",text);
 					$(this).dialog("close");
 				}
 			},
 		]
 	});
-	var initVal = [];
-	initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
-	initVal.push("#ひとつの単語に複数の読み方を登録可能です");
-	initVal.push("#読み方を省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
-	initVal.push("#半角シャープ(#)でコメントアウトできます");
-
+	storageKey = "originalWordlist";
+	if(localStorage.getItem(storageKey) === null){
+		var initVal = [];
+		initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
+		initVal.push("#ひとつの単語に複数の読み方を登録可能です");
+		initVal.push("#読み方が一つだけの場合は省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
+		initVal.push("#半角シャープ(#)でコメントアウトできます");
+		initVal.push(loadTextFile("words/nations.txt"));
+		localStorage.setItem(storageKey,initVal.join("\n"));
+	}
 
 	$(".ta-original-wordlist").height("99%");
-	$(".ta-original-wordlist").val(initVal.join("\n"));
+	$(".ta-original-wordlist").val(localStorage.getItem(storageKey));
 }
 makeDialog();
+
+$(".radio-original").click(function(){
+	$(".dialog-original").dialog("open");
+});
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
@@ -137,6 +147,11 @@ $(".btn-send").click(function(){
 	//console.log(text);
 	var result = getSimilarWord(wordlist[wordfile],text,length=100);
 	//console.log(result);
+	if(result.length == 0){
+		$(".loading2").hide();
+		$(".div-result").html("うまく変換できる単語を見つけられませんでした");
+		return;
+	}
 	result.forEach(function(value,index){
 		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
 	});

@@ -251,6 +251,7 @@ function loadDatabaseText(text){
 }
 
 function loadDatabaseFile(path){
+	/*
 	var wordlisttext = "";
 	$.ajaxSetup({async: false});
 	$.get(path)
@@ -261,11 +262,27 @@ function loadDatabaseFile(path){
 		console.log("error",data);
 	})
 	$.ajaxSetup({async: true});
+	*/
+	var wordlisttext = loadTextFile(path);
 
 	if(wordlisttext == ""){
 		return null;
 	}
 	return loadDatabaseText(wordlisttext);
+}
+
+function loadTextFile(path){
+	var text = "";
+	$.ajaxSetup({async: false});
+	$.get(path)
+	.done(function(data){
+		text = data;
+	})
+	.fail(function(data){
+		console.log("error",data);
+	})
+	$.ajaxSetup({async: true});
+	return text;
 }
 
 function separateKana_outer(){
