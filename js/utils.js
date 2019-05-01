@@ -25,7 +25,8 @@ function makeKanaDist_outer(){
 		$.getJSON("conf/allkanaBi.json"),
 		$.getJSON("conf/simConsonantsSimple.json"),
 		$.getJSON("conf/simVowelsSimple.json"),
-		$.getJSON("conf/vowels.json")
+		$.getJSON("conf/vowels.json"),
+		$.getJSON("conf/consonants.json")
 	)
 	.done(function(allkana, cCost, vCost,vowels){
 		zip(["allkana","cCost","vCost","vowels"],[allkana,cCost,vCost,vowels]).forEach(function([v1,v2]){
@@ -52,9 +53,19 @@ function makeKanaDist_outer(){
 
 	function reflectParam(costkana, param){
 		var vowels = configs["vowels"];
-		var sameVowel;
+		var sameVowel, sameConsonant;
 		sameVowel = param["sameVowel"];
+		sameConsonant = param["sameConsonant"];
 		if(sameVowel != 1){
+			for(v1 in vowels){
+				vowels[v1].forEach(function(v2){
+					 vowels[v1].forEach(function(v3){
+						 costkana[v2][v3] *= sameVowel;
+					 });
+				});
+			}
+		}
+		if(sameConsonant != 1){
 			for(v1 in vowels){
 				vowels[v1].forEach(function(v2){
 					 vowels[v1].forEach(function(v3){
