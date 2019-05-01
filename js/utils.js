@@ -208,7 +208,7 @@ function GetYomi_outer(tokenizer){
 		});
 		return removeSign(yomi);
 	}
-	return getYomi;	
+	return getYomi;
 }
 
 function loadDatabaseText(text){
@@ -474,4 +474,10 @@ function getSimilarWord_outer(param){
 
 	return getSimilarWord_inner;
 
+}
+
+function containAlphabet(val){
+	console.log("containAlphabet",val);
+	var regex = /^[^\x01-\x7E\xA1-\xDF]+$/
+	return !regex.test(val);
 }

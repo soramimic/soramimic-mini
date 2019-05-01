@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Soramimic</title>
+<title>SoramimicMini</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -76,10 +76,14 @@ $( '.ipt-word' ).keypress( function ( e ) {
 } );
 
 
+
 $(".btn-send").click(function(){
 	$(".loading2").show();
 	var text = $(".ipt-word").val();
 	if(text == ""){
+		return;
+	}else if(containAlphabet(text)){
+		alert("【変換不可能文字の検出】使用できるのはひらがな・カタカナ・漢字のみです");
 		return;
 	}
 	var wordfile = $("input[name=wordfile]:checked").val();
