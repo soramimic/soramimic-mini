@@ -60,7 +60,8 @@ promise
 	loadDB = loadDatabaseText;
 	separateKana = separateKana_outer();
 	convertBar = convertBar_outer();
-	getSimilarWord = getSimilarWord_outer(setDefaultParameters());
+	var param = setDefaultParameters({"sameVowel":0.5});
+	getSimilarWord = getSimilarWord_outer(param);
 
 	wordlist = {}
 	$('.radio-file').find("input[type=radio]").prop("disabled",true);
@@ -141,7 +142,7 @@ $(".btn-send").click(function(){
 		return;
 	}
 	var wordfile = $("input[name=wordfile]:checked").val();
-	var param = setDefaultParameters({"sameVowel":0.5});
+
 	text = GetYomi(text);
 	text = separateKana(text);
 	//console.log(text);
