@@ -28,8 +28,8 @@ function makeKanaDist_outer(){
 		$.getJSON("conf/vowels.json"),
 		$.getJSON("conf/consonants.json")
 	)
-	.done(function(allkana, cCost, vCost,vowels){
-		zip(["allkana","cCost","vCost","vowels"],[allkana,cCost,vCost,vowels]).forEach(function([v1,v2]){
+	.done(function(allkana, cCost, vCost,vowels,consonants){
+		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(function([v1,v2]){
 			configs[v1]=v2[0];
 		});
 		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
@@ -52,9 +52,10 @@ function makeKanaDist_outer(){
 	$.ajaxSetup({async: true});
 
 	function reflectParam(costkana, param){
-		var vowels = configs["vowels"];
-		var sameVowel, sameConsonant;
+		var vowels, sameVowel, consonants, sameConsonant;
+		vowels = configs["vowels"];
 		sameVowel = param["sameVowel"];
+		consonants = configs["consonants"];
 		sameConsonant = param["sameConsonant"];
 		if(sameVowel != 1){
 			for(v1 in vowels){
@@ -66,10 +67,10 @@ function makeKanaDist_outer(){
 			}
 		}
 		if(sameConsonant != 1){
-			for(v1 in vowels){
-				vowels[v1].forEach(function(v2){
-					 vowels[v1].forEach(function(v3){
-						 costkana[v2][v3] *= sameVowel;
+			for(v1 in consonants){
+				consonants[v1].forEach(function(v2){
+					 consonants[v1].forEach(function(v3){
+						 costkana[v2][v3] *= sameConsonant;
 					 });
 				});
 			}
@@ -95,6 +96,7 @@ function makeKanaDist_outer(){
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 			});
 		});
+		//console.log(costKanaBi["ン"]);
 		costKanaBi = reflectParam(costKanaBi,param);
 		return costKanaBi;
 	}
