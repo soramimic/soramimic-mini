@@ -1,107 +1,10 @@
-function ld_outer(cost){
-	function ld_inner(s,t){
-		score = 0;
-		zip(s,t).forEach(function([v1,v2]){
-			score+=cost[v1][v2]
-		});
-		return score;
-	}
-	return ld_inner;
-}
+
 const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
 
 function orgRound(value, base) {
     return Math.round(value * base) / base;
 }
 
-//母音同士、子音同士の距離から、ひらがな同士の距離を求める関数
-//outerで、母音同士、子音同士の類似度など必要なファイルを読み込んでおく
-//innerで、その都度パラメータによる微調整を加えた音素間類似度のobjectを返す。
-function makeKanaDist_outer(){
-	var configs = {}
-	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
-	$.ajaxSetup({async: false});
-	$.when(
-		$.getJSON("conf/allkanaBi.json"),
-		$.getJSON("conf/simConsonantsSimple.json"),
-		$.getJSON("conf/simVowelsSimple.json"),
-		$.getJSON("conf/vowels.json"),
-		$.getJSON("conf/consonants.json")
-	)
-	.done(function(allkana, cCost, vCost,vowels,consonants){
-		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(function([v1,v2]){
-			configs[v1]=v2[0];
-		});
-		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
-
-		var k = {}
-		Object.keys(allkana).forEach(function(v1){
-			s1 = allkana[v1];
-			k[v1] = {}
-			Object.keys(allkana).forEach(function(v2){
-				s2 = allkana[v2];
-				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
-			});
-		});
-		configs["kanaCostElement"] = k;
-		//console.log(configs["kanaCostElement"]);
-	})
-	.fail(function(){
-		console.log("error");
-	})
-	$.ajaxSetup({async: true});
-
-	function reflectParam(costkana, param){
-		var vowels, sameVowel, consonants, sameConsonant;
-		vowels = configs["vowels"];
-		sameVowel = param["sameVowel"];
-		consonants = configs["consonants"];
-		sameConsonant = param["sameConsonant"];
-		if(sameVowel != 1){
-			for(v1 in vowels){
-				vowels[v1].forEach(function(v2){
-					 vowels[v1].forEach(function(v3){
-						 costkana[v2][v3] *= sameVowel;
-					 });
-				});
-			}
-		}
-		if(sameConsonant != 1){
-			for(v1 in consonants){
-				consonants[v1].forEach(function(v2){
-					 consonants[v1].forEach(function(v3){
-						 costkana[v2][v3] *= sameConsonant;
-					 });
-				});
-			}
-		}
-		return costkana;
-	}
-
-	function makeKanaDist_inner(param){
-		var w = [param["consonant"],param["vowel"]],
-			sameChar = param["sameChar"],
-			sameVowel = param["sameVowel"],
-			single = configs["single"];
-		var costKanaBi = {},
-			k = configs["kanaCostElement"];
-		Object.keys(k).forEach(function(v1){
-			var s1 = k[v1];
-			costKanaBi[v1] = {}
-			Object.keys(k).forEach(function(v2){
-				var s2 = s1[v2],
-					m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
-				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 )
-					m = s2[1];
-				costKanaBi[v1][v2] = Math.round(m*100)/100;
-			});
-		});
-		//console.log(costKanaBi["ン"]);
-		costKanaBi = reflectParam(costKanaBi,param);
-		return costKanaBi;
-	}
-	return makeKanaDist_inner;
-}
 
 //makeKanaDist時のデフォルトパラメータを作る関数
 function setDefaultParameters(param={}){
@@ -264,20 +167,7 @@ function loadDatabaseText(text){
 }
 
 function loadDatabaseFile(path){
-	/*
-	var wordlisttext = "";
-	$.ajaxSetup({async: false});
-	$.get(path)
-	.done(function(data){
-		wordlisttext = data;
-	})
-	.fail(function(data){
-		console.log("error",data);
-	})
-	$.ajaxSetup({async: true});
-	*/
 	var wordlisttext = loadTextFile(path);
-
 	if(wordlisttext == ""){
 		return null;
 	}
@@ -442,7 +332,7 @@ function argsort(array) {
     const argIndices = arrayObject.map(data => data.idx);
     return argIndices;
 }
-
+/*
 function getSimilarWord_outer(param){
 	var kanadist, ld;
 	kanadist = makeKanaDist(param);
@@ -505,7 +395,7 @@ function getSimilarWord_outer(param){
 	return getSimilarWord_inner;
 
 }
-
+*/
 function containAlphabet(val){
 	console.log("containAlphabet",val);
 	var regex = /^[^\x01-\x7E\xA1-\xDF]+$/
