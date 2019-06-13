@@ -71,7 +71,7 @@ $("div.container-fluid").hide();
 $(".loading").show();
 $(".loading2").hide();
 
-function getParam(){
+const getParam = () => {
 	let val = $("input[name=consonant_vowel]").val(),
 		param = {}
 
@@ -92,10 +92,10 @@ function getParam(){
 	console.log("param",param);
 	return param;
 }
-function ld_outer(cost){
-	function ld_inner(s,t){
+const ld_outer = cost => {
+	const ld_inner = (s,t) => {
 		let score = 0;
-		zip(s,t).forEach(function([v1,v2]){
+		zip(s,t).forEach(([v1,v2]) => {
 			//console.log(v1,v2,cost[v1][v2]);
 			score+=cost[v1][v2]
 		});
@@ -107,8 +107,8 @@ function ld_outer(cost){
 //母音同士、子音同士の距離から、ひらがな同士の距離を求める関数
 //outerで、母音同士、子音同士の類似度など必要なファイルを読み込んでおく
 //innerで、その都度パラメータによる微調整を加えた音素間類似度のobjectを返す。
-function makeKanaDist_outer(){
-	let configs = {}
+const makeKanaDist_outer = () => {
+	const configs = {}
 	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
 	$.ajaxSetup({async: false});
 	$.when(
@@ -118,21 +118,21 @@ function makeKanaDist_outer(){
 		$.getJSON("conf/vowels.json"),
 		$.getJSON("conf/consonants.json")
 	)
-	.done(function(allkana, cCost, vCost,vowels,consonants){
-		let k = {}
-		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(function([v1,v2]){
+	.done((allkana, cCost, vCost,vowels,consonants) => {
+		const k = {}
+		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(([v1,v2]) => {
 			configs[v1]=v2[0];
 		});
 		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
 
-		Object.keys(allkana).forEach(function(v1){
-			s1 = allkana[v1];
+		for (let v1 of Object.keys(allkana)){
+			const s1 = allkana[v1];
 			k[v1] = {}
-			Object.keys(allkana).forEach(function(v2){
-				s2 = allkana[v2];
+			for ( let v2 of Object.keys(allkana)){
+				const s2 = allkana[v2];
 				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
-			});
-		});
+			}
+		}
 		configs["kanaCostElement"] = k;
 		//console.log(configs["kanaCostElement"]);
 	})
@@ -141,111 +141,115 @@ function makeKanaDist_outer(){
 	})
 	$.ajaxSetup({async: true});
 
-	function reflectParam(costkana, param){
-		var vowels, sameVowel, consonants, sameConsonant;
-		vowels = configs["vowels"];
-		sameVowel = param["sameVowel"];
-		consonants = configs["consonants"];
-		sameConsonant = param["sameConsonant"];
+	const reflectParam = (costkana, param) => {
+		const vowels = configs["vowels"],
+			sameVowel = param["sameVowel"],
+			consonants = configs["consonants"],
+			sameConsonant = param["sameConsonant"]
+			;
+
 		//console.log(costkana["ア"]);
 		if(sameVowel != 1){
-			for(v1 in vowels){
-				vowels[v1].forEach(function(v2){
-					 vowels[v1].forEach(function(v3){
+			for(let v1 of Object.keys(vowels)){
+				const vowel = vowels[v1];
+				for(let v2 of vowel){
+					for(let v3 of vowel){
 						 costkana[v2][v3] *= sameVowel;
-					 });
-				});
+					 };
+				};
 			}
 		}
 
 		if(sameConsonant != 1){
-			for(v1 in consonants){
-				consonants[v1].forEach(function(v2){
-					 consonants[v1].forEach(function(v3){
+			for(let v1 of Object.keys(consonants)){
+				const consonant = consonants[v1];
+				for(let v2 of consonant){
+					for(let v3 of consonant){
 						 costkana[v2][v3] *= sameConsonant;
-					 });
-				});
+					}
+				}
 			}
 		}
 		return costkana;
 	}
 
-	function makeKanaDist_inner(param){
-		var w = [param["consonant"],param["vowel"]],
+	const makeKanaDist_inner = param => {
+		const w = [param["consonant"],param["vowel"]],
 			//sameChar = param["sameChar"],
 			//sameVowel = param["sameVowel"],
-			single = configs["single"];
-		var costKanaBi = {},
-			k = configs["kanaCostElement"];
-		Object.keys(k).forEach(function(v1){
-			var s1 = k[v1];
+			single = configs["single"],
+			costKanaBi = {},
+			k = configs["kanaCostElement"]
+			;
+		for(let v1 of Object.keys(k)){
+			const s1 = k[v1];
 			costKanaBi[v1] = {}
-			Object.keys(k).forEach(function(v2){
-				var s2 = s1[v2],
-					m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
-				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
-					m = s2[1];
-				}
+			for(let v2 of Object.keys(k)){
+				const s2 = s1[v2],
+					isSingle = (single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ),
+					m = (isSingle) ? (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]) : s2[1]
+					;
+				//let m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
+				//if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
+				//	m = s2[1];
+				//}
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 				if(isNaN(costKanaBi[v1][v2]))
 					console.log(v1,v2);
-			});
-		});
-		costKanaBi = reflectParam(costKanaBi,param);
-		return costKanaBi;
+			};
+		};
+		return reflectParam(costKanaBi,param);
 	}
 	return makeKanaDist_inner;
 }
 
-function getSimilarWord_outer(param){
-	var kanadist, ld;
-	kanadist = makeKanaDist(param);
-	ld = ld_outer(kanadist);
+const getSimilarWord_outer = param => {
+	const kanadist = makeKanaDist(param),
+		ld = ld_outer(kanadist),
+		memo = {}
+		;
 
-	var memo = {}
-	function getSimilarWord_inner(wordlist, target, length = 1){
-		var orglen, cand, cand2, sims, words, args, result, indexes;
-		orglen = target.length;
-		cand = convertBar(target);
+	const getSimilarWord_inner = (wordlist, target, length = 1) => {
+		const orglen = target.length,
+			cand = convertBar(target),
+			cand2 = {},
+			sims = [],
+			result = [],
+			indexes = [];
+		let	words = []
+			;
 
-		cand2 = {}
-		cand.forEach(function(val){
-			var tmplength = val.length;
+		for(let val of cand){
+			const tmplength = val.length;
 			if(!(tmplength in cand2)){
 				cand2[tmplength] = []
 			}
 			cand2[tmplength].push(val);
-		});
+		};
 
-		sims = [];
-		words = [];
-		for(var i in cand2){
-			if(!(i in wordlist)){
+		for(let i of Object.keys(cand2)){
+			if(!(i in wordlist))
 				continue;
-			}
-			wordlist[i].forEach(function(w){
-				var tmplist, tSim;
-				tmplist = [];
-				cand2[i].forEach(function(tar){
+
+			for(let w of wordlist[i]){
+				const tmplist = [];
+				let tSim;
+
+				for(let tar of cand2[i]){
 					//var tmp = ld(tar,w[2]);
 					//console.log(w,tmp);
 					tmplist.push(ld(tar,w[2])/i);
-				});
-				tSim = Math.min.apply(null,tmplist);
+				};
 
+				tSim = Math.min.apply(null,tmplist);
 				sims.push(tSim*orglen);
-			});
+			};
 			words = words.concat(wordlist[i]);
 		}
 
-		args = argsort(sims);
-		result = [];
-		indexes = [];
-		for(var i = 0; i<args.length;i++){
-			var val = args[i];
-			var tmpW = words[val];
-
-			var id = tmpW[tmpW.length-1];
+		for(let val of argsort(sims)){
+			const tmpW = words[val],
+				id = tmpW[tmpW.length-1];
 			if(indexes.indexOf(id)<0){
 				indexes.push(id);
 				result.push([target.join(""),tmpW[1], tmpW[0], orgRound(sims[val],100),tmpW[3]]);

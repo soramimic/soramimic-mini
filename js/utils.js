@@ -1,13 +1,12 @@
 
-const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
+//const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
+const zip = rows => rows[0].map((_,c)=>rows.map(row=>row[c]));
+const orgRound = (value, base) => Math.round(value * base) / base;
 
-const orgRound = function(value, base) {
-    return Math.round(value * base) / base;
-}
 
 
 //makeKanaDist時のデフォルトパラメータを作る関数
-const setDefaultParameters = function(param={}){
+const setDefaultParameters = (param={}) => {
 	let defaultParam = {
 	        "splitter":"/",
 	        "vowel":1,
@@ -32,7 +31,7 @@ const setDefaultParameters = function(param={}){
  * [引数]   strVal: 入力値
  * [返却値] String(): 半角変換された文字列
  */
-const toHalfWidth = function(strVal){
+const toHalfWidth = (strVal) => {
   // 半角変換
   let halfVal;
   halfVal = strVal.replace(/[！-～]/g,
@@ -51,20 +50,20 @@ const toHalfWidth = function(strVal){
     .replace(/〜/g, "~");
 }
 
-const removeSign = function(strVal){
+const removeSign = strVal => {
 	strVal = toHalfWidth(strVal); //全角を半角に変換
 	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
 	strVal = strVal.replace(/・/g, '').replace(/「/g, '').replace(/」/g, '');
 	return strVal;
 }
 
-const toKatakana = function(strVal){
-	return strVal.replace(/[ぁ-ん]/g, function(s) {
+const toKatakana = strVal => {
+	strVal.replace(/[ぁ-ん]/g, function(s) {
 		   return String.fromCharCode(s.charCodeAt(0) + 0x60);
 	});
 }
 
-const formatText = function(strVal){
+const formatText = strVal => {
 	strVal = removeSign(strVal);
 	strVal = toKatakana(strVal);
 	return strVal;
@@ -72,22 +71,24 @@ const formatText = function(strVal){
 
 
 //直積を求めてリストで返す
-const productList = function(list){
+const productList = list => {
 	let p=1,
 		result, //結果の収納リスト
-		i = 0;
-	list.forEach(function(v){
+		i = 0,
+		plist = [],
+		p2 = p
+		;
+	for (const v of list)
 		p*=v.length;
-	});
+
 	result = Array(p);
 	result.fill([]);
 
-	var plist = [],
-		p2=p;
-	list.forEach(function(v){
+	for (const v of list){
 		p2 /= v.length;
 		plist.push([p2,p/(p2*v.length)]);
-	});
+	}
+
 	zip(plist,list).forEach(function([v1,v2]){
 		var tmp=0;
 		for(var i1=0;i1<v1[0];i1++){
@@ -102,7 +103,7 @@ const productList = function(list){
 	return result;
 }
 
-function MakeTokenizer(){
+const MakeTokenizer = () => {
 	return new Promise(function(resolve,reject){
 		kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
 			if(err) { reject(err); }
