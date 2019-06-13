@@ -1,14 +1,14 @@
 
 const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
 
-function orgRound(value, base) {
+const orgRound = function(value, base) {
     return Math.round(value * base) / base;
 }
 
 
 //makeKanaDist時のデフォルトパラメータを作る関数
-function setDefaultParameters(param={}){
-	var defaultParam = {
+const setDefaultParameters = function(param={}){
+	let defaultParam = {
 	        "splitter":"/",
 	        "vowel":1,
 	        "consonant":1,
@@ -32,9 +32,10 @@ function setDefaultParameters(param={}){
  * [引数]   strVal: 入力値
  * [返却値] String(): 半角変換された文字列
  */
-function toHalfWidth(strVal){
+const toHalfWidth = function(strVal){
   // 半角変換
-  var halfVal = strVal.replace(/[！-～]/g,
+  let halfVal;
+  halfVal = strVal.replace(/[！-～]/g,
     function( tmpStr ) {
       // 文字コードをシフト
       return String.fromCharCode( tmpStr.charCodeAt(0) - 0xFEE0 );
@@ -49,22 +50,21 @@ function toHalfWidth(strVal){
     .replace(/　/g, " ")
     .replace(/〜/g, "~");
 }
- var text ="[]]{（こんにちは」・？/";
 
-function removeSign(strVal){
+const removeSign = function(strVal){
 	strVal = toHalfWidth(strVal); //全角を半角に変換
 	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
 	strVal = strVal.replace(/・/g, '').replace(/「/g, '').replace(/」/g, '');
 	return strVal;
 }
 
-function toKatakana(strVal){
+const toKatakana = function(strVal){
 	return strVal.replace(/[ぁ-ん]/g, function(s) {
 		   return String.fromCharCode(s.charCodeAt(0) + 0x60);
 	});
 }
 
-function formatText(strVal){
+const formatText = function(strVal){
 	strVal = removeSign(strVal);
 	strVal = toKatakana(strVal);
 	return strVal;
@@ -72,15 +72,16 @@ function formatText(strVal){
 
 
 //直積を求めてリストで返す
-function productList(list){
-	var p=1;
+const productList = function(list){
+	let p=1,
+		result, //結果の収納リスト
+		i = 0;
 	list.forEach(function(v){
 		p*=v.length;
 	});
-	var result = [];
-	for(var i=0;i<p;i++){
-		result.push([]);
-	}
+	result = Array(p);
+	result.fill([]);
+
 	var plist = [],
 		p2=p;
 	list.forEach(function(v){
@@ -213,24 +214,29 @@ function separateKana_outer(){
     //console.log(vowels);
 
 	function separateKana_inner(k){
+		let i = 0,
+			result = []
+			;
 		["ー","ッ"].forEach(function(v){
 			while( k.indexOf(v+v) >= 0 ){
 				k = k.replace(v+v,v);
 			}
 		});
 		k+="__" //(最後の2文字をうまく処理するため終端文字の追加)
-		var i = 0,
-			result = [];
+
 		while(i < k.length - 2){
-			var p = k.slice(i,i+3);
+			let p = k.slice(i,i+3),
+				moji = ""
+				;
+			const lenmax = 2
+				;
 			if(p[0] in S2L)
 				p = S2L[p[0]] + p.slice(1);
-			var moji = "",
-				lenmax = 2;
 			[2,1].forEach(function(si){
+				let p1 = p.slice(0,si),
+					p2 = p[si]
+					;
 				if(moji != "")return;
-				var p1 = p.slice(0,si);
-				var p2 = p[si];
 				//console.log(p1,p2);
 				if(p1 in kanalist){
 					if(p2 == "ー"){
@@ -278,7 +284,7 @@ function separateKana_outer(){
 
 
 function convertBar_outer(){
-	var converter;
+	let converter;
 	$.ajaxSetup({async: false});
 	$.when(
 		$.getJSON("conf/kanaWithBar.json")
@@ -293,16 +299,18 @@ function convertBar_outer(){
 	$.ajaxSetup({async: true});
 	//console.log(converter);
 	function convertBar_inner(kana){
-		var count = [];
-		var count2 = [];
+		let count = [],
+			count2 = [],
+			change = productList(count2),
+			result = []
+			;
+
 		kana.forEach(function(v,i){
 			if(v in converter){
 				count.push(v);
 				count2.push(converter[v]);
 			}
 		});
-		var change = productList(count2);
-		var result = [];
 		change.forEach(function(v){
 			var kanaStr = kana.join("/");
 			zip(count,v).forEach(function([v2,v3]){
