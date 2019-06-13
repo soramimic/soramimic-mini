@@ -185,14 +185,11 @@ const makeKanaDist_outer = () => {
 			const s1 = k[v1];
 			costKanaBi[v1] = {}
 			for(let v2 of Object.keys(k)){
-				const s2 = s1[v2],
-					isSingle = (single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ),
-					m = (isSingle) ? (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]) : s2[1]
-					;
-				//let m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
-				//if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
-				//	m = s2[1];
-				//}
+				const s2 = s1[v2];
+				let m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
+				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
+					m = s2[1];
+				}
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 				if(isNaN(costKanaBi[v1][v2]))
 					console.log(v1,v2);
@@ -228,7 +225,8 @@ const getSimilarWord_outer = param => {
 		};
 
 		for(let i of Object.keys(cand2)){
-			if(!(i in wordlist))
+			if(Object.keys(wordlist).indexOf(i)<0)
+			//if(!(i in wordlist))
 				continue;
 
 			for(let w of wordlist[i]){
@@ -268,20 +266,20 @@ const getSimilarWord_outer = param => {
 
 promise = MakeTokenizer()
 promise
-.then(function(tokenizer){
+.then((tokenizer) => {
 	GetYomi = GetYomi_outer(tokenizer);
 	makeKanaDist = makeKanaDist_outer();
 	loadDB = loadDatabaseText;
 	separateKana = separateKana_outer();
 	convertBar = convertBar_outer();
-	var param = getParam();
+	const param = getParam();
 	console.log(param);
 	getSimilarWord = getSimilarWord_outer(param);
 
 	wordlist = {}
 	$('.radio-file').find("input[type=radio]").prop("disabled",true);
 	$('.radio-file').find("input[type=radio]").each(function(index, element){
-		var path = $(element).val();
+		const path = $(element).val();
 		wordlist[path] = loadDatabaseFile(path);
 		$(element).prop("disabled",false);
 	});
@@ -299,7 +297,7 @@ $( '.ipt-word' ).keypress( function ( e ) {
 
 
 function makeDialog(){
-	var div = $("<div class='dialog-original'></div>");
+	const div = $("<div class='dialog-original'></div>");
 	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
 
 
@@ -329,7 +327,7 @@ function makeDialog(){
 			},
 		]
 	});
-	storageKey = "originalWordlist";
+	const storageKey = "originalWordlist";
 	if(localStorage.getItem(storageKey) === null){
 		var initVal = [];
 		initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
@@ -354,7 +352,7 @@ $(".ipt-parameter").change(function(){
 	console.log("isParamChanged",isParamChanged);
 });
 $(".ipt-parameter").on("input",function(){
-	var val = $(this).val();
+	const val = $(this).val();
 	if (val == 1)val=0.99;
 	else if(val == -1)val=-0.99;
 	$(this).closest(".row").find(".param-value").html(val);
@@ -363,32 +361,32 @@ $(".ipt-parameter").on("input",function(){
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
-	var text = $(".ipt-word").val();
+	let text = $(".ipt-word").val();
 	if(text == ""){
 		return;
 	}else if(containAlphabet(text)){
 		alert("【変換不可能文字の検出】使用できるのはひらがな・カタカナ・漢字のみです");
 		return;
 	}
-	var wordfile = $("input[name=wordfile]:checked").val();
+	const wordfile = $("input[name=wordfile]:checked").val();
 
 	text = GetYomi(text);
 	text = separateKana(text);
 	//console.log(text);
 	if(isParamChanged){
-		var param = getParam();
+		const param = getParam();
 		getSimilarWord = getSimilarWord_outer(param);
 		isParamChanged = false;
 		console.log("isParamChanged",isParamChanged);
 	}
-	var result = getSimilarWord(wordlist[wordfile],text,length=100);
+	const result = getSimilarWord(wordlist[wordfile],text,length=100);
 	//console.log(result);
 	if(result.length == 0){
 		$(".loading2").hide();
 		$(".div-result").html("うまく変換できる単語を見つけられませんでした");
 		return;
 	}
-	result.forEach(function(value,index){
+	result.forEach((value,index) => {
 		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
 	});
 
