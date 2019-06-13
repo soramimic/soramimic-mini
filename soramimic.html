@@ -264,6 +264,37 @@ const getSimilarWord_outer = param => {
 
 }
 
+const soramimi_dp = (text, wordlist, para) => {
+	const param = setDefaultParameters(para),
+		gs = getSimilarWord_outer(param),
+		gy = GetYomi,
+		splitter=param["splitter"],
+    	repeat = param["repeat"],
+	    isDuplicate = param["duplicate"],
+	    penaBreak = param["bunsetsu"],
+	    wordsNum = param["wordsNum"],
+	    takeLen = param["length"],
+		wordfile = $("input[name=wordfile]:checked").val(),
+	    number = Object.keys(wordlist[wordfile]),
+	    phrases = text.split(splitter),
+	    phraselen = phrases.length,
+	    base_info = {"raws":[],"targets":[],"indexBreaks":[]}
+	    ;
+
+	//phraseの基本的な構造を解析
+	for ( let val of phrases){
+		const raw = val,
+			yomi = gy(val)
+			;
+		base_info["raws"].push(raw);
+		base_info["targets"].push(separateKana(yomi));
+	}
+
+
+
+
+}
+
 promise = MakeTokenizer()
 promise
 .then((tokenizer) => {
@@ -286,6 +317,7 @@ promise
 	wordlist["original"] = wordlist["words/nations.txt"];
 	$(".container-fluid").show();
 	$(".loading").remove();
+	soramimi_dp("こんにちは",wordlist,{});//for test
 
 });
 $( '.ipt-word' ).keypress( function ( e ) {
@@ -296,7 +328,7 @@ $( '.ipt-word' ).keypress( function ( e ) {
 } );
 
 
-function makeDialog(){
+const makeDialog = () => {
 	const div = $("<div class='dialog-original'></div>");
 	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
 
@@ -329,7 +361,7 @@ function makeDialog(){
 	});
 	const storageKey = "originalWordlist";
 	if(localStorage.getItem(storageKey) === null){
-		var initVal = [];
+		const initVal = [];
 		initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
 		initVal.push("#ひとつの単語に複数の読み方を登録可能です");
 		initVal.push("#読み方が一つだけの場合は省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
