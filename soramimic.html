@@ -264,7 +264,12 @@ const getSimilarWord_outer = param => {
 
 }
 
-const soramimi_dp = (text, wordlist, para) => {
+const isInList = (value, list) => {
+	return (list.indexOf(value) < 0) ? false : true;
+}
+
+
+const soramimi_dp = (text, wordList, para) => {
 	const param = setDefaultParameters(para),
 		gs = getSimilarWord_outer(param),
 		gy = GetYomi,
@@ -275,20 +280,122 @@ const soramimi_dp = (text, wordlist, para) => {
 	    wordsNum = param["wordsNum"],
 	    takeLen = param["length"],
 		wordfile = $("input[name=wordfile]:checked").val(),
-	    number = Object.keys(wordlist[wordfile]),
+		wordlist = wordList[wordfile],
+	    number = Object.keys(wordlist).map(i => Number(i)),
 	    phrases = text.split(splitter),
 	    phraselen = phrases.length,
-	    base_info = {"raws":[],"targets":[],"indexBreaks":[]}
+	    base_info = {"raws":[],"targets":[],"indexBreaks":[]},
+	    resultkeys = ["relativeScores","scores","words"],
+	    results = {}
 	    ;
 
 	//phraseの基本的な構造を解析
-	for ( let val of phrases){
+	for ( let val of phrases ){
 		const raw = val,
 			yomi = gy(val)
 			;
 		base_info["raws"].push(raw);
 		base_info["targets"].push(separateKana(yomi));
 	}
+
+	for (let val of resultkeys){
+		results[val] = Array(phraselen);
+		results[val].fill([]);
+	}
+
+	//base_infoの確認
+	for (let v of Object.keys(base_info)){
+		console.log(v, base_info[v]);
+	}
+
+	const dp = index => {
+		const target = base_info["targets"][index],
+        	//breaks = base_info["indexBreaks"][index],
+        	tarlen = target.length,
+        	used = [],
+        	memo = {0:[]},
+        	error = null
+        	;
+
+		for(let v2 of results["words"]){
+			for(let v of v2){
+				used.append(v[v.length-1]);
+			}
+		}
+
+		const dp_non_duplicate = t => {
+			const mini_result = {"scores":[],"words":[]}
+			//console.log("memokey",Object.keys(memo),"index",Object.keys(memo).indexOf(t));
+			if(Object.keys(memo).indexOf(String(t))>=0){
+				//console.log("memo",memo);
+				return memo[t];
+			}else{
+				//console.log("t",t,"memo",memo,"memo_t",memo[t]);
+			}
+
+			for (let i = 0; i<t; i++){
+				//console.log("number",number);
+
+				if ( number.indexOf(t-i)<0 ){
+					//console.log("t-i",t-i);
+					continue
+				}
+
+				let words = dp_non_duplicate(i);
+				console.log("i",i);
+				console.log("words",words);
+				if(words === error)
+					continue;
+				else{
+					words = words.slice();
+				}
+
+				let score =  words.reduce((score, data) => {return score + data[data.length-2]},0);
+				//console.log("score",score);
+				const currentUsed = words.map(v => v[v.length-1]),
+					newWord = []
+				;
+
+				for(let w of gw(target.slice(i,t),100)){
+					const wid = w[w.length-1],
+						wscore = w[w.length-1];
+					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
+						continue;
+					words.append(w);
+					score += wscore;
+					break;
+				}
+				score += words.length*wordsNum;
+				mini_result["scores"].push(score);
+				mini_result["words"].push(words);
+			}
+			if(mimi_result["scores"].length > 0){
+				const arg = argmin(mini_result["scores"]);
+				memo[t] = mini_result["words"][arg];
+				return memo[t];
+			}
+			else{
+				memo[t] = error;
+				return memo[t];
+			}
+
+		}
+
+		const dp_duplicate = t => {
+			return memo[t];
+		}
+		if ( isDuplicate )
+			pass;
+		else
+			return do_non_duplicate(tarlen+1)
+	}
+
+	for ( let i of [...Array(phraselen).keys()] ){
+		console.log(i);
+	}
+	//dp(0);
+
+
 
 
 

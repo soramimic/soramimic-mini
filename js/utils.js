@@ -1,6 +1,6 @@
 
-//const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
-const zip = rows => rows[0].map((_,c)=>rows.map(row=>row[c]));
+const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
+//const zip = rows => rows[0].map((_,c)=>rows.map(row=>row[c]));
 const orgRound = (value, base) => Math.round(value * base) / base;
 
 
@@ -84,7 +84,7 @@ const productList = list => {
 	result = Array(p);
 	result.fill([]);
 
-	for (const v of list){
+	for (let v of list){
 		p2 /= v.length;
 		plist.push([p2,p/(p2*v.length)]);
 	}
@@ -300,19 +300,20 @@ function convertBar_outer(){
 	$.ajaxSetup({async: true});
 	//console.log(converter);
 	function convertBar_inner(kana){
-		let count = [],
+		const count = [],
 			count2 = [],
-			change = productList(count2),
 			result = []
 			;
 
-		kana.forEach(function(v,i){
+		for(let v of kana){
 			if(v in converter){
 				count.push(v);
 				count2.push(converter[v]);
 			}
-		});
-		change.forEach(function(v){
+		}
+
+		const change = productList(count2);
+		for(let v of change){
 			var kanaStr = kana.join("/");
 			zip(count,v).forEach(function([v2,v3]){
 				kanaStr = kanaStr.replace(v2,v3.join("/")).replace("//","/");
@@ -320,7 +321,7 @@ function convertBar_outer(){
 			if(kanaStr.endsWith("/"))
 				kanaStr = kanaStr.slice(0,-1);
 			result.push(kanaStr.split("/"));
-		});
+		};
 		return result;
 	}
 	return convertBar_inner;
@@ -341,6 +342,7 @@ function argsort(array) {
     const argIndices = arrayObject.map(data => data.idx);
     return argIndices;
 }
+const argmin = array => [].map.call(array, (x, i) => [x, i]).reduce((r, a) => (a[0] < r[0] ? a : r))[1];
 /*
 function getSimilarWord_outer(param){
 	var kanadist, ld;
