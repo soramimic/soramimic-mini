@@ -1,6 +1,26 @@
 
-const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
-//const zip = rows => rows[0].map((_,c)=>rows.map(row=>row[c]));
+//const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
+const zip = (...rows) => rows[0].map((_,c)=>rows.map(row=>row[c]));
+
+//直積を求めてリストで返す
+const product = (...arguments) => {
+	if (arguments.length == 0) return [];
+    let prod = arguments[0].map(m => [m]);
+    for (let i = 1; i<arguments.length; i++){
+    	prod = prod.map( m =>
+    		arguments[i].map( n => [...m,n])
+    	).flat();
+    }
+    return prod;
+}
+
+
+//a=[["オ","オ"],["オー"]];
+//b=[["エ","エ"],["エー"]];
+//c=[["ウ","ウ"],[]];
+//console.log(product(a,b,c));
+
+
 const orgRound = (value, base) => Math.round(value * base) / base;
 
 
@@ -70,38 +90,6 @@ const formatText = strVal => {
 }
 
 
-//直積を求めてリストで返す
-const productList = list => {
-	let p=1,
-		result, //結果の収納リスト
-		i = 0,
-		plist = [],
-		p2 = p
-		;
-	for (const v of list)
-		p*=v.length;
-
-	result = Array(p);
-	result.fill([]);
-
-	for (let v of list){
-		p2 /= v.length;
-		plist.push([p2,p/(p2*v.length)]);
-	}
-
-	zip(plist,list).forEach(function([v1,v2]){
-		var tmp=0;
-		for(var i1=0;i1<v1[0];i1++){
-			v2.forEach(function(v3){
-				for(var i2 = 0;i2<v1[1];i2++){
-					result[tmp].push(v3);
-					tmp+=1;
-				}
-			});
-		}
-	});
-	return result;
-}
 
 const MakeTokenizer = () => {
 	return new Promise(function(resolve,reject){
@@ -299,23 +287,28 @@ function convertBar_outer(){
 	});
 	$.ajaxSetup({async: true});
 	//console.log(converter);
-	function convertBar_inner(kana){
+	const convertBar_inner = kana => {
 		const count = [],
 			count2 = [],
 			result = []
 			;
 
+		//console.log(kana);
 		for(let v of kana){
 			if(v in converter){
 				count.push(v);
 				count2.push(converter[v]);
 			}
 		}
+		//console.log("count",count);
+		//console.log("count2",count2);
 
-		const change = productList(count2);
+		const change = product(...count2);
+		//console.log("change",change);
 		for(let v of change){
 			var kanaStr = kana.join("/");
 			zip(count,v).forEach(function([v2,v3]){
+				//console.log("v3",v3);
 				kanaStr = kanaStr.replace(v2,v3.join("/")).replace("//","/");
 			});
 			if(kanaStr.endsWith("/"))
@@ -326,6 +319,8 @@ function convertBar_outer(){
 	}
 	return convertBar_inner;
 }
+//let convertBar = convertBar_outer();
+//console.log(convertBar(["アー","ッ","ン"]));
 
 
 function argsort(array) {
