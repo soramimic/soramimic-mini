@@ -242,6 +242,9 @@ const isInList = (value, list) => {
 	return (list.indexOf(value) < 0) ? false : true;
 }
 
+const a = [["a","b"],["b"],["c"]]
+console.log("test",a.slice(-1),a[a.length-1]);
+
 
 const soramimi_dp = (text, wordlist, para) => {
 	const param = setDefaultParameters(para),
@@ -278,26 +281,31 @@ const soramimi_dp = (text, wordlist, para) => {
 		const target = base_info["targets"][index],
         	//breaks = base_info["indexBreaks"][index],
         	tarlen = target.length,
-        	used = results["words"].map(v => v.map(v2 => v2.slice(-1))).flat(),
+        	//used = results["words"].map(v => v.map(v2 => v2.slice(-1)[0])).flat(),//mapやforEachではなぜかだめだった
+        	used = [],
         	memo = {0:[]},
         	error = null
         	;
 
+		//mapやforEachではなぜか参照できなかったので、これを使う
+		//console.log("result_word",results["words"][0]);
+		for(let v of results["words"]){
+			for(let v2 of v)
+				used.push(v2.slice(-1)[0]);
+		}
+		//console.log("used",used);
+
+
 		const dp_inner = t => {
 			const mini_result = {"scores":[],"words":[]}
-			//console.log("memokey",Object.keys(memo),"index",Object.keys(memo).indexOf(t));
 			if(Object.keys(memo).indexOf(String(t))>=0){
-				//console.log("memo",memo);
 				return memo[t];
 			}else{
-				//console.log("t",t,"memo",memo,"memo_t",memo[t]);
 			}
 
 			for (let i = 0; i<t; i++){
-				//console.log("number",number);
 
 				if ( number.indexOf(t-i)<0 ){
-					//console.log("t-i",t-i);
 					continue
 				}
 
@@ -310,7 +318,7 @@ const soramimi_dp = (text, wordlist, para) => {
 					words = words.slice();
 				}
 
-				let score =  words.reduce((score, data) => {return score + data[data.length-2]},0);
+				let score =  words.reduce((s, data) => {return s + data[data.length-2]},0);
 				//console.log("score",score);
 				const currentUsed = words.map(v => v[v.length-1]),
 					newWord = []
@@ -318,10 +326,10 @@ const soramimi_dp = (text, wordlist, para) => {
 
 				//console.log("target_dp",target);
 				//console.log("target_before_gs",target,target.slice(i,t));
+
 				for(let w of gs(wordlist,target.slice(i,t),100)){
-					console.log("smallW",target.slice(i,t),w);
-					const wid = w.slice(-1),
-						wscore = w.slice(-1)
+					const wid = w.slice(-1)[0],
+						wscore = w.slice(-1)[0]
 						;
 					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
 						continue;
