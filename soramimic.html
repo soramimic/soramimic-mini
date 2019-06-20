@@ -201,7 +201,6 @@ const getSimilarWord_outer = param => {
 
 
 	const getSimilarWord_inner = (wordlist, target, length = 1) => {
-		//console.log("target",target);
 		const orglen = target.length,
 			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
 			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
@@ -210,7 +209,6 @@ const getSimilarWord_outer = param => {
 			words = []
 			;
 
-		//console.log(cand);
 		for(let val of cand){
 			const tmplength = val.length;
 			if(Object.keys(cand2).indexOf(tmplength)<0)
@@ -245,7 +243,7 @@ const isInList = (value, list) => {
 }
 
 
-const soramimi_dp = (text, wordList, para) => {
+const soramimi_dp = (text, wordlist, para) => {
 	const param = setDefaultParameters(para),
 		gs = getSimilarWord_outer(param),
 		gy = GetYomi,
@@ -255,8 +253,6 @@ const soramimi_dp = (text, wordList, para) => {
 	    penaBreak = param["bunsetsu"],
 	    wordsNum = param["wordsNum"],
 	    takeLen = param["length"],
-		wordfile = $("input[name=wordfile]:checked").val(),
-		wordlist = wordList[wordfile],
 	    number = Object.keys(wordlist).map(i => Number(i)),
 	    phrases = text.split(splitter),
 	    phraselen = phrases.length,
@@ -321,9 +317,12 @@ const soramimi_dp = (text, wordList, para) => {
 				;
 
 				//console.log("target_dp",target);
+				console.log("target_before_gs",target,target.slice(i,t));
 				for(let w of gs(wordlist,target.slice(i,t),100)){
-					const wid = w[w.length-1],
-						wscore = w[w.length-1];
+					console.log("smallW",target.slice(i,t),w);
+					const wid = w.slice(-1),
+						wscore = w.slice(-1)
+						;
 					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
 						continue;
 					words.push(w);
@@ -380,9 +379,6 @@ promise
 	wordlist["original"] = wordlist["words/nations.txt"];
 	$(".container-fluid").show();
 	$(".loading").remove();
-	console.time("soramimi_dp");
-	console.log(soramimi_dp("こんにちは/今日は来てくれてありがとう",wordlist,{}));//for test
-	console.timeEnd("soramimi_dp");
 
 });
 $( '.ipt-word' ).keypress( function ( e ) {
@@ -461,16 +457,20 @@ $(".btn-send").click(function(){
 	let text = $(".ipt-word").val();
 	if(text == ""){
 		return;
-	}else if(containAlphabet(text)){
+	}
+	/*
+	else if(containAlphabet(text)){
 		alert("【変換不可能文字の検出】使用できるのはひらがな・カタカナ・漢字のみです");
 		return;
 	}
+	*/
 	const wordfile = $("input[name=wordfile]:checked").val();
 
-	text = GetYomi(text);
-	console.log("afterGetYomi",text);
-	text = separateKana(text);
-	console.log("afterSeparateKana",text);
+	console.log("GetYomi",GetYomi(text));
+	//text = GetYomi(text);
+	//console.log("afterGetYomi",text);
+	//text = separateKana(text);
+	//console.log("afterSeparateKana",text);
 	//console.log(text);
 	if(isParamChanged){
 		const param = getParam();
@@ -478,21 +478,30 @@ $(".btn-send").click(function(){
 		isParamChanged = false;
 		console.log("isParamChanged",isParamChanged);
 	}
-	console.time("getSimilarWord");
-	const result = getSimilarWord(wordlist[wordfile],text,length=1000);
-	console.timeEnd("getSimilarWord");
-	//console.log(result);
+	//console.time("getSimilarWord");
+	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
+	//console.timeEnd("getSimilarWord");
+	console.time("soramimi_dp");
+	const result = soramimi_dp(text,wordlist[wordfile],{});
+	console.timeEnd("soramimi_dp");
+
+	console.log(result);
 	if(result.length == 0){
 		$(".loading2").hide();
 		$(".div-result").html("うまく変換できる単語を見つけられませんでした");
 		return;
 	}
-	result.forEach((value,index) => {
-		//console.log(value);
-		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
-	});
+	resultText = result.map(v=>{
+		return v.reduce((prev2,v2)=>{
+			prev2[0]+=v2[0];//org
+			prev2[1]+=v2[1];//yomi
+			prev2[2]+=v2[2];//word
+			return prev2
+		},["","","",""]);
+	}).flat()//平坦化
+	;
 
-	$(".div-result").html(result.join("<br>"));
+	$(".div-result").html(resultText.join("<br>"));
 	$(".loading2").hide();
 });
 </script>

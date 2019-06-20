@@ -294,11 +294,12 @@ function convertBar_outer(){
 	});
 	$.ajaxSetup({async: true});
 	//console.log(converter);
-	const convertBar_inner = kana => {
-		if(typeof kana === "undefined")
+	const convertBar_inner = kanatext => {
+		if(typeof kanatext === "undefined")
 			return []
 
-		const count = kana.map((val,idx)=>{return {val,idx}})
+		const kana = kanatext.slice(),//もとの配列を破壊しないために値渡しする
+			count = kana.map((val,idx)=>{return {val,idx}})
 						.filter(c => Object.keys(converter).indexOf(c.val)>=0)
 						.map(c => c.idx);
 		if(count.length == 0)//count.lengthが0のときは引数をそのまま返す
