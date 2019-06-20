@@ -1,10 +1,11 @@
 
 //const zip = (array1, array2) => array1.map((_, i) => [array1[i], array2[i]]);
-const zip = (...rows) => rows[0].map((_,c)=>rows.map(row=>row[c]));
+//const zip = (...rows) => rows[0].map((_,c)=>rows.map(row=>row[c]));
+const zip = (...rows) => [].map.call(rows[0],(_,c)=>rows.map(row=>row[c]));
 
 //直積を求めてリストで返す
 const product = (...arguments) => {
-	if (arguments.length == 0) return [];
+	if (arguments.length == 0) return [];//
     let prod = arguments[0].map(m => [m]);
     for (let i = 1; i<arguments.length; i++){
     	prod = prod.map( m =>
@@ -13,6 +14,8 @@ const product = (...arguments) => {
     }
     return prod;
 }
+
+
 
 
 //a=[["オ","オ"],["オー"]];
@@ -139,9 +142,11 @@ function loadDatabaseText(text){
 				var yomi, sep, ptn;
 				yomi = GetYomi(val6);
 				sep = separateKana(yomi);
+				//console.log("yomi",yomi);
 				ptn = convertBar(sep);
+				//console.log(ptn);
 				ptn.forEach(function(v4){
-					var v4len = v4.length;
+					const v4len = v4.length;
 					if(v4len == 0){
 						return;
 					}
@@ -156,16 +161,16 @@ function loadDatabaseText(text){
 	return result;
 }
 
-function loadDatabaseFile(path){
-	var wordlisttext = loadTextFile(path);
+const loadDatabaseFile = path => {
+	const wordlisttext = loadTextFile(path);
 	if(wordlisttext == ""){
 		return null;
 	}
 	return loadDatabaseText(wordlisttext);
 }
 
-function loadTextFile(path){
-	var text = "";
+const loadTextFile = path => {
+	let text = "";
 	$.ajaxSetup({async: false});
 	$.get(path)
 	.done(function(data){
@@ -178,8 +183,8 @@ function loadTextFile(path){
 	return text;
 }
 
-function separateKana_outer(){
-	var kanalist, vowels;
+const separateKana_outer = () => {
+	let kanalist, vowels;
 	$.ajaxSetup({async: false});
 	$.when(
 			$.getJSON("conf/allkanaBi.json"),
@@ -195,8 +200,11 @@ function separateKana_outer(){
 	$.ajaxSetup({async: true});
 	//console.log(kanalist);
 	//適切な発音への変換に必要なオブジェクトの定義
-    S2L = {}
-    zip(["ァ","ィ","ゥ","ェ","ォ","ャ","ュ","ョ","ヮ"],["ア","イ","ウ","エ","オ","ヤ","ユ","ヨ","ワ"]).forEach(function([v1,v2]){
+    const S2L = {},
+    	smallVowelList = "ァィゥェォャュョヮ",
+    	largeVowelList = "アイウエオヤユヨワ"
+    	;
+    zip(smallVowelList,largeVowelList).forEach(function([v1,v2]){
     	S2L[v1] = v2;
     });
     edan = "ケセテネヘメエレエゲゼデベペ";
@@ -206,11 +214,11 @@ function separateKana_outer(){
 		let i = 0,
 			result = []
 			;
-		["ー","ッ"].forEach(function(v){
+		for(let v of ["ー","ッ"]){
 			while( k.indexOf(v+v) >= 0 ){
 				k = k.replace(v+v,v);
 			}
-		});
+		};
 		k+="__" //(最後の2文字をうまく処理するため終端文字の追加)
 
 		while(i < k.length - 2){
@@ -220,19 +228,19 @@ function separateKana_outer(){
 			const lenmax = 2
 				;
 			if(p[0] in S2L)
-				p = S2L[p[0]] + p.slice(1);
-			[2,1].forEach(function(si){
-				let p1 = p.slice(0,si),
-					p2 = p[si]
+				p = S2L[p[0]] + p.slice(1);//もし小文字で始まってたら大文字に置き換える
+			for(let si of [2,1]){
+				let p1 = p.slice(0,si),//最初のn文字,n=1 or 2
+					p2 = p[si]//n+1文字目
 					;
-				if(moji != "")return;
+				if(moji != "")break;//直前のループでmojiになにか代入していたら終了
 				//console.log(p1,p2);
-				if(p1 in kanalist){
+				if(Object.keys(kanalist).indexOf(p1)>=0){
 					if(p2 == "ー"){
-						if(vowels["エ"].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
+						if(vowels["エ"].indexOf(p1)>=0 && p1.slice(-1) == "イ"){
 							moji = p1[0];
 						}
-						else if(vowels["オ"].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
+						else if(vowels["オ"].indexOf(p1)>=0 && p1.slice(-1) == "ウ"){
 							moji = p1[0];
 						}
 						else if(p1 == "ン"){
@@ -244,13 +252,13 @@ function separateKana_outer(){
 							moji = p1+p2;
 						}
 					}
-					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "イ"){
+					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) == "イ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 == "オ" && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] == "ウ"){
+					else if(p2 == "オ" && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) == "ウ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 in vowels && vowels[p2].indexOf(p1)>=0 && p1[p1.length-1] != "ー"){
+					else if(p2 in vowels && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) != "ー"){
 						moji = p1+"ー";
 					}
 					else{
@@ -258,7 +266,7 @@ function separateKana_outer(){
 						//console.log(p1);
 					}
 				}
-			});
+			};
 			if(moji == ""){
 				break;
 			}
@@ -270,7 +278,12 @@ function separateKana_outer(){
     return separateKana_inner;
 }
 
-
+const count = [].map.call("あいうい",(val,idx)=>{return {val,idx}})
+				.filter(c => c.val == "い")
+				;
+console.log(
+	zip(["い","う"],["き","く"]).reduce((prev,[v1,v2]) => prev.replace(v1,v2),	"あいうえお")
+);
 
 function convertBar_outer(){
 	let converter;
@@ -288,25 +301,34 @@ function convertBar_outer(){
 	$.ajaxSetup({async: true});
 	//console.log(converter);
 	const convertBar_inner = kana => {
-		const count = [],
-			count2 = [],
-			result = []
-			;
+		if(typeof kana === "undefined")
+			return []
 
-		//console.log(kana);
-		for(let v of kana){
-			if(v in converter){
-				count.push(v);
-				count2.push(converter[v]);
-			}
-		}
-		//console.log("count",count);
-		//console.log("count2",count2);
+		const count = kana.map((val,idx)=>{return {val,idx}})
+						.filter(c => Object.keys(converter).indexOf(c.val)>=0)
+						.map(c => c.idx);
+		if(count.length == 0)//count.lengthが0のときは引数をそのまま返す
+			return kana;
 
-		const change = product(...count2);
-		//console.log("change",change);
+		const change = product(...count.map(v => converter[kana[v]]))//直積
+
+
+		const result = change.map(v => {
+			return zip(count,v).reduce((prev,[v2,v3]) => {
+				//console.log(prev);
+				prev[v2] = v3;
+				return prev;
+			}, kana) //入力のv2文字目をv3に置き換える
+			.flat(); //配列の次元を統一
+		});
+
+		//console.log("result",result);
+		return result;
+
+		/*
+		const result = [];
 		for(let v of change){
-			var kanaStr = kana.join("/");
+			let kanaStr = kana.join("/");
 			zip(count,v).forEach(function([v2,v3]){
 				//console.log("v3",v3);
 				kanaStr = kanaStr.replace(v2,v3.join("/")).replace("//","/");
@@ -316,6 +338,8 @@ function convertBar_outer(){
 			result.push(kanaStr.split("/"));
 		};
 		return result;
+		*/
+
 	}
 	return convertBar_inner;
 }

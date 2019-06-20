@@ -208,6 +208,7 @@ const getSimilarWord_outer = param => {
 
 
 	const getSimilarWord_inner = (wordlist, target, length = 1) => {
+
 		const orglen = target.length,
 			cand = convertBar(target),
 			cand2 = {},
@@ -224,7 +225,6 @@ const getSimilarWord_outer = param => {
 			}
 			cand2[tmplength].push(val);
 		};
-
 		for(let i of Object.keys(cand2)){
 			if(Object.keys(wordlist).indexOf(i)<0)
 			//if(!(i in wordlist))
@@ -511,7 +511,9 @@ $(".btn-send").click(function(){
 	const wordfile = $("input[name=wordfile]:checked").val();
 
 	text = GetYomi(text);
+	console.log("afterGetYomi",text);
 	text = separateKana(text);
+	console.log("afterSeparateKana",text);
 	//console.log(text);
 	if(isParamChanged){
 		const param = getParam();
@@ -519,7 +521,9 @@ $(".btn-send").click(function(){
 		isParamChanged = false;
 		console.log("isParamChanged",isParamChanged);
 	}
-	const result = getSimilarWord(wordlist[wordfile],text,length=100);
+	console.time("getSimilarWord");
+	const result = getSimilarWord(wordlist[wordfile],text,length=1000);
+	console.timeEnd("getSimilarWord");
 	//console.log(result);
 	if(result.length == 0){
 		$(".loading2").hide();
