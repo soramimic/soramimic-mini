@@ -221,7 +221,7 @@ const getSimilarWord_outer = param => {
 			sims = sims.concat(
 					wordlist[i].map(w => {
 						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
-						return orgRound(Math.min.apply(null,tmplist),100);//最小値を見つけて丸める
+						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
 					})
 				);
 			words = words.concat(wordlist[i]);

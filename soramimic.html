@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SoramimicMini</title>
+<title>Soramimic</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -45,7 +45,10 @@
 				</div>
 			</div>
 			<div class="col-xs-12">
+				<!-- 
 				<input type = "text" class="form-control ipt-word" maxlength="10000" placeholder="変換したい単語(10文字以内)">
+				 -->
+				<textarea class="form-control ipt-word" maxlength="10000" placeholder="変換したい文章"></textarea>
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
 			<div class="col-xs-12">出力結果(上から、入力読み,出力読み,出力元単語)</div>
@@ -205,6 +208,7 @@ const getSimilarWord_outer = param => {
 		ld = ld_outer(kanadist),
 		memo = {}
 		;
+	console.log("kanadist",kanadist["ア"]["カ"],kanadist["ア"]["イ"]);
 
 
 	const getSimilarWord_inner = (wordlist, target, length = 1) => {
@@ -215,6 +219,7 @@ const getSimilarWord_outer = param => {
 		let	sims = [],
 			words = []
 			;
+		//console.log("targetlength",orglen,target);
 
 		for(let val of cand){
 			const tmplength = val.length;
@@ -227,7 +232,7 @@ const getSimilarWord_outer = param => {
 			sims = sims.concat(
 					wordlist[i].map(w => {
 						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
-						return orgRound(Math.min.apply(null,tmplist),100);//最小値を見つけて丸める
+						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
 					})
 				);
 			words = words.concat(wordlist[i]);
@@ -324,21 +329,24 @@ const soramimi_dp = (text, wordlist, para) => {
 					words = words.slice();
 				}
 
-				let score =  words.reduce((s, data) => {return s + data[data.length-2]},0);
+				let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
 				const currentUsed = words.map(v => v[v.length-1]),
 					newWord = []
 				;
 
+				//console.log("target_out",target);
 				for(let w of gs(wordlist,target.slice(i,t),100)){
 					const wid = w.slice(-1)[0],
-						wscore = w.slice(-1)[0]
+						wscore = w.slice(-2)[0]
 						;
 					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
 						continue;
 					words.push(w);
+					//console.log("newWord",w,wscore,scoreb,score);
 					score += wscore;
 					break;
 				}
+				//console.log("score",i,t,scoreb,score);
 				score += words.length*wordsNum;
 				mini_result["scores"].push(score);
 				mini_result["words"].push(words);
@@ -476,7 +484,8 @@ $(".ipt-parameter").on("input",function(){
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
-	let text = $(".ipt-word").val();
+	let text = $(".ipt-word").val().replace(/\r?\n/g, '/');
+	console.log(text);
 	if(text == ""){
 		return;
 	}
@@ -504,7 +513,7 @@ $(".btn-send").click(function(){
 	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	//console.timeEnd("getSimilarWord");
 	console.time("soramimi_dp");
-	const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8});
+	const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});
 	console.timeEnd("soramimi_dp");
 
 	console.log(result);

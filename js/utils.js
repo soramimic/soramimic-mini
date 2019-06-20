@@ -279,7 +279,7 @@ const separateKana_outer = () => {
 }
 
 
-function convertBar_outer(){
+const convertBar_outer = () => {
 	let converter;
 	$.ajaxSetup({async: false});
 	$.when(
