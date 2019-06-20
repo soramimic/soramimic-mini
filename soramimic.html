@@ -11,6 +11,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/kuromoji/build/kuromoji.js"></script>
+<script src="js/soramimic.js"></script>
 </head>
 <script>
 </script>
@@ -200,7 +201,7 @@ const getSimilarWord_outer = param => {
 
 
 	const getSimilarWord_inner = (wordlist, target, length = 1) => {
-
+		//console.log("target",target);
 		const orglen = target.length,
 			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
 			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
@@ -209,7 +210,7 @@ const getSimilarWord_outer = param => {
 			words = []
 			;
 
-		console.log(cand);
+		//console.log(cand);
 		for(let val of cand){
 			const tmplength = val.length;
 			if(Object.keys(cand2).indexOf(tmplength)<0)
@@ -233,21 +234,6 @@ const getSimilarWord_outer = param => {
 					const tmpW = words[val];
 					return [target.join(""), tmpW[1],tmpW[0], sims[val],tmpW[3]];
 				});
-		/*
-		for(let val of argsort(sims)){
-			const tmpW = words[val],
-				id = tmpW[tmpW.length-1];
-			if(indexes.indexOf(id)<0){
-				indexes.push(id);
-				result.push([target.join(""),tmpW[1], tmpW[0], orgRound(sims[val],100),tmpW[3]]);
-
-			}
-			if(result.length == length){
-				break;
-			}
-		}
-		return result;
-		*/
 	}
 
 	return getSimilarWord_inner;
@@ -274,24 +260,18 @@ const soramimi_dp = (text, wordList, para) => {
 	    number = Object.keys(wordlist).map(i => Number(i)),
 	    phrases = text.split(splitter),
 	    phraselen = phrases.length,
-	    base_info = {"raws":[],"targets":[],"indexBreaks":[]},
-	    resultkeys = ["relativeScores","scores","words"],
-	    results = {}
+		//phraseの基本的な構造を解析
+	    base_info = phrases.reduce((prev,val)=>{
+			prev["raws"].push(val);
+			prev["targets"].push(separateKana(gy(val)));
+			return prev;
+		},{"raws":[],"targets":[],"indexBreaks":[]}),
+	    results = ["relativeScores","scores","words"].reduce((prev,val)=>{
+			prev[val] = Array(phraselen);
+			prev[val].fill([]);
+			return prev;
+		},{});
 	    ;
-
-	//phraseの基本的な構造を解析
-	for ( let val of phrases ){
-		const raw = val,
-			yomi = gy(val)
-			;
-		base_info["raws"].push(raw);
-		base_info["targets"].push(separateKana(yomi));
-	}
-
-	for (let val of resultkeys){
-		results[val] = Array(phraselen);
-		results[val].fill([]);
-	}
 
 	//base_infoの確認
 	for (let v of Object.keys(base_info)){
@@ -302,18 +282,12 @@ const soramimi_dp = (text, wordList, para) => {
 		const target = base_info["targets"][index],
         	//breaks = base_info["indexBreaks"][index],
         	tarlen = target.length,
-        	used = [],
+        	used = results["words"].map(v => v.map(v2 => v2.slice(-1))).flat(),
         	memo = {0:[]},
         	error = null
         	;
 
-		for(let v2 of results["words"]){
-			for(let v of v2){
-				used.append(v[v.length-1]);
-			}
-		}
-
-		const dp_non_duplicate = t => {
+		const dp_inner = t => {
 			const mini_result = {"scores":[],"words":[]}
 			//console.log("memokey",Object.keys(memo),"index",Object.keys(memo).indexOf(t));
 			if(Object.keys(memo).indexOf(String(t))>=0){
@@ -331,9 +305,9 @@ const soramimi_dp = (text, wordList, para) => {
 					continue
 				}
 
-				let words = dp_non_duplicate(i);
-				console.log("i",i);
-				console.log("words",words);
+				let words = dp_inner(i);
+				//console.log("i",i);
+				//console.log("words",words);
 				if(words === error)
 					continue;
 				else{
@@ -346,12 +320,13 @@ const soramimi_dp = (text, wordList, para) => {
 					newWord = []
 				;
 
-				for(let w of gw(target.slice(i,t),100)){
+				//console.log("target_dp",target);
+				for(let w of gs(wordlist,target.slice(i,t),100)){
 					const wid = w[w.length-1],
 						wscore = w[w.length-1];
 					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
 						continue;
-					words.append(w);
+					words.push(w);
 					score += wscore;
 					break;
 				}
@@ -359,7 +334,7 @@ const soramimi_dp = (text, wordList, para) => {
 				mini_result["scores"].push(score);
 				mini_result["words"].push(words);
 			}
-			if(mimi_result["scores"].length > 0){
+			if(mini_result["scores"].length > 0){
 				const arg = argmin(mini_result["scores"]);
 				memo[t] = mini_result["words"][arg];
 				return memo[t];
@@ -370,25 +345,16 @@ const soramimi_dp = (text, wordList, para) => {
 			}
 
 		}
-
-		const dp_duplicate = t => {
-			return memo[t];
-		}
-		if ( isDuplicate )
-			pass;
-		else
-			return do_non_duplicate(tarlen+1)
+		return dp_inner(tarlen+1);
 	}
 
-	for ( let i of [...Array(phraselen).keys()] ){
-		console.log(i);
-	}
+	phrases.forEach((v,i)=>{
+		const r = dp(i);
+		if ( r != null)
+			results["words"][i] = r;
+	});
+	return results["words"];
 	//dp(0);
-
-
-
-
-
 
 }
 
@@ -414,7 +380,9 @@ promise
 	wordlist["original"] = wordlist["words/nations.txt"];
 	$(".container-fluid").show();
 	$(".loading").remove();
-	soramimi_dp("こんにちは",wordlist,{});//for test
+	console.time("soramimi_dp");
+	console.log(soramimi_dp("こんにちは/今日は来てくれてありがとう",wordlist,{}));//for test
+	console.timeEnd("soramimi_dp");
 
 });
 $( '.ipt-word' ).keypress( function ( e ) {
