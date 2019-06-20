@@ -317,7 +317,7 @@ const soramimi_dp = (text, wordlist, para) => {
 				;
 
 				//console.log("target_dp",target);
-				console.log("target_before_gs",target,target.slice(i,t));
+				//console.log("target_before_gs",target,target.slice(i,t));
 				for(let w of gs(wordlist,target.slice(i,t),100)){
 					console.log("smallW",target.slice(i,t),w);
 					const wid = w.slice(-1),
@@ -493,12 +493,16 @@ $(".btn-send").click(function(){
 	}
 	resultText = result.map(v=>{
 		return v.reduce((prev2,v2)=>{
-			prev2[0]+=v2[0];//org
-			prev2[1]+=v2[1];//yomi
-			prev2[2]+=v2[2];//word
+			prev2[0].push(v2[0]);//org
+			prev2[1].push(v2[1]);//yomi
+			prev2[2].push(v2[2]);//word
 			return prev2
-		},["","","",""]);
-	}).flat()//平坦化
+		},[[],[],[]])
+		.map(v=>v.join("/"))
+		.concat([""])
+		;
+	})
+	.flat()//平坦化
 	;
 
 	$(".div-result").html(resultText.join("<br>"));
