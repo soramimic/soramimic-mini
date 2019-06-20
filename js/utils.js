@@ -144,7 +144,7 @@ function loadDatabaseText(text){
 				sep = separateKana(yomi);
 				//console.log("yomi",yomi);
 				ptn = convertBar(sep);
-				//console.log(ptn);
+				//console.log("ptn",ptn);
 				ptn.forEach(function(v4){
 					const v4len = v4.length;
 					if(v4len == 0){
@@ -278,12 +278,6 @@ const separateKana_outer = () => {
     return separateKana_inner;
 }
 
-const count = [].map.call("あいうい",(val,idx)=>{return {val,idx}})
-				.filter(c => c.val == "い")
-				;
-console.log(
-	zip(["い","う"],["き","く"]).reduce((prev,[v1,v2]) => prev.replace(v1,v2),	"あいうえお")
-);
 
 function convertBar_outer(){
 	let converter;
@@ -308,7 +302,7 @@ function convertBar_outer(){
 						.filter(c => Object.keys(converter).indexOf(c.val)>=0)
 						.map(c => c.idx);
 		if(count.length == 0)//count.lengthが0のときは引数をそのまま返す
-			return kana;
+			return [kana];//length>0のときと次元を揃えるため配列化しておく。
 
 		const change = product(...count.map(v => converter[kana[v]]))//直積
 

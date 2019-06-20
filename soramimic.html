@@ -93,15 +93,7 @@ const getParam = () => {
 	return param;
 }
 const ld_outer = cost => {
-	const ld_inner = (s,t) => {
-		let score = 0;
-		zip(s,t).forEach(([v1,v2]) => {
-			//console.log(v1,v2,cost[v1][v2]);
-			score+=cost[v1][v2]
-		});
-		return score;
-	}
-	return ld_inner;
+	return (s,t) => zip(s,t).reduce((prev,[v1,v2])=> prev+=cost[v1][v2],0);
 }
 
 //母音同士、子音同士の距離から、ひらがな同士の距離を求める関数
@@ -210,42 +202,38 @@ const getSimilarWord_outer = param => {
 	const getSimilarWord_inner = (wordlist, target, length = 1) => {
 
 		const orglen = target.length,
-			cand = convertBar(target),
-			cand2 = {},
-			sims = [],
-			result = [],
-			indexes = [];
-		let	words = []
+			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
+			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
+			cand2 = {}
+		let	sims = [],
+			words = []
 			;
 
+		console.log(cand);
 		for(let val of cand){
 			const tmplength = val.length;
-			if(!(tmplength in cand2)){
+			if(Object.keys(cand2).indexOf(tmplength)<0)
 				cand2[tmplength] = []
-			}
 			cand2[tmplength].push(val);
 		};
+
 		for(let i of Object.keys(cand2)){
-			if(Object.keys(wordlist).indexOf(i)<0)
-			//if(!(i in wordlist))
-				continue;
-
-			for(let w of wordlist[i]){
-				const tmplist = [];
-				let tSim;
-
-				for(let tar of cand2[i]){
-					//var tmp = ld(tar,w[2]);
-					//console.log(w,tmp);
-					tmplist.push(ld(tar,w[2])/i);
-				};
-
-				tSim = Math.min.apply(null,tmplist);
-				sims.push(tSim*orglen);
-			};
+			sims = sims.concat(
+					wordlist[i].map(w => {
+						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
+						return orgRound(Math.min.apply(null,tmplist),100);//最小値を見つけて丸める
+					})
+				);
 			words = words.concat(wordlist[i]);
 		}
 
+		return argsort(sims)
+				.slice(0,length) //指定された長さまでを切り取る
+				.map(val => {
+					const tmpW = words[val];
+					return [target.join(""), tmpW[1],tmpW[0], sims[val],tmpW[3]];
+				});
+		/*
 		for(let val of argsort(sims)){
 			const tmpW = words[val],
 				id = tmpW[tmpW.length-1];
@@ -259,6 +247,7 @@ const getSimilarWord_outer = param => {
 			}
 		}
 		return result;
+		*/
 	}
 
 	return getSimilarWord_inner;
@@ -522,7 +511,7 @@ $(".btn-send").click(function(){
 		console.log("isParamChanged",isParamChanged);
 	}
 	console.time("getSimilarWord");
-	const result = getSimilarWord(wordlist[wordfile],text,length=1000);
+	const result = getSimilarWord(wordlist[wordfile],text,length=100);
 	console.timeEnd("getSimilarWord");
 	//console.log(result);
 	if(result.length == 0){
@@ -531,6 +520,7 @@ $(".btn-send").click(function(){
 		return;
 	}
 	result.forEach((value,index) => {
+		//console.log(value);
 		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
 	});
 
