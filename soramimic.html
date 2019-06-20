@@ -511,7 +511,7 @@ $(".btn-send").click(function(){
 		console.log("isParamChanged",isParamChanged);
 	}
 	console.time("getSimilarWord");
-	const result = getSimilarWord(wordlist[wordfile],text,length=100);
+	const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	console.timeEnd("getSimilarWord");
 	//console.log(result);
 	if(result.length == 0){
