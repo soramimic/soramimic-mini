@@ -48,8 +48,15 @@
 				<input type = "text" class="form-control ipt-word" maxlength="10000" placeholder="変換したい単語(10文字以内)">
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
-			<div class="col-xs-10">出力結果(左から順位,入力読み,出力読み,出力,非類似度)</div>
-			<div class="col-xs-2"><img class="loading2" src='gif/ajax-loader.gif'></div>
+			<div class="col-xs-12">出力結果(上から、入力読み,出力読み,出力元単語)</div>
+			<!--
+			<div class="col-xs-12">
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped convert-progress" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+				</div>
+			</div>
+			 -->
+			<span class="loading">Converting...<img src='gif/ajax-loader.gif'></span>
 			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
@@ -272,6 +279,7 @@ const soramimi_dp = (text, wordlist, para) => {
 		},{});
 	    ;
 
+
 	//base_infoの確認
 	for (let v of Object.keys(base_info)){
 		console.log(v, base_info[v]);
@@ -310,8 +318,6 @@ const soramimi_dp = (text, wordlist, para) => {
 				}
 
 				let words = dp_inner(i);
-				//console.log("i",i);
-				//console.log("words",words);
 				if(words === error)
 					continue;
 				else{
@@ -319,13 +325,9 @@ const soramimi_dp = (text, wordlist, para) => {
 				}
 
 				let score =  words.reduce((s, data) => {return s + data[data.length-2]},0);
-				//console.log("score",score);
 				const currentUsed = words.map(v => v[v.length-1]),
 					newWord = []
 				;
-
-				//console.log("target_dp",target);
-				//console.log("target_before_gs",target,target.slice(i,t));
 
 				for(let w of gs(wordlist,target.slice(i,t),100)){
 					const wid = w.slice(-1)[0],
@@ -355,10 +357,22 @@ const soramimi_dp = (text, wordlist, para) => {
 		return dp_inner(tarlen+1);
 	}
 
+	//progressBarの初期値設定
+
+	const bar = $(".progress-bar.convert-progress");
+	bar.css("width","0%");
+	//bar.attr("aria-valuenow","0");
+	//bar.attr("aria-valuenmin","0");
+	//bar.attr("aria-valuenmax",phraselen);
+
 	phrases.forEach((v,i)=>{
 		const r = dp(i);
 		if ( r != null)
 			results["words"][i] = r;
+		//progressBarの変更
+		const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
+		bar.css("width", percentStr);
+		bar.html(percentStr);
 	});
 	return results["words"];
 	//dp(0);
@@ -490,7 +504,7 @@ $(".btn-send").click(function(){
 	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	//console.timeEnd("getSimilarWord");
 	console.time("soramimi_dp");
-	const result = soramimi_dp(text,wordlist[wordfile],{});
+	const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8});
 	console.timeEnd("soramimi_dp");
 
 	console.log(result);
