@@ -48,7 +48,7 @@
 				<!-- 
 				<input type = "text" class="form-control ipt-word" maxlength="10000" placeholder="変換したい単語(10文字以内)">
 				 -->
-				<textarea class="form-control ipt-word" maxlength="10000" placeholder="変換したい文章"></textarea>
+				<textarea class="form-control ipt-word" maxlength="10000" rows="10" placeholder="変換したい文章(1万文字以内)"></textarea>
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
 			<div class="col-xs-12">出力結果(上から、入力読み,出力読み,出力元単語)</div>
@@ -250,14 +250,6 @@ const getSimilarWord_outer = param => {
 
 }
 
-const isInList = (value, list) => {
-	return (list.indexOf(value) < 0) ? false : true;
-}
-
-const a = [["a","b"],["b"],["c"]]
-console.log("test",a.slice(-1),a[a.length-1]);
-
-
 const soramimi_dp = (text, wordlist, para) => {
 	const param = setDefaultParameters(para),
 		gs = getSimilarWord_outer(param),
@@ -411,12 +403,14 @@ promise
 	$(".loading").remove();
 
 });
-$( '.ipt-word' ).keypress( function ( e ) {
-	if ( e.which == 13 ) {
-		$(".btn-send").click();
-		return false;
-	}
-} );
+
+//textareaだとコメントアウトできなくて面倒なので
+//$( '.ipt-word' ).keypress( function ( e ) {
+//	if ( e.which == 13 ) {
+//		$(".btn-send").click();
+//		return false;
+//	}
+//} );
 
 
 const makeDialog = () => {
@@ -484,7 +478,9 @@ $(".ipt-parameter").on("input",function(){
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
-	let text = $(".ipt-word").val().replace(/\r?\n/g, '/');
+	let text = $(".ipt-word").val();
+	console.log(text);
+	text = text.replace(/\r?\n/g, '/');
 	console.log(text);
 	if(text == ""){
 		return;

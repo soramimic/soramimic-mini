@@ -20,8 +20,6 @@ class Soramimic {
 			console.log("error");
 		})
 		$.ajaxSetup({async: true});
-		this.makeKanaDist = this.makeKanaDist_outer();
-		//console.log(this.makeKanaDist_outer());
 	}
 
 	//kanaの距離を計算する関数。outerで基本的な結果を求めておき、innerで微調整する

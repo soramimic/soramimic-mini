@@ -75,8 +75,10 @@ const toHalfWidth = (strVal) => {
 
 const removeSign = strVal => {
 	strVal = toHalfWidth(strVal); //全角を半角に変換
-	strVal = strVal.replace(/\W/g, function(m){return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
+	strVal = strVal.replace(/\W/g, m=>{return m.match(/[!-~]|\s/) ? "" : m}); //正規表現で記号を削除
 	strVal = strVal.replace(/・/g, '').replace(/「/g, '').replace(/」/g, '');
+	strVal = strVal.replace(/。/g, '').replace(/、/g, '');
+	//console.log("check");
 	return strVal;
 }
 
