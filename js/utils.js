@@ -3,6 +3,8 @@
 //const zip = (...rows) => rows[0].map((_,c)=>rows.map(row=>row[c]));
 const zip = (...rows) => [].map.call(rows[0],(_,c)=>rows.map(row=>row[c]));
 
+
+
 //直積を求めてリストで返す
 const product = (...arguments) => {
 	if (arguments.length == 0) return [];//
@@ -183,6 +185,20 @@ const loadTextFile = path => {
 	})
 	$.ajaxSetup({async: true});
 	return text;
+}
+
+const loadJsonFile = path => {
+	let json = "";
+	$.ajaxSetup({async: false});
+	$.getJSON(path)
+	.done(function(data){
+		json = data;
+	})
+	.fail(function(data){
+		console.log("error",data);
+	})
+	$.ajaxSetup({async: true});
+	return json;
 }
 
 const separateKana_outer = () => {
