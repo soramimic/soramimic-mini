@@ -69,9 +69,8 @@ class Soramimic {
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
 		this.CONSONANT_SIMILARITY_ = this.constructor.loadJsonFile(this.CONSONANT_SIMILARITY_FILE_PATH_);
 		
-		this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
-		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
-		
+		//this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
+		//this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
 		
 	}
 	
@@ -94,6 +93,8 @@ class Soramimic {
 		$.ajaxSetup({async: true});
 		return json;
 	}
+	
+
 	//同じ文字か判定
 	isSameKana(kana1,kana2){
 		return kana1 == kana2;
@@ -156,8 +157,8 @@ class Soramimic {
 				prev[kana+"ン"] = [[kana+"ン"]];//ンのユニットを追加する
 				prev[kana+"ッ"] = [[kana+"ッ"]];//ッのユニットを追加する
 				prev[kana+vowelOfKana] = [[kana+"ー"],[kana,vowelOfKana]];//母音の連続を伸ばし棒化する
-				if(kana == "エ") prev[kana+"イ"] = [[kana+"ー"],[kana,"イ"]];//eiを伸ばし棒化する
-				if(kana == "オ") prev[kana+"ウ"] = [[kana+"ー"],[kana,"ウ"]];//ouを伸ばし棒化する
+				if(vowelOfKana == "エ") prev[kana+"イ"] = [[kana+"ー"],[kana,"イ"]];//eiを伸ばし棒化する
+				if(vowelOfKana == "オ") prev[kana+"ウ"] = [[kana+"ー"],[kana,"ウ"]];//ouを伸ばし棒化する
 				break;
 			}
 			return prev;
@@ -264,8 +265,34 @@ class Soramimic {
 	ld(kanaDist,s,t){return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);}
 	
 	//kanaListのkeysの単位で文字列を分割する
-	separateKana(kana,kanaUnits){//kanaUnitsはカナのリスト(not object)を想定
+	separateKana(kana){//kanaUnitsはカナのリスト(not object)を想定
+		const S2L = this.SMALL2LARGE_,
+			KANA_UNITS_ = Object.keys(this.KANA_UNITS_),
+			LEN_MAX_ = 3
+			;
 		
+		//連続してても意味のない音を一音に置き換える
+		for(let v of ["ー","ッ"]){
+			const reg = new RegExp(v+"+","g");
+			kana = kana.replace(reg,v);
+		};
+		return [].reduce.call(kana, (prev, v, i) =>{
+			if(i<prev.join("").length){//iが現在の文字数より小さければスキップ
+				
+			}else{
+				let isBreak = false;
+				for(let j = LEN_MAX_; j>0; j--){
+					if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
+						prev.push(kana.slice(i,i+j));
+						isBreak = true;
+						break;
+					}
+				}
+				if(isBreak == false)
+					console.log(kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
+			}
+			return prev;
+		},[] );
 		
 	}
 
@@ -309,4 +336,12 @@ class Soramimic {
 }
 
 const db = new Soramimic();
-console.log(db.KANA_SIMILARITY_);
+console.log("アイウエオ",db.separateKana("アイウエオ"));
+console.log("オオセイギ",db.separateKana("オオセイギ"));
+console.log("ヴェイーグウオウ",db.separateKana("ヴェイーグウオウ"));
+
+//testText = "ーー、ーーーー、ーー、ーーー";
+//testStr = "ー"
+//reg = new RegExp(testStr+"+","g")
+//console.log(testText.replace(reg,"ー"));
+
