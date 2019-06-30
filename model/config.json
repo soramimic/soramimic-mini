@@ -1,0 +1,7 @@
+{
+	"num_encoder_tokens":37,
+	"num_decoder_tokens":86,
+	"max_encoder_seq_length":24,
+	"max_decoder_seq_length":21,
+	"latent_dim":256
+}

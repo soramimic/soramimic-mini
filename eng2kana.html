@@ -1,0 +1,81 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://unpkg.com/keras-js"></script>
+<script>
+const loadJsonFile = (path) => {
+	let json = "";
+	$.ajaxSetup({async: false});
+	$.getJSON(path)
+		.done(function(data,textStatus,jqXHR) {
+			console.log(jqXHR.status); //例：200
+			console.log(textStatus); //例：success
+			json = data;
+		})
+		// 5. failは、通信に失敗した時に実行される
+		.fail(function(jqXHR, textStatus, errorThrown ) {
+			console.log(jqXHR.status); //例：404
+			console.log(textStatus); //例：error
+			console.log(errorThrown); //例：NOT FOUND
+		});
+	$.ajaxSetup({async: true});
+	return json;
+}
+
+const config = loadJsonFile("model/config.json"),
+	num_encoder_tokens = config.num_encoder_tokens,
+	num_decoder_tokens = config.num_decoder_tokens,
+	max_encoder_seq_length = config.max_encoder_seq_length,
+	max_decoder_seq_length = config.max_decoder_seq_length,
+	input_token_index = loadJsonFile("model/input_token_index.json"),
+	target_token_index = loadJsonFile("model/target_token_index.json"),
+	reverse_input_char_index = loadJsonFile("model/reverse_input_char_index.json"),
+	reverse_target_char_index = loadJsonFile("model/reverse_target_char_index.json")
+	;
+
+const vectorize = (input_text) => {
+	let encoder_input_data = new Float32Array(max_encoder_seq_length * num_encoder_tokens);
+	[].forEach.call(input_text, (v,i) => {
+		encoder_input_data[i*num_encoder_tokens + input_token_index[v]] = 1.;
+	});
+	return encoder_input_data;
+}
+
+console.log(vectorize("HELLO"));
+
+
+
+const model = new KerasJS.Model({
+    filepath: './model/wordKana2kana.bin',
+    gpu: false
+});
+
+console.log("model",model);
+model
+.ready()
+.then(() => {
+    // 入力データをセットして予測
+    const data = vectorize("\t"+"HELLO"+"\n");
+    const inputData = {
+        "input": data // Sequentialモデルの場合はinput、Modelの場合は入力層の名前
+    }
+    return model.predict(inputData);
+})
+.then(outputData => {
+    // 予測結果を出力
+    output = outputData["output"]; // Sequentialモデルの場合はoutput、Modelの場合は出力層の名前
+    console.log("output",output);
+    var result = "";
+    if(output[0] <= output[1]) {
+        result = "「笑」";
+    } else {
+        result = "「怒」";
+    }
+    result = result + "<br><br>　　　「笑っている犬」の確率：" + output[1];
+    result = result + "<br>　　　「怒っている犬」の確率：" + output[0];
+    document.getElementById("result").innerHTML = "　　　【判別結果】" + result;
+
+})
+.catch(err => {
+    // エラーを画面表示
+    alert(err);
+})
+</script>
