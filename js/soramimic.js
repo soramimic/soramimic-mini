@@ -72,7 +72,22 @@ class Soramimic {
 		//this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
 		//this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
 		
+		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
+		this.TOKENIZER_ = null;
+		this.buildTokenizer();//tokenizerをセットする
+		
 	}
+	
+	buildTokenizer(){
+		const self = this;
+		kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
+			if(err) { console.log(err); }
+			self.TOKENIZER_ = tokenizer;
+			console.log("set tokenizer");
+		});
+	}
+
+
 	
 	//jsonファイルを読み込む
 	static loadJsonFile(path){
@@ -93,6 +108,56 @@ class Soramimic {
 		$.ajaxSetup({async: true});
 		return json;
 	}
+	static loadTextFile(path){
+		let text = "";
+		$.ajaxSetup({async: false});
+		$.get(path)
+		.done(function(data){
+			text = data;
+		})
+		.fail(function(data){
+			console.log("error",data);
+		})
+		$.ajaxSetup({async: true});
+		return text;
+	}
+	loadDatabaseFile(path){
+		const wordlisttext = this.constructor.loadTextFile(path);
+		if(wordlisttext == ""){
+			return null;
+		}
+		return this.loadDatabaseText(wordlisttext);
+	}
+	
+	loadDatabaseText(text){
+		let words, result;
+		const words = text.split("\n").map(val=>{
+			val = val.replace(/\u200B/g, "");//エスケープ処理
+			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット			
+			return val;
+		});
+		
+		return words.filter(v => v.length != 0)
+			.reduce((prev,v,index)=>{ 
+				if(v.length == 1)
+					v.push(getYomi(val[0]));
+				const title = v[0];
+				for(let v2 of v.slice(1)){
+					const yomi = this.getYomi(v2),
+						sep = this.separateKana(yomi),
+						ptn = this.getPronunciationVariation(sep)
+						;
+					for(let v3 of ptn){
+						const v3len = v3.length;
+						if(Object.keys(prev).indexOf(v3len)>=0)
+							prev[v3len]=[];
+						prev[v3len].push([title,v2,v3,index]);
+						return prev;
+					}
+				}
+		},{});
+	}
+
 	
 
 	//同じ文字か判定
@@ -151,6 +216,11 @@ class Soramimic {
 		return Object.keys(k2r).reduce((prev,kana)=>{
 			const vowelOfKana = k2v[kana];
 			prev[kana] = [[kana]];
+			switch(kana){
+			case "ン": case "ッ":
+				prev[kana].push([""]);
+				break;
+			}
 			switch(vowelOfKana){
 			case "ア": case "イ": case "ウ":	case "エ": case "オ":
 				prev[kana+"ー"] = [[kana+"ー"]];//伸ばし棒のユニットを追加する
@@ -295,14 +365,40 @@ class Soramimic {
 		},[] );
 		
 	}
+	
+	getYomi(strVal){
+		const tokenizer = this.TOKENIZER_;
+		const yomi = tokenizer.tokenize(strVal)
+					.reduce((prev,v)=>{
+						let tYomi = v.pronunciation;
+						if(typeof tYomi === "undefined") 
+							tYomi = v.surface_form;
+						//console.log(tYomi);
+						return prev+tYomi;
+					},"");
+		return removeSign(yomi);
+	}
+
 
 	//母音連続時の変換パターンのリスト("アア"を[["アー"],["ア","ア"]]にするなど)
+	getPronunciationVariation(kana){
+		const kanaUnits = this.KANA_UNITS_;
+		const variations = kana.map(v => {
+			if(Object.keys(kanaUnits).indexOf(v)>=0)
+				return kanaUnits[v];
+			else
+				return [v];
+		});
+		return product(...variations)
+				.map(v => v.filter(v2=>v2!="").flat())
+				.filter(v => v.length != 0);//長さ0の配列は要素に含めない
+	}
 	
 	//入力にkanaDist下で距離の近い単語を求める
 	getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		const orglen = target.length,
 			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
-			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
+			cand = this.getPronunciationVariation(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
 			cand2 = {}
 		let	sims = [],
 			words = []
@@ -336,10 +432,13 @@ class Soramimic {
 }
 
 const db = new Soramimic();
-console.log("アイウエオ",db.separateKana("アイウエオ"));
-console.log("オオセイギ",db.separateKana("オオセイギ"));
-console.log("ヴェイーグウオウ",db.separateKana("ヴェイーグウオウ"));
-
+kana = db.separateKana("アーヴェイン");
+variation = db.getPronunciationVariation(kana);
+console.log(variation);
+setTimeout(()=>{
+	const yomi = db.getYomi("綾小路清隆");
+	console.log(yomi);
+},3000);
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"
 //reg = new RegExp(testStr+"+","g")
