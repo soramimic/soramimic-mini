@@ -69,8 +69,8 @@ class Soramimic {
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
 		this.CONSONANT_SIMILARITY_ = this.constructor.loadJsonFile(this.CONSONANT_SIMILARITY_FILE_PATH_);
 
-		//this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
-		//this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
+		this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
+		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
 
 		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
 		this.TOKENIZER_ = null;
@@ -90,7 +90,12 @@ class Soramimic {
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
 			this.wordList = this.WORD_FILE_PATH_;
-			console.log(this.getSimilarWord())
+			const target = jpn2kanaUnits("こんにちは");
+			//const yomi = jpn2kanaUnits("こんにちは");
+			//const sep =
+			console.log("target",target);
+
+			console.log(this.getSimilarWord(this.KANA_SIMILARITY_,WORD_LIST_.BASEBALL,target,{}));
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
 
@@ -178,6 +183,7 @@ class Soramimic {
 						sep = this.separateKana(yomi),
 						ptn = this.getPronunciationVariation(sep)
 						;
+					console.log("yomi",yomi);
 					for(let v3 of ptn){
 						const v3len = v3.length;
 						//console.log("prev:",prev);
@@ -202,7 +208,7 @@ class Soramimic {
 		if(Object.keys(k2v).indexOf(kana1)>=0 && Object.keys(k2v).indexOf(kana2)>=0)
 			return k2v[kana1] == k2v[kana2];
 		else{
-			console.log("kana is undefined");
+			//console.log("kana is undefined");
 			return false;
 		}
 	}
@@ -212,7 +218,7 @@ class Soramimic {
 		if(Object.keys(k2c).indexOf(kana1)>=0 && Object.keys(k2c).indexOf(kana2)>=0)
 			return k2c[kana1] == k2c[kana2];
 		else{
-			console.log("kana is undefined");
+			//console.log("kana is undefined");
 			return false;
 		}
 	}
@@ -313,8 +319,9 @@ class Soramimic {
 			k2p = $.extend(true,{},kana2phonon);
 		//伸ばし棒を追加
 		for(let k1 of Object.keys(k2p)){
-			const hasVowel = "aiueo".indexOf(k2p[k1][1].slice(-1));
-			if(hasVowel){
+			const hasVowel = ("aiueo".indexOf(k2p[k1][1].slice(-1))>=0);
+			console.log(k1,hasVowel);
+			if(hasVowel == true){
 				k2p[k1+"ー"] = [k2p[k1][0],k2p[k1][1]+":"];
 				k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
 				k2p[k1+"ッ"] = k2p[k1];//ッは、なにもないのと同じ
@@ -327,6 +334,8 @@ class Soramimic {
 				prev1[k1] = Object.keys(k2p)
 							.reduce( (prev2,k2) => {
 								const p2 = k2p[k2];//k2のphonon
+								if(Object.keys(sims[1]).indexOf(p1[1])<0)
+									console.log("k1,p1",k1,p1);
 								prev2[k2] = (sims[0][p1[0]][p2[0]]+sims[1][p1[1]][p2[1]])/2;//子音同士、母音同士の類似度の平均をk1とk2の類似度のベースとして定義
 								return prev2;
 							},{});
@@ -404,11 +413,16 @@ class Soramimic {
 					.reduce((prev,v)=>{
 						let tYomi = v.pronunciation;
 						if(typeof tYomi === "undefined")
-							tYomi = v.surface_form;
+							tYomi = hiraToKana(v.surface_form);
 						//console.log(tYomi);
 						return prev+tYomi;
 					},"");
 		return removeSign(yomi);
+	}
+
+	jpn2kanaUnits(strVal){
+		const yomi = getYomi(strVal);
+		return separateKana(yomi);
 	}
 
 
