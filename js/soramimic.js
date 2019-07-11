@@ -78,25 +78,29 @@ class Soramimic {
 
 		this.WORD_FILE_PATH_ = {
 				BASEBALL: "words/baseball.txt",
-				CREATURE: "words/creature.txt",
-				NATION: "words/nations.txt",
-				PHYSICIST: "words/physicist.txt",
-				POKEMON: "words/pokemon.txt",
-				SEKITSUI: "words/sekitsui.txt",
-				SHOGI: "words/shogi.txt",
-				STATION: "words/stations.txt"
+				//CREATURE: "words/creature.txt",
+				//NATION: "words/nations.txt",
+				//PHYSICIST: "words/physicist.txt",
+				//POKEMON: "words/pokemon.txt",
+				//SEKITSUI: "words/sekitsui.txt",
+				//SHOGI: "words/shogi.txt",
+				//STATION: "words/stations.txt"
 		}
 		this.WORD_LIST_ = {}
 
+		console.time("buildTokenizer");
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
+			console.timeEnd("buildTokenizer");
 			this.wordList = this.WORD_FILE_PATH_;
-			const target = jpn2kanaUnits("こんにちは");
+			const target = this.jpn2kanaUnits("こんにちは");
 			//const yomi = jpn2kanaUnits("こんにちは");
 			//const sep =
 			console.log("target",target);
-
-			console.log(this.getSimilarWord(this.KANA_SIMILARITY_,WORD_LIST_.BASEBALL,target,{}));
+			console.log("wordlist",this.WORD_LIST_);
+			console.time("getSimWord");
+			console.log("similarWord",this.getSimilarWord(this.KANA_SIMILARITY_,this.WORD_LIST_.BASEBALL,target,{},100));
+			console.timeEnd("getSimWord");
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
 
@@ -188,8 +192,10 @@ class Soramimic {
 					for(let v3 of ptn){
 						const v3len = v3.length;
 						//console.log("prev:",prev);
-						if(Object.keys(prev).indexOf(v3len)<0)
+						if(Object.keys(prev).indexOf(String(v3len))<0){
+							//console.log("prev",v3len,Object.keys(prev),Object.keys(prev).indexOf(v3len));
 							prev[v3len]=[];
+						}
 						prev[v3len].push([title,v2,v3,index]);
 					}
 				}
@@ -374,7 +380,11 @@ class Soramimic {
 	}
 
 	//文字列sとtのkanaDist下での置換コストを求める
-	ld(kanaDist,s,t){return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);}
+	ld(kanaDist,s,t){
+		//if(typeof s === "undefined" ||  typeof t === "undefined")
+		//	console.log("ld",s,t);
+		return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);
+	}
 
 	//kanaListのkeysの単位で文字列を分割する
 	separateKana(kanaStr){//kanaUnitsはカナのリスト(not object)を想定
@@ -452,8 +462,8 @@ class Soramimic {
 	}
 
 	jpn2kanaUnits(strVal){
-		const yomi = getYomi(strVal);
-		return separateKana(yomi);
+		const yomi = this.getYomi(strVal);
+		return this.separateKana(yomi);
 	}
 
 
@@ -490,12 +500,14 @@ class Soramimic {
 		for(let i of Object.keys(cand2)){
 			sims = sims.concat(
 					wordlist[i].map(w => {
-						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
+						const tmplist = cand2[i].map(tar=>this.ld(kanaDist,tar,w[2])/i);
 						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
 					})
 				);
+			//console.log("sims",sims,wordlist[i]);
 			words = words.concat(wordlist[i]);
 		}
+		//console.log("sims",sims);
 
 		return argsort(sims)
 				.slice(0,length) //指定された長さまでを切り取る
