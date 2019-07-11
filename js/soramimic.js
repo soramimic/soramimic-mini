@@ -11,6 +11,7 @@ class Soramimic {
 				SAME_BAR_REWARD: 1, //拗音同士に対して掛け算する
 				SAME_HATSUON_REWARD: 1, //撥音同士に対して掛け算する(pronunciationではない)
 				SAME_SOKUON_REWARD: 1,//促音同士に対して掛け算する
+				WORD_NUMBER_PENALTY: 1, //単語数に対するペナルティ
 				LENGTH: 1
 		}
 		this.KANA2PHONON_ = {"sp": ["sp", "sp"], "ッ": ["sp", "q"],"ン": ["sp", "N"],
@@ -92,7 +93,9 @@ class Soramimic {
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
 			console.timeEnd("buildTokenizer");
+			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
+			console.timeEnd("loadWordList");
 			const target = this.jpn2kanaUnits("こんにちは");
 			//const yomi = jpn2kanaUnits("こんにちは");
 			//const sep =
@@ -101,10 +104,148 @@ class Soramimic {
 			console.time("getSimWord");
 			console.log("similarWord",this.getSimilarWord(this.KANA_SIMILARITY_,this.WORD_LIST_.BASEBALL,target,{},100));
 			console.timeEnd("getSimWord");
+			
+			console.time("dp");
+			console.log("soramimi",this.soramimi_dp("こんにちは",this.WORD_LIST_.BASEBALL,{}))
+			console.timeEnd("dp");
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
 
 
+	}
+	
+	soramimi_dp(text, wordlist, para = {}){
+		const param = this.assignDefaultParameter(para);
+		this.kanaSimilarity = param;
+		const gs = (wordlist,target,length) => this.getSimilarWord(this.KANA_SIMILARITY_, wordlist, target, param, length),
+			gy = this.getYomi,
+			splitter=param.SPLITTER,
+	    	repeat = param.REPEAT,
+		    isDuplicate = param.DUPLICATE,
+		    penaBreak = param.SAME_PHRASE_BREAK_REWARD,
+		    samaKana = param.SAME_KANA_REWARD,
+		    sameVowel = param.SAME_VOWEL_REWARD,
+		    sameConsonant = param.SAME_CONSONANT_REWARD,
+		    sameBar = param.SAME_BAR_REWARD,
+		    sameHatsuon = param.SAME_HATSUON_REWARD,
+		    sameSokuon = param.SAME_SOKUON_REWARD,
+		    wordsNum = param.WORD_NUMBER_PENALTY,
+		    takeLen = param.LENGTH,
+		    number = Object.keys(wordlist).map(i => Number(i)),
+		    phrases = text.split(splitter),
+		    phraselen = phrases.length,
+			//phraseの基本的な構造を解析
+		    base_info = phrases.reduce((prev,val)=>{
+				prev["raws"].push(val);
+				prev["targets"].push(this.separateKana(this.getYomi(val)));
+				return prev;
+			},{"raws":[],"targets":[],"indexBreaks":[]}),
+		    results = ["relativeScores","scores","words"].reduce((prev,val)=>{
+				prev[val] = Array(phraselen);
+				prev[val].fill([]);
+				return prev;
+			},{});
+		    ;
+
+
+		//base_infoの確認
+		for (let v of Object.keys(base_info)){
+			console.log(v, base_info[v]);
+		}
+
+		const dp = index => {
+			const target = base_info["targets"][index],
+	        	//breaks = base_info["indexBreaks"][index],
+	        	tarlen = target.length,
+	        	//used = results["words"].map(v => v.map(v2 => v2.slice(-1)[0])).flat(),//mapやforEachではなぜかだめだった
+	        	used = [],
+	        	memo = {0:[]},
+	        	error = null
+	        	;
+
+			//mapやforEachではなぜか参照できなかったので、これを使う
+			//console.log("result_word",results["words"][0]);
+			for(let v of results["words"]){
+				for(let v2 of v)
+					used.push(v2.slice(-1)[0]);
+			}
+			//console.log("used",used);
+
+
+			const dp_inner = t => {
+				const mini_result = {"scores":[],"words":[]}
+				if(Object.keys(memo).indexOf(String(t))>=0){
+					return memo[t];
+				}else{
+				}
+
+				for (let i = 0; i<t; i++){
+
+					if ( number.indexOf(t-i)<0 ){
+						continue
+					}
+
+					let words = dp_inner(i);
+					if(words === error)
+						continue;
+					else{
+						words = words.slice();
+					}
+
+					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
+					const currentUsed = words.map(v => v[v.length-1]),
+						newWord = []
+					;
+
+					//console.log("target_out",target);
+					for(let w of gs(wordlist,target.slice(i,t),100)){
+						const wid = w.slice(-1)[0],
+							wscore = w.slice(-2)[0]
+							;
+						if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
+							continue;
+						words.push(w);
+						//console.log("newWord",w,wscore,scoreb,score);
+						score += wscore;
+						break;
+					}
+					//console.log("score",i,t,scoreb,score);
+					score += words.length*wordsNum;
+					mini_result["scores"].push(score);
+					mini_result["words"].push(words);
+				}
+				if(mini_result["scores"].length > 0){
+					const arg = argmin(mini_result["scores"]);
+					memo[t] = mini_result["words"][arg];
+					return memo[t];
+				}
+				else{
+					memo[t] = error;
+					return memo[t];
+				}
+
+			}
+			return dp_inner(tarlen+1);
+		}
+
+		//progressBarの初期値設定
+
+		const bar = $(".progress-bar.convert-progress");
+		bar.css("width","0%");
+		//bar.attr("aria-valuenow","0");
+		//bar.attr("aria-valuenmin","0");
+		//bar.attr("aria-valuenmax",phraselen);
+
+		phrases.forEach((v,i)=>{
+			const r = dp(i);
+			if ( r != null)
+				results["words"][i] = r;
+			//progressBarの変更
+			const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
+			bar.css("width", percentStr);
+			bar.html(percentStr);
+		});
+		return results["words"];
 	}
 
 	set wordList(filepathobj){
@@ -377,6 +518,10 @@ class Soramimic {
 		},{});
 
 		return kanaSimilarity;
+	}
+	
+	set kanaSimilarity(param){
+		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_, param);
 	}
 
 	//文字列sとtのkanaDist下での置換コストを求める
