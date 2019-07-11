@@ -18,18 +18,18 @@ class Soramimic {
 				"ウァ": ["w+a", "w-a"],  "ウヮ": ["w+a", "w-a"], "ウィ": ["w+i", "w-i"], "ウェ": ["w+e", "w-e"], "ウォ": ["w+o", "w-o"],
 				"カ": ["k+a", "k-a"],"キ": ["k+i", "k-i"],"ク": ["k+u", "k-u"],"ケ": ["k+e", "k-e"],"コ": ["k+o", "k-o"],
 				"ガ": ["g+a", "g-a"],"ギ": ["g+i", "g-i"],"グ": ["g+u", "g-u"],"ゲ": ["g+e", "g-e"], "ゴ": ["g+o", "g-o"],
-				"キャ": ["ky+a", "y-a"], "キュ": ["ky+u", "y-u"], "キェ": ["ky+e", "y-e"],"キョ": ["ky+o", "y-o"], 
-				"ギャ": ["gy+a", "y-a"],"ギュ": ["gy+u", "y-u"],"ギェ": ["gy+e", "y-e"],"ギョ": ["gy+o", "y-o"], 
-				"クァ": ["k+a", "k-a"], "クヮ": ["k+a", "k-a"],"クィ": ["k+i", "k-i"], "クェ": ["k+e", "k-e"], "クォ": ["k+o", "k-o"], 
-				"グァ": ["g+a", "g-a"], "グヮ": ["g+a", "g-a"],"グィ": ["g+i", "g-i"], "グェ": ["g+e", "g-e"], "グォ": ["g+o", "g-o"], 
+				"キャ": ["ky+a", "y-a"], "キュ": ["ky+u", "y-u"], "キェ": ["ky+e", "y-e"],"キョ": ["ky+o", "y-o"],
+				"ギャ": ["gy+a", "y-a"],"ギュ": ["gy+u", "y-u"],"ギェ": ["gy+e", "y-e"],"ギョ": ["gy+o", "y-o"],
+				"クァ": ["k+a", "k-a"], "クヮ": ["k+a", "k-a"],"クィ": ["k+i", "k-i"], "クェ": ["k+e", "k-e"], "クォ": ["k+o", "k-o"],
+				"グァ": ["g+a", "g-a"], "グヮ": ["g+a", "g-a"],"グィ": ["g+i", "g-i"], "グェ": ["g+e", "g-e"], "グォ": ["g+o", "g-o"],
 				"サ": ["s+a", "s-a"],"シ": ["sh+i", "y-i"],"ス": ["s+u", "s-u"], "セ": ["s+e", "s-e"],"ソ": ["s+o", "s-o"],
-				"ザ": ["z+a", "z-a"],"ジ": ["j+i", "y-i"],"ズ": ["z+u", "z-u"],"ゼ": ["z+e", "z-e"], "ゾ": ["z+o", "z-o"], 
+				"ザ": ["z+a", "z-a"],"ジ": ["j+i", "y-i"],"ズ": ["z+u", "z-u"],"ゼ": ["z+e", "z-e"], "ゾ": ["z+o", "z-o"],
 				"シャ": ["sh+a", "y-a"],"シュ": ["sh+u", "y-u"],"シェ": ["sh+e", "y-e"], "ショ": ["sh+o", "y-o"],
 				"ジャ": ["j+a", "y-a"], "ジュ": ["j+u", "y-u"], "ジェ": ["j+e", "y-e"], "ジョ": ["j+o", "y-o"],
 				"スァ": ["s+a", "s-a"],"スヮ": ["s+a", "s-a"],"スィ": ["s+i", "s-i"],"スェ": ["s+e", "s-e"],"スォ": ["s+o", "s-o"],
-				"ズァ": ["z+a", "z-a"], "ズヮ": ["z+a", "z-a"],"ズィ": ["z+i", "z-i"], "ズェ": ["z+e", "z-e"], "ズォ": ["z+o", "z-o"], 
+				"ズァ": ["z+a", "z-a"], "ズヮ": ["z+a", "z-a"],"ズィ": ["z+i", "z-i"], "ズェ": ["z+e", "z-e"], "ズォ": ["z+o", "z-o"],
 				"タ": ["t+a", "t-a"], "チ": ["ch+i", "y-i"], "ツ": ["ts+u", "s-u"], "テ": ["t+e", "t-e"], "ト": ["t+o", "t-o"],
-				"ダ": ["d+a", "d-a"], "ヂ": ["d+i", "d-i"], "ヅ": ["d+u", "d-u"],"デ": ["d+e", "d-e"],"ド": ["d+o", "d-o"], 
+				"ダ": ["d+a", "d-a"], "ヂ": ["d+i", "d-i"], "ヅ": ["d+u", "d-u"],"デ": ["d+e", "d-e"],"ド": ["d+o", "d-o"],
 				"チャ": ["ch+a", "y-a"], "チュ": ["ch+u", "y-u"], "チェ": ["ch+e", "y-e"], "チョ": ["ch+o", "y-o"],
 				"ヂャ": ["dy+a", "y-a"], "ヂュ": ["dy+u", "y-u"], "ヂェ": ["dy+e", "y-e"], "ヂョ": ["dy+o", "y-o"],
 				"ティ": ["t+i", "t-i"], "テュ": ["t+u", "t-u"], "トゥ": ["t+u", "t-u"],
@@ -45,7 +45,7 @@ class Soramimic {
 				"ピャ": ["py+a", "y-a"], "ピェ": ["py+e", "y-e"], "ピュ": ["py+u", "y-u"], "ピョ": ["py+o", "y-o"],
 				"ファ": ["f+a", "f-a"], "フヮ": ["f+a", "f-a"],"フィ": ["f+i", "f-i"], "フェ": ["f+e", "f-e"], "フォ": ["f+o", "f-o"],
 				"ブァ": ["b+a", "b-a"],  "ブヮ": ["b+a", "b-a"],"ブィ": ["b+i", "b-i"], "ブェ": ["b+e", "b-e"], "ブォ": ["b+o", "b-o"],
-				"プァ": ["p+a", "p-a"], "プヮ": ["p+a", "p-a"],"プィ": ["p+i", "p-i"], "プェ": ["p+e", "p-e"], "プォ": ["p+o", "p-o"], 
+				"プァ": ["p+a", "p-a"], "プヮ": ["p+a", "p-a"],"プィ": ["p+i", "p-i"], "プェ": ["p+e", "p-e"], "プォ": ["p+o", "p-o"],
 				"マ": ["m+a", "m-a"], "ミ": ["m+i", "m-i"], "ム": ["m+u", "m-u"], "メ": ["m+e", "m-e"], "モ": ["m+o", "m-o"],
 				"ミャ": ["my+a", "y-a"], "ミュ": ["my+u", "y-u"], "ミェ": ["my+e", "y-e"], "ミョ": ["my+o", "y-o"],
 				"ムァ": ["m+a", "m-a"], "ムヮ": ["m+a", "m-a"], "ムィ": ["m+i", "m-i"], "ムェ": ["m+e", "m-e"], "ムォ": ["m+o", "m-o"],
@@ -63,32 +63,64 @@ class Soramimic {
 		this.KANA2CONSONANT_ = this.getKana2Consonant(this.KANA2PHONON_);
 		this.KANA_UNITS_ = this.getKanaUnits(this.KANA2PHONON_,this.KANA2VOWEL_);
 		this.SMALL2LARGE_ = this.getSmall2Large(this.SMALL_VOWELS_,this.LARGE_VOWELS_);//小さい母音を大きい母音に変換するオブジェクト
-		
+
 		this.VOWEL_SIMILARTIY_FILE_PATH_ = "conf/simVowelsSimple.json";
 		this.CONSONANT_SIMILARITY_FILE_PATH_ = "conf/simConsonantsSimple.json";
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
 		this.CONSONANT_SIMILARITY_ = this.constructor.loadJsonFile(this.CONSONANT_SIMILARITY_FILE_PATH_);
-		
+
 		//this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
 		//this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
-		
+
 		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
 		this.TOKENIZER_ = null;
-		this.buildTokenizer();//tokenizerをセットする
-		
+
+		this.WORD_FILE_PATH_ = {
+				BASEBALL: "words/baseball.txt",
+				CREATURE: "words/creature.txt",
+				NATION: "words/nations.txt",
+				PHYSICIST: "words/physicist.txt",
+				POKEMON: "words/pokemon.txt",
+				SEKITSUI: "words/sekitsui.txt",
+				SHOGI: "words/shogi.txt",
+				STATION: "words/stations.txt"
+		}
+		this.WORD_LIST_ = {}
+
+		this.buildTokenizer()//tokenizerをセットする
+		.then(() => {
+			this.wordList = this.WORD_FILE_PATH_;
+			console.log(this.getSimilarWord())
+			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
+		});
+
+
 	}
-	
+
+	set wordList(filepathobj){
+		for(let k of Object.keys(filepathobj)){
+			const path = filepathobj[k];
+			this.WORD_LIST_[k] = this.loadDatabaseFile(path);
+		}
+	}
+	set wordListOrg(text){
+		this.WORD_LIST_["ORIGINAL"] = this.loadDatabaseText(text);
+	}
+
 	buildTokenizer(){
 		const self = this;
-		kuromoji.builder({dicPath:"js/kuromoji/dict"}).build(function(err, tokenizer){
-			if(err) { console.log(err); }
-			self.TOKENIZER_ = tokenizer;
-			console.log("set tokenizer");
+		return new Promise(function(resolve,reject){
+			kuromoji.builder({dicPath:self.KUROMOJI_PATH_}).build(function(err, tokenizer){
+				if(err) { console.log(err);reject("error:",err); }
+				self.TOKENIZER_ = tokenizer;
+				console.log("set tokenizer");
+				resolve("ok");
+			});
 		});
 	}
 
 
-	
+
 	//jsonファイルを読み込む
 	static loadJsonFile(path){
 		let json = "";
@@ -128,19 +160,18 @@ class Soramimic {
 		}
 		return this.loadDatabaseText(wordlisttext);
 	}
-	
+
 	loadDatabaseText(text){
-		let words, result;
 		const words = text.split("\n").map(val=>{
 			val = val.replace(/\u200B/g, "");//エスケープ処理
-			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット			
+			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 			return val;
 		});
-		
+
 		return words.filter(v => v.length != 0)
-			.reduce((prev,v,index)=>{ 
+			.reduce((prev,v,index)=>{
 				if(v.length == 1)
-					v.push(getYomi(val[0]));
+					v.push(this.getYomi(v[0]));
 				const title = v[0];
 				for(let v2 of v.slice(1)){
 					const yomi = this.getYomi(v2),
@@ -149,16 +180,17 @@ class Soramimic {
 						;
 					for(let v3 of ptn){
 						const v3len = v3.length;
-						if(Object.keys(prev).indexOf(v3len)>=0)
+						//console.log("prev:",prev);
+						if(Object.keys(prev).indexOf(v3len)<0)
 							prev[v3len]=[];
 						prev[v3len].push([title,v2,v3,index]);
-						return prev;
 					}
 				}
-		},{});
+				return prev;
+			},{});
 	}
 
-	
+
 
 	//同じ文字か判定
 	isSameKana(kana1,kana2){
@@ -182,7 +214,7 @@ class Soramimic {
 		else{
 			console.log("kana is undefined");
 			return false;
-		}		
+		}
 	}
 	//どちらも拗音かどうか
 	isSameBar(kana1,kana2){
@@ -208,7 +240,7 @@ class Soramimic {
 		;
 		return (isKana1Ok && isKana2Ok);
 	}
-	
+
 	//カナを分割するときの単位を定義
 	getKanaUnits(kana2romaji,kana2vowel){
 		const k2r = kana2romaji,
@@ -246,7 +278,7 @@ class Soramimic {
 		roma2vowel["N"]="sp";//撥音の母音は無音とする
 		roma2vowel["q"]="sp";//促音の母音は無音とする
 		return Object.keys(k2r).reduce((prev,kana)=>{
-			const romaVowelOfKana = k2r[kana][1].slice(-1);//kanaのローマ字表記の最後の文字(=母音)を取得 
+			const romaVowelOfKana = k2r[kana][1].slice(-1);//kanaのローマ字表記の最後の文字(=母音)を取得
 			prev[kana] = roma2vowel[romaVowelOfKana];//kanaを母音カナに変換
 			return prev;
 		},{});
@@ -254,7 +286,7 @@ class Soramimic {
 	//カナを子音に変換するリストを作る
 	getKana2Consonant(kana2romaji){
 		const k2r = kana2romaji;
-		
+
 		return Object.keys(k2r).reduce( (prev,kana) => {
 			const romaConsonantOfKana = (k2r[kana][0] == "sp") ? "sp" : k2r[kana][0][0];
 			switch(romaConsonantOfKana){
@@ -287,7 +319,7 @@ class Soramimic {
 				k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
 				k2p[k1+"ッ"] = k2p[k1];//ッは、なにもないのと同じ
 			}
-				
+
 		}
 		return Object.keys(k2p)
 			.reduce( (prev1,k1) => {
@@ -300,20 +332,20 @@ class Soramimic {
 							},{});
 				return prev1;
 			},{});
-		
+
 	}
 	////parametersに存在しないkeyをthis.DEFAULT_PARAMETER_VALUESを埋めて返す
 	assignDefaultParameter(parameters){
 		return Object.assign(this.DEFAULT_PARAMETER_VALUES_,parameters);
 	}
-	
+
 	//パラメータに基づいて微調整する
 	getKanaSimilarity(kanaSimilarityBase,parameters = {}){
 		const param = this.assignDefaultParameter(parameters),
 			//ksb = $.extend(true,{},kanaSimilarityBase)//値渡し
 			ksb = kanaSimilarityBase;
 			;
-		
+
 		const kanaSimilarity = Object.keys(ksb).reduce((prev1,k1)=>{
 			prev1[k1] = Object.keys(ksb).reduce((prev2,k2) => {
 				let s = ksb[k1][k2];//baseのsimilarityを取得
@@ -326,21 +358,21 @@ class Soramimic {
 				return prev2;
 			},{});
 			return prev1;
-		},{}); 
-		
+		},{});
+
 		return kanaSimilarity;
 	}
 
 	//文字列sとtのkanaDist下での置換コストを求める
 	ld(kanaDist,s,t){return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);}
-	
+
 	//kanaListのkeysの単位で文字列を分割する
 	separateKana(kana){//kanaUnitsはカナのリスト(not object)を想定
 		const S2L = this.SMALL2LARGE_,
 			KANA_UNITS_ = Object.keys(this.KANA_UNITS_),
 			LEN_MAX_ = 3
 			;
-		
+
 		//連続してても意味のない音を一音に置き換える
 		for(let v of ["ー","ッ"]){
 			const reg = new RegExp(v+"+","g");
@@ -348,7 +380,7 @@ class Soramimic {
 		};
 		return [].reduce.call(kana, (prev, v, i) =>{
 			if(i<prev.join("").length){//iが現在の文字数より小さければスキップ
-				
+
 			}else{
 				let isBreak = false;
 				for(let j = LEN_MAX_; j>0; j--){
@@ -363,15 +395,15 @@ class Soramimic {
 			}
 			return prev;
 		},[] );
-		
+
 	}
-	
+
 	getYomi(strVal){
 		const tokenizer = this.TOKENIZER_;
 		const yomi = tokenizer.tokenize(strVal)
 					.reduce((prev,v)=>{
 						let tYomi = v.pronunciation;
-						if(typeof tYomi === "undefined") 
+						if(typeof tYomi === "undefined")
 							tYomi = v.surface_form;
 						//console.log(tYomi);
 						return prev+tYomi;
@@ -393,7 +425,7 @@ class Soramimic {
 				.map(v => v.filter(v2=>v2!="").flat())
 				.filter(v => v.length != 0);//長さ0の配列は要素に含めない
 	}
-	
+
 	//入力にkanaDist下で距離の近い単語を求める
 	getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		const orglen = target.length,
@@ -432,13 +464,6 @@ class Soramimic {
 }
 
 const db = new Soramimic();
-kana = db.separateKana("アーヴェイン");
-variation = db.getPronunciationVariation(kana);
-console.log(variation);
-setTimeout(()=>{
-	const yomi = db.getYomi("綾小路清隆");
-	console.log(yomi);
-},3000);
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"
 //reg = new RegExp(testStr+"+","g")
