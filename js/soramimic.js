@@ -32,6 +32,7 @@ class Soramimic {
 				"ダ": ["d+a", "d-a"], "ヂ": ["d+i", "d-i"], "ヅ": ["d+u", "d-u"],"デ": ["d+e", "d-e"],"ド": ["d+o", "d-o"],
 				"チャ": ["ch+a", "y-a"], "チュ": ["ch+u", "y-u"], "チェ": ["ch+e", "y-e"], "チョ": ["ch+o", "y-o"],
 				"ヂャ": ["dy+a", "y-a"], "ヂュ": ["dy+u", "y-u"], "ヂェ": ["dy+e", "y-e"], "ヂョ": ["dy+o", "y-o"],
+				"ツァ": ["ts+a", "s-a"],"ツヮ": ["ts+a", "s-a"],"ツィ": ["ts+i", "s-i"],"ツェ": ["ts+e", "s-e"],"ツォ": ["ts+o", "s-o"],
 				"ティ": ["t+i", "t-i"], "テュ": ["t+u", "t-u"], "トゥ": ["t+u", "t-u"],
 				"ディ": ["d+i", "d-i"], "デュ": ["d+u", "d-u"],  "ドゥ": ["d+u", "d-u"],
 				"ナ": ["n+a", "n-a"], "ニ": ["n+i", "n-i"], "ヌ": ["n+u", "n-u"], "ネ": ["n+e", "n-e"], "ノ": ["n+o", "n-o"],
@@ -43,13 +44,13 @@ class Soramimic {
 				"ヒャ": ["hy+a", "y-a"], "ヒュ": ["hy+u", "y-u"], "ヒェ": ["hy+e", "y-e"], "ヒョ": ["hy+o", "y-o"],
 				"ビャ": ["by+a", "y-a"], "ビュ": ["by+u", "y-u"], "ビェ": ["by+e", "y-e"], "ビョ": ["by+o", "y-o"],
 				"ピャ": ["py+a", "y-a"], "ピェ": ["py+e", "y-e"], "ピュ": ["py+u", "y-u"], "ピョ": ["py+o", "y-o"],
-				"ファ": ["f+a", "f-a"], "フヮ": ["f+a", "f-a"],"フィ": ["f+i", "f-i"], "フェ": ["f+e", "f-e"], "フォ": ["f+o", "f-o"],
+				"ファ": ["f+a", "f-a"], "フヮ": ["f+a", "f-a"],"フィ": ["f+i", "f-i"], "フュ": ["hy+u", "y-u"], "フェ": ["f+e", "f-e"], "フォ": ["f+o", "f-o"],
 				"ブァ": ["b+a", "b-a"],  "ブヮ": ["b+a", "b-a"],"ブィ": ["b+i", "b-i"], "ブェ": ["b+e", "b-e"], "ブォ": ["b+o", "b-o"],
 				"プァ": ["p+a", "p-a"], "プヮ": ["p+a", "p-a"],"プィ": ["p+i", "p-i"], "プェ": ["p+e", "p-e"], "プォ": ["p+o", "p-o"],
 				"マ": ["m+a", "m-a"], "ミ": ["m+i", "m-i"], "ム": ["m+u", "m-u"], "メ": ["m+e", "m-e"], "モ": ["m+o", "m-o"],
 				"ミャ": ["my+a", "y-a"], "ミュ": ["my+u", "y-u"], "ミェ": ["my+e", "y-e"], "ミョ": ["my+o", "y-o"],
 				"ムァ": ["m+a", "m-a"], "ムヮ": ["m+a", "m-a"], "ムィ": ["m+i", "m-i"], "ムェ": ["m+e", "m-e"], "ムォ": ["m+o", "m-o"],
-				"ヤ": ["y+a", "y-a"], "ユ": ["y+u", "y-u"], "ヨ": ["y+o", "y-o"],
+				"ヤ": ["y+a", "y-a"], "ユ": ["y+u", "y-u"], "イェ": ["y+e","y-e"], "ヨ": ["y+o", "y-o"],
 				"ラ": ["r+a", "r-a"], "リ": ["r+i", "r-i"], "ル": ["r+u", "r-u"], "レ": ["r+e", "r-e"], "ロ": ["r+o", "r-o"],
 				"リャ": ["ry+a", "y-a"], "リュ": ["ry+u", "y-u"], "リェ": ["ry+e", "y-e"], "リョ": ["ry+o", "y-o"],
 				"ワ": ["w+a", "w-a"], "ヲ": ["sp", "o"],
@@ -183,7 +184,7 @@ class Soramimic {
 						sep = this.separateKana(yomi),
 						ptn = this.getPronunciationVariation(sep)
 						;
-					console.log("yomi",yomi);
+					//console.log("yomi",yomi);
 					for(let v3 of ptn){
 						const v3len = v3.length;
 						//console.log("prev:",prev);
@@ -320,7 +321,7 @@ class Soramimic {
 		//伸ばし棒を追加
 		for(let k1 of Object.keys(k2p)){
 			const hasVowel = ("aiueo".indexOf(k2p[k1][1].slice(-1))>=0);
-			console.log(k1,hasVowel);
+			//console.log(k1,hasVowel);
 			if(hasVowel == true){
 				k2p[k1+"ー"] = [k2p[k1][0],k2p[k1][1]+":"];
 				k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
@@ -376,14 +377,34 @@ class Soramimic {
 	ld(kanaDist,s,t){return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);}
 
 	//kanaListのkeysの単位で文字列を分割する
-	separateKana(kana){//kanaUnitsはカナのリスト(not object)を想定
+	separateKana(kanaStr){//kanaUnitsはカナのリスト(not object)を想定
 		const S2L = this.SMALL2LARGE_,
 			KANA_UNITS_ = Object.keys(this.KANA_UNITS_),
+			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
 			LEN_MAX_ = 3
 			;
 
+		//伸ばし棒に変換可能な小文字を変換する
+		let kana = [].map.call(kanaStr,(v,i)=>{
+			switch(v){
+			case "ァ": case "ィ": case "ゥ": case "ェ": case "ォ":
+				if(i>0){
+					const str = kanaStr[i-1]+S2L[v];
+					if(KANA_UNITS_.indexOf(str)>=0)
+						return "ー";
+				}
+				if(i>1){
+					const str = kanaStr.slice(i-2,i)+S2L[v];
+					if(KANA_UNITS_.indexOf(str)>=0)
+						return "ー";
+				}
+				return v;
+			default:
+				return v;
+			}
+		}).join("");
 		//連続してても意味のない音を一音に置き換える
-		for(let v of ["ー","ッ"]){
+		for(let v of ["ー","ッ","ン"]){
 			const reg = new RegExp(v+"+","g");
 			kana = kana.replace(reg,v);
 		};
@@ -393,14 +414,24 @@ class Soramimic {
 			}else{
 				let isBreak = false;
 				for(let j = LEN_MAX_; j>0; j--){
-					if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
-						prev.push(kana.slice(i,i+j));
-						isBreak = true;
+					//for(let k = LEN_MAX_ - j; k>-1; k--){
+						if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
+							//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
+							if(j>1 && "アイウエオ".indexOf(kana[i+j-1])>=0 && KANA_UNITS_.indexOf(kana.slice(i,i+j-1))>=0){
+								prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
+							}
+							else{
+								prev.push(kana.slice(i,i+j));
+							}
+							isBreak = true;
+							break;
+						}
+					//}
+					if(isBreak == true)
 						break;
-					}
 				}
 				if(isBreak == false)
-					console.log(kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
+					console.log(kana,kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
 			}
 			return prev;
 		},[] );
@@ -478,6 +509,7 @@ class Soramimic {
 }
 
 const db = new Soramimic();
+db.separateKana("ヴォオーギン");
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"
 //reg = new RegExp(testStr+"+","g")
