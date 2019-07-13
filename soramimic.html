@@ -359,8 +359,8 @@ const soramimi_dp = (text, wordlist, para) => {
 
 	//progressBarの初期値設定
 
-	const bar = $(".progress-bar.convert-progress");
-	bar.css("width","0%");
+	//const bar = $(".progress-bar.convert-progress");
+	//bar.css("width","0%");
 	//bar.attr("aria-valuenow","0");
 	//bar.attr("aria-valuenmin","0");
 	//bar.attr("aria-valuenmax",phraselen);
@@ -370,9 +370,9 @@ const soramimi_dp = (text, wordlist, para) => {
 		if ( r != null)
 			results["words"][i] = r;
 		//progressBarの変更
-		const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
-		bar.css("width", percentStr);
-		bar.html(percentStr);
+		//const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
+		//bar.css("width", percentStr);
+		//bar.html(percentStr);
 	});
 	return results["words"];
 	//dp(0);

@@ -116,7 +116,9 @@ class Soramimic {
 	
 	soramimi_dp(text, wordlist, para = {}){
 		const param = this.assignDefaultParameter(para);
-		this.kanaSimilarity = param;
+		
+		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_, param);
+		
 		const gs = (wordlist,target,length) => this.getSimilarWord(this.KANA_SIMILARITY_, wordlist, target, param, length),
 			gy = this.getYomi,
 			splitter=param.SPLITTER,
@@ -132,7 +134,7 @@ class Soramimic {
 		    wordsNum = param.WORD_NUMBER_PENALTY,
 		    takeLen = param.LENGTH,
 		    number = Object.keys(wordlist).map(i => Number(i)),
-		    phrases = text.split(splitter),
+		    phrases = text.split(splitter).map(v=>v.trim()).filter(v=>v!=""),
 		    phraselen = phrases.length,
 			//phraseの基本的な構造を解析
 		    base_info = phrases.reduce((prev,val)=>{
@@ -665,8 +667,8 @@ class Soramimic {
 	//デフォルトのパラメータをセット
 }
 
-const db = new Soramimic();
-db.separateKana("ヴォオーギン");
+//const db = new Soramimic();
+//db.separateKana("ヴォオーギン");
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"
 //reg = new RegExp(testStr+"+","g")
