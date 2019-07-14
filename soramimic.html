@@ -266,7 +266,9 @@ const soramimi_dp = (text, wordlist, para) => {
 		//phraseの基本的な構造を解析
 	    base_info = phrases.reduce((prev,val)=>{
 			prev["raws"].push(val);
+			console.time("test");
 			prev["targets"].push(separateKana(gy(val)));
+			console.timeEnd("test");
 			return prev;
 		},{"raws":[],"targets":[],"indexBreaks":[]}),
 	    results = ["relativeScores","scores","words"].reduce((prev,val)=>{
@@ -391,13 +393,19 @@ promise
 	console.log(param);
 	getSimilarWord = getSimilarWord_outer(param);
 
+	console.time("soramimic_html");
+	separateKana("アリガトウサヨウナラトモダチ");
+	console.timeEnd("soramimic_html");
 	wordlist = {}
 	$('.radio-file').find("input[type=radio]").prop("disabled",true);
+	console.time("soramimi_out");
 	$('.radio-file').find("input[type=radio]").each(function(index, element){
 		const path = $(element).val();
+		//if(path.includes("baseball") == false)return;
 		wordlist[path] = loadDatabaseFile(path);
 		$(element).prop("disabled",false);
 	});
+	console.timeEnd("soramimi_out");
 	wordlist["original"] = wordlist["words/nations.txt"];
 	$(".container-fluid").show();
 	$(".loading").remove();

@@ -64,8 +64,10 @@ class Soramimic {
 		this.KANA2VOWEL_ = this.getKana2Vowel(this.KANA2PHONON_);
 		this.KANA2CONSONANT_ = this.getKana2Consonant(this.KANA2PHONON_);
 		this.KANA_UNITS_ = this.getKanaUnits(this.KANA2PHONON_,this.KANA2VOWEL_);
+		this.KANA_UNITS_LIST_ = Object.keys(this.KANA2PHONON_);
 		this.SMALL2LARGE_ = this.getSmall2Large(this.SMALL_VOWELS_,this.LARGE_VOWELS_);//小さい母音を大きい母音に変換するオブジェクト
 
+		
 		this.VOWEL_SIMILARTIY_FILE_PATH_ = "conf/simVowelsSimple.json";
 		this.CONSONANT_SIMILARITY_FILE_PATH_ = "conf/simConsonantsSimple.json";
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
@@ -78,9 +80,9 @@ class Soramimic {
 		this.TOKENIZER_ = null;
 
 		this.WORD_FILE_PATH_ = {
-				BASEBALL: "words/baseball.txt",
+				//BASEBALL: "words/baseball.txt",
 				//CREATURE: "words/creature.txt",
-				//NATION: "words/nations.txt",
+				NATION: "words/nations.txt",
 				//PHYSICIST: "words/physicist.txt",
 				//POKEMON: "words/pokemon.txt",
 				//SEKITSUI: "words/sekitsui.txt",
@@ -88,11 +90,10 @@ class Soramimic {
 				//STATION: "words/stations.txt"
 		}
 		this.WORD_LIST_ = {}
-
-		console.time("buildTokenizer");
+		//console.time("buildTokenizer");
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
-			console.timeEnd("buildTokenizer");
+			//console.timeEnd("buildTokenizer");
 			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
 			console.timeEnd("loadWordList");
@@ -110,6 +111,7 @@ class Soramimic {
 			console.timeEnd("dp");
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
+		
 
 
 	}
@@ -535,12 +537,22 @@ class Soramimic {
 
 	//kanaListのkeysの単位で文字列を分割する
 	separateKana(kanaStr){//kanaUnitsはカナのリスト(not object)を想定
-		const S2L = this.SMALL2LARGE_,
-			KANA_UNITS_ = Object.keys(this.KANA_UNITS_),
+		//console.time("1");
+		//console.time("1-1");
+		const S2L = this.SMALL2LARGE_;
+		//console.timeEnd("1-1");
+		//console.time("1-2");
+		//Object.keysは遅いので使わない
+		const KANA_UNITS_ = this.KANA_UNITS_LIST_;
+		//console.timeEnd("1-2");
+		//console.time("1-3");
+		const LEN_MAX_ = 3;
+		//console.timeEnd("1-3");
 			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
-			LEN_MAX_ = 3
+			//LEN_MAX_ = 3
 			;
-
+		//console.timeEnd("1");
+		console.time("2");
 		//伸ばし棒に変換可能な小文字を変換する
 		let kana = [].map.call(kanaStr,(v,i)=>{
 			switch(v){
@@ -560,12 +572,19 @@ class Soramimic {
 				return v;
 			}
 		}).join("");
+		console.timeEnd("2");
+		console.time("3");
 		//連続してても意味のない音を一音に置き換える
+			//RegExpはなぜか時間がかかるので正規表現を直書きする
+		/*
 		for(let v of ["ー","ッ","ン"]){
 			const reg = new RegExp(v+"+","g");
 			kana = kana.replace(reg,v);
-		};
-		return [].reduce.call(kana, (prev, v, i) =>{
+		};*/
+		kana = kana.replace(/ーー/g,"ー").replace(/ンン/g,"ン").replace(/ッッ/g,"ッ");
+		console.timeEnd("3");
+		console.time("4");
+		let result = [].reduce.call(kana, (prev, v, i) =>{
 			if(i<prev.join("").length){//iが現在の文字数より小さければスキップ
 
 			}else{
@@ -592,6 +611,8 @@ class Soramimic {
 			}
 			return prev;
 		},[] );
+		console.timeEnd("4");
+		return result;
 
 	}
 
@@ -667,8 +688,10 @@ class Soramimic {
 	//デフォルトのパラメータをセット
 }
 
-//const db = new Soramimic();
-//db.separateKana("ヴォオーギン");
+const db = new Soramimic();
+console.time("soramimic_js");
+db.separateKana("アリガトウサヨウナラトモダチ");
+console.timeEnd("soramimic_js");
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"
 //reg = new RegExp(testStr+"+","g")
