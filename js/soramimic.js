@@ -64,7 +64,9 @@ class Soramimic {
 		this.KANA2VOWEL_ = this.getKana2Vowel(this.KANA2PHONON_);
 		this.KANA2CONSONANT_ = this.getKana2Consonant(this.KANA2PHONON_);
 		this.KANA_UNITS_ = this.getKanaUnits(this.KANA2PHONON_,this.KANA2VOWEL_);
-		this.KANA_UNITS_LIST_ = Object.keys(this.KANA2PHONON_);
+		this.KANA_UNITS_LIST_ = Object.keys(this.KANA_UNITS_);
+		this.KANA_UNITS_LIST_VOWEL_END_ = this.KANA_UNITS_LIST_.filter(v=> (v.length>1 && this.VOWELS_.includes(v[v.length-1])) );
+		//console.log("this.KANA_UNITS_LIST_VOWEL_END_",this.KANA_UNITS_LIST_VOWEL_END_);
 		this.SMALL2LARGE_ = this.getSmall2Large(this.SMALL_VOWELS_,this.LARGE_VOWELS_);//小さい母音を大きい母音に変換するオブジェクト
 
 		
@@ -80,14 +82,14 @@ class Soramimic {
 		this.TOKENIZER_ = null;
 
 		this.WORD_FILE_PATH_ = {
-				//BASEBALL: "words/baseball.txt",
-				//CREATURE: "words/creature.txt",
+				BASEBALL: "words/baseball.txt",
+				CREATURE: "words/creature.txt",
 				NATION: "words/nations.txt",
-				//PHYSICIST: "words/physicist.txt",
-				//POKEMON: "words/pokemon.txt",
-				//SEKITSUI: "words/sekitsui.txt",
-				//SHOGI: "words/shogi.txt",
-				//STATION: "words/stations.txt"
+				PHYSICIST: "words/physicist.txt",
+				POKEMON: "words/pokemon.txt",
+				SEKITSUI: "words/sekitsui.txt",
+				SHOGI: "words/shogi.txt",
+				STATION: "words/stations.txt"
 		}
 		this.WORD_LIST_ = {}
 		//console.time("buildTokenizer");
@@ -317,7 +319,7 @@ class Soramimic {
 	}
 
 	loadDatabaseText(text){
-		const words = text.split("\n").map(val=>{
+		let words = text.split("\n").map(val=>{
 			val = val.replace(/\u200B/g, "");//エスケープ処理
 			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 			return val;
@@ -327,13 +329,20 @@ class Soramimic {
 			.reduce((prev,v,index)=>{
 				if(v.length == 1)
 					v.push(this.getYomi(v[0]));
+				
 				const title = v[0];
 				for(let v2 of v.slice(1)){
-					const yomi = this.getYomi(v2),
-						sep = this.separateKana(yomi),
-						ptn = this.getPronunciationVariation(sep)
-						;
+					if(index<10)console.time("1");
+					const yomi = this.getYomi(v2);
+					if(index<10)console.timeEnd("1");
+					if(index<10)console.time("2");
+					const sep = this.separateKana(yomi);
+					if(index<10)console.timeEnd("2");
+					if(index<10)console.time("3");//結構時間かかってる
+					const ptn = this.getPronunciationVariation(sep);
+					if(index<10)console.timeEnd("3");
 					//console.log("yomi",yomi);
+					
 					for(let v3 of ptn){
 						const v3len = v3.length;
 						//console.log("prev:",prev);
@@ -343,6 +352,7 @@ class Soramimic {
 						}
 						prev[v3len].push([title,v2,v3,index]);
 					}
+					
 				}
 				return prev;
 			},{});
@@ -544,6 +554,9 @@ class Soramimic {
 		//console.time("1-2");
 		//Object.keysは遅いので使わない
 		const KANA_UNITS_ = this.KANA_UNITS_LIST_;
+		const KANA_UNITS_VOWEL_END_ = this.KANA_UNITS_LIST_VOWEL_END_;
+		const SMALL_VOWELS_ = this.SMALL_VOWELS_;
+		const SMALL_VOWELS_LIMITED_ = "ァィゥェォ";
 		//console.timeEnd("1-2");
 		//console.time("1-3");
 		const LEN_MAX_ = 3;
@@ -552,28 +565,51 @@ class Soramimic {
 			//LEN_MAX_ = 3
 			;
 		//console.timeEnd("1");
-		console.time("2");
+		//console.time("2");
 		//伸ばし棒に変換可能な小文字を変換する
-		let kana = [].map.call(kanaStr,(v,i)=>{
+		//1文字めが小文字だったら大文字に直す
+		if(kanaStr.length>0 && SMALL_VOWELS_.includes(kanaStr[0]))
+			kanaStr = S2L[kanaStr[0]]+kana.slice(1);
+		//2文字目が小文字母音で1--2文字目がカナユニットに含まれていないとき
+		if(kanaStr.length>1 && SMALL_VOWELS_LIMITED_.includes(kanaStr[1]) && KANA_UNITS_.includes(kanaStr.slice(0,2)) == false){
+			const str = kanaStr[0]+S2L[kanaStr[1]];
+			//2文字目を大文字に変換したやつがカナユニットに含まれていたとき、2文字目を伸ばし棒に変換する
+			if(KANA_UNITS_VOWEL_END_.includes(str))
+				kanaStr = kanaStr[0]+"ー"+kanaStr.slice(2);
+		}
+		let kana = kanaStr.slice(0,2)+[].map.call(kanaStr.slice(2),(v,i)=>{
+			//コメントアウトしてたときのやり方より気持ち早い
+			if(SMALL_VOWELS_LIMITED_.includes(v)){
+				let str = kanaStr[i+1]+S2L[v];
+				if(KANA_UNITS_VOWEL_END_.includes(str) || KANA_UNITS_VOWEL_END_.includes(kanaStr[i]+str))
+					return "ー";
+				else
+					return v;
+			}
+			else{
+				return v;
+			}
+			/*
 			switch(v){
 			case "ァ": case "ィ": case "ゥ": case "ェ": case "ォ":
 				if(i>0){
 					const str = kanaStr[i-1]+S2L[v];
-					if(KANA_UNITS_.indexOf(str)>=0)
+					if(KANA_UNITS_.includes(str))
 						return "ー";
 				}
 				if(i>1){
 					const str = kanaStr.slice(i-2,i)+S2L[v];
-					if(KANA_UNITS_.indexOf(str)>=0)
+					if(KANA_UNITS_.includes(str))
 						return "ー";
 				}
 				return v;
 			default:
 				return v;
 			}
+			*/
 		}).join("");
-		console.timeEnd("2");
-		console.time("3");
+		//console.timeEnd("2");
+		//console.time("3");
 		//連続してても意味のない音を一音に置き換える
 			//RegExpはなぜか時間がかかるので正規表現を直書きする
 		/*
@@ -582,36 +618,32 @@ class Soramimic {
 			kana = kana.replace(reg,v);
 		};*/
 		kana = kana.replace(/ーー/g,"ー").replace(/ンン/g,"ン").replace(/ッッ/g,"ッ");
-		console.timeEnd("3");
-		console.time("4");
+		//console.timeEnd("3");
+		//console.time("4");
 		let result = [].reduce.call(kana, (prev, v, i) =>{
 			if(i<prev.join("").length){//iが現在の文字数より小さければスキップ
 
 			}else{
 				let isBreak = false;
 				for(let j = LEN_MAX_; j>0; j--){
-					//for(let k = LEN_MAX_ - j; k>-1; k--){
-						if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
-							//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
-							if(j>1 && "アイウエオ".indexOf(kana[i+j-1])>=0 && KANA_UNITS_.indexOf(kana.slice(i,i+j-1))>=0){
-								prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
-							}
-							else{
-								prev.push(kana.slice(i,i+j));
-							}
-							isBreak = true;
-							break;
+					if(KANA_UNITS_.includes(kana.slice(i,i+j))){
+						//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
+						if(j>1 && "アイウエオ".includes(kana[i+j-1]) && KANA_UNITS_.includes(kana.slice(i+j-1,i+j+1))){
+							prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
 						}
-					//}
-					if(isBreak == true)
+						else{
+							prev.push(kana.slice(i,i+j));
+						}
+						isBreak = true;
 						break;
+					}
 				}
 				if(isBreak == false)
 					console.log(kana,kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
 			}
 			return prev;
 		},[] );
-		console.timeEnd("4");
+		//console.timeEnd("4");
 		return result;
 
 	}
@@ -638,8 +670,10 @@ class Soramimic {
 	//母音連続時の変換パターンのリスト("アア"を[["アー"],["ア","ア"]]にするなど)
 	getPronunciationVariation(kana){
 		const kanaUnits = this.KANA_UNITS_;
+		//const kanaUnitsList = this.KANA_UNITS_LIST_;
 		const variations = kana.map(v => {
-			if(Object.keys(kanaUnits).indexOf(v)>=0)
+			if(v in kanaUnits)
+			//if(kanaUnitsList.includes(v))
 				return kanaUnits[v];
 			else
 				return [v];

@@ -149,11 +149,17 @@ function loadDatabaseText(text){
 			}
 			var title = val[0];
 			val.slice(1).forEach(function(val6){
-				var yomi, sep, ptn;
+				let yomi, sep, ptn;
+				if(index<10)console.time("1");
 				yomi = GetYomi(val6);
+				if(index<10)console.timeEnd("1");
+				if(index<10)console.time("2");
 				sep = separateKana(yomi);
+				if(index<10)console.timeEnd("2");
 				//console.log("yomi",yomi);
+				if(index<10)console.time("3");
 				ptn = convertBar(sep);
+				if(index<10)console.timeEnd("3");
 				//console.log("ptn",ptn);
 				ptn.forEach(function(v4){
 					const v4len = v4.length;
@@ -226,7 +232,8 @@ const separateKana_outer = () => {
 	//適切な発音への変換に必要なオブジェクトの定義
     const S2L = {},
     	smallVowelList = "ァィゥェォャュョヮ",
-    	largeVowelList = "アイウエオヤユヨワ"
+    	largeVowelList = "アイウエオヤユヨワ",
+    	KANA_LIST_ = Object.keys(kanalist)
     	;
     zip(smallVowelList,largeVowelList).forEach(function([v1,v2]){
     	S2L[v1] = v2;
@@ -238,8 +245,9 @@ const separateKana_outer = () => {
 		let i = 0,
 			result = []
 			;
+		
 		for(let v of ["ー","ッ"]){
-			while( k.indexOf(v+v) >= 0 ){
+			while( k.includes(v+v) ){
 				k = k.replace(v+v,v);
 			}
 		};
@@ -259,12 +267,12 @@ const separateKana_outer = () => {
 					;
 				if(moji != "")break;//直前のループでmojiになにか代入していたら終了
 				//console.log(p1,p2);
-				if(Object.keys(kanalist).indexOf(p1)>=0){
+				if(KANA_LIST_.includes(p1)){
 					if(p2 == "ー"){
-						if(vowels["エ"].indexOf(p1)>=0 && p1.slice(-1) == "イ"){
+						if(vowels["エ"].includes(p1) && p1.slice(-1) == "イ"){
 							moji = p1[0];
 						}
-						else if(vowels["オ"].indexOf(p1)>=0 && p1.slice(-1) == "ウ"){
+						else if(vowels["オ"].includes(p1) && p1.slice(-1) == "ウ"){
 							moji = p1[0];
 						}
 						else if(p1 == "ン"){
@@ -276,13 +284,13 @@ const separateKana_outer = () => {
 							moji = p1+p2;
 						}
 					}
-					else if(p2 == "エ" && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) == "イ"){
+					else if(p2 == "エ" && vowels[p2].includes(p1) && p1.slice(-1) == "イ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 == "オ" && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) == "ウ"){
+					else if(p2 == "オ" && vowels[p2].includes(p1) && p1.slice(-1) == "ウ"){
 						moji = p1.slice(0,-1) + "ー";
 					}
-					else if(p2 in vowels && vowels[p2].indexOf(p1)>=0 && p1.slice(-1) != "ー"){
+					else if(p2 in vowels && vowels[p2].includes(p1) && p1.slice(-1) != "ー"){
 						moji = p1+"ー";
 					}
 					else{
