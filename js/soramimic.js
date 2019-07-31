@@ -76,6 +76,7 @@ class Soramimic {
 		console.timeEnd("gksb");
 		console.time("gks");
 		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
+		console.log(Object.keys(this.KANA_SIMILARITY_));
 		console.timeEnd("gks");
 		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
 		this.TOKENIZER_ = null;
@@ -96,6 +97,7 @@ class Soramimic {
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
 			console.timeEnd("buildTokenizer");
+			console.log("yomi waokitsune",this.getYomi("ワオキツネザル"));
 			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
 			console.timeEnd("loadWordList");
@@ -188,7 +190,8 @@ class Soramimic {
 
 			const dp_inner = t => {
 				const mini_result = {"scores":[],"words":[]}
-				if(Object.keys(memo).indexOf(String(t))>=0){
+				//if(Object.keys(memo).indexOf(String(t))>=0){
+				if(t in memo){
 					return memo[t];
 				}else{
 				}
@@ -227,18 +230,33 @@ class Soramimic {
 					score += words.length*wordsNum;
 					mini_result["scores"].push(score);
 					mini_result["words"].push(words);
+					//console.log(mini_result);
 				}
 				if(mini_result["scores"].length > 0){
+					if(t == tarlen+1){
+						console.log("mini_result",mini_result["words"]);
+						const targetstr = target.join("");
+						for(let i=0;i<mini_result["scores"].length;i++){
+							const resultstr = mini_result["words"][i].map(v=>v[0]).join("");
+							if(resultstr != targetstr){
+								mini_result["scores"][i]+=10000;
+								//console.log(i,resultstr,mini_result["scores"][i]);
+							}
+						}
+						console.log("mini_result",mini_result);
+					}
 					const arg = argmin(mini_result["scores"]);
 					memo[t] = mini_result["words"][arg];
 					return memo[t];
 				}
 				else{
 					memo[t] = error;
+					console.log("memo error");
 					return memo[t];
 				}
 
 			}
+			//console.log("tarlen",tarlen);
 			return dp_inner(tarlen+1);
 		}
 
@@ -253,6 +271,7 @@ class Soramimic {
 		phrases.forEach((v,i)=>{
 			console.time("dp_"+String(i));
 			const r = dp(i);
+			console.log(r);
 			if ( r != null)
 				results["words"][i] = r;
 			//progressBarの変更
@@ -338,9 +357,9 @@ class Soramimic {
 		const resultdb = {}
 		for(let i = 0; i<words.length;i++){
 			const v = words[i];
-			if(v.length == 1)v.push(this.getYomi[v[0]]);
+
+			if(v.length == 1)v.push(this.getYomi(v[0]));
 			const title = v[0];
-			console.log("v",v);
 			for(let v2 of v.slice(1)){
 				if(v2.length == 0)console.log("v2",v2);
 				const yomi = this.getYomi(v2);
@@ -504,10 +523,10 @@ class Soramimic {
 	getKanaSimilarityBase(consonantSimilarity,vowelSimilarity,kana2phonon){//kanaUnitsはカナユニットのみのリスト(this.KANA_UNITSのObject.keysを使う)
 		const sims = [consonantSimilarity,vowelSimilarity],
 			k2p = $.extend(true,{},kana2phonon);
-		const k2plist = Object.keys(k2p);
+
 		//伸ばし棒を追加
-		//for(let k1 of Object.keys(k2p)){
-		for(let k1 of k2plist){
+		for(let k1 of Object.keys(k2p)){
+		//for(let k1 of k2plist){
 			const hasVowel = ("aiueo".indexOf(k2p[k1][1].slice(-1))>=0);
 			//console.log(k1,hasVowel);
 			if(hasVowel == true){
@@ -515,8 +534,8 @@ class Soramimic {
 				k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
 				k2p[k1+"ッ"] = k2p[k1];//ッは、なにもないのと同じ
 			}
-
 		}
+		let k2plist = Object.keys(k2p);
 		//return Object.keys(k2p)
 		return k2plist
 			.reduce( (prev1,k1) => {
@@ -580,7 +599,20 @@ class Soramimic {
 	ld(kanaDist,s,t){
 		if(typeof s === "undefined" ||  typeof t === "undefined")
 			console.log("ld",s,t);
-		return zip(s,t).reduce((prev,[v1,v2])=> prev+=kanaDist[v1][v2],0);
+		//console.log("ld_kanadist",kanaDist);
+		return zip(s,t).reduce((prev,[v1,v2])=> {
+			if(!(v1 in kanaDist)){
+				console.log(v1);
+				return prev+100;
+			}else if(!(v2 in kanaDist[v1])){
+				console.log(v2);
+				return prev+100;
+			}
+			else{
+				prev += kanaDist[v1][v2];
+				return prev;
+			}
+			},0);
 	}
 
 	//kanaListのkeysの単位で文字列を分割する
@@ -636,11 +668,26 @@ class Soramimic {
 		const splitter = "|";
 		//console.timeEnd("def");//0.002msくらい
 		for(let i = 0;i<kana.length; i++){
-			const p = kana[i];
+			let p = kana[i];
 			const last = resulttext[resulttext.length-1];
+			const last2 = resulttext[resulttext.length-2];
 			if(p in vowels && vowels[p].includes(last)){
+				if(last in vowels && vowels[last].includes(resulttext[resulttext.length-2])){
+					resulttext += splitter;
+				}
 			}
 			else if(smallChars.includes(p)){
+				if("ァィェォ".includes(p) && last == "ウ" && vowels[last].includes(last2)){
+					//console.log(kana);
+					resulttext = resulttext.slice(0,-1)+splitter+last;
+					//console.log(resulttext);
+				}
+				else if("ーンッ".includes(p) && last in vowels && vowels[last].includes(last2)){
+					resulttext = resulttext.slice(0,-1)+splitter+last;
+				}
+				else if("ーンッ".includes(p) && "ーンッ".includes(last)){
+					continue;
+				}
 			}
 			else if(p == splitter){
 			}
@@ -705,7 +752,8 @@ class Soramimic {
 	getPronunciationVariation(kana){
 		const kanaUnits = this.KANA_UNITS_;
 		const variations = kana.map(v => {
-			if(Object.keys(kanaUnits).indexOf(v)>=0)
+			//if(Object.keys(kanaUnits).indexOf(v)>=0)
+			if(v in kanaUnits)
 				return kanaUnits[v];
 			else
 				return [v];
@@ -717,9 +765,11 @@ class Soramimic {
 
 	//入力にkanaDist下で距離の近い単語を求める
 	getSimilarWord(kanaDist,wordlist,target,param,length=1){
+		//console.log(kanaDist);
 		const orglen = target.length,
 			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
-			cand = this.getPronunciationVariation(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
+			//cand = this.getPronunciationVariation(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
+			cand = this.getPronunciationVariation(target).filter(v=>{return v.length in wordlist}),
 			cand2 = {}
 		let	sims = [],
 			words = []
@@ -727,13 +777,15 @@ class Soramimic {
 
 		for(let val of cand){
 			const tmplength = val.length;
-			if(Object.keys(cand2).indexOf(tmplength)<0)
+			//if(Object.keys(cand2).indexOf(tmplength)<0)
+			if(!(tmplength in cand2))
 				cand2[tmplength] = []
 			cand2[tmplength].push(val);
 		};
 		for(let i of Object.keys(cand2)){
 			sims = sims.concat(
 					wordlist[i].map(w => {
+						//console.log("kanaDist",kanaDist);
 						const tmplist = cand2[i].map(tar=>this.ld(kanaDist,tar,w[2])/i);
 						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
 					})
@@ -755,7 +807,7 @@ class Soramimic {
 }
 
 const soramimic = new Soramimic();
-soramimic.getYomi("アイウエオ");
+//soramimic.getYomi("アイウエオ");
 //db.separateKana("ヴォオーギン");
 //testText = "ーー、ーーーー、ーー、ーーー";
 //testStr = "ー"

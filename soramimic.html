@@ -4,19 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Soramimic</title>
-<!--
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
- -->
-
+<!--
 <script src="jquery/ajax-1.7.0-jquery.min.js"></script>
 <script src="jquery/jquery-1.11.0.min.js"></script>
 <script src="jquery/jquery.cookie.js"></script>
 <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <script src="bootstrap/js/bootstrap.min.js"></script>
+ -->
 
 <script src="js/utils.js"></script>
 <script src="js/kuromoji/build/kuromoji.js"></script>
@@ -31,12 +31,12 @@
 			<div class="form-group col-xs-12 radio-wordlist">
 				<label class="" for=>単語リストの種類</label>
 				<div class="radio-file">
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/baseball.txt" checked="checked">野球選手</label>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/stations.txt">駅名</label>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/nations.txt">国名</label>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/sekitsui.txt">動物</label>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/pokemon.txt">ポケモン</label>
-					<label class="radio-inline"><input type="radio" name="wordfile" value="words/physicist.txt">物理学者</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="BASEBALL" checked="checked">野球選手</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="STATION">駅名</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="NATION">国名</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="SEKITSUI">動物</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="POKEMON">ポケモン</label>
+					<label class="radio-inline"><input type="radio" name="wordfile" value="PHYSICIST">物理学者</label>
 				</div>
 				<div>
 					<label class="radio-inline radio-original"><input type="radio" name="wordfile" value="original">自作の単語リストを使用</label>
@@ -74,18 +74,11 @@
 	</div>
 </body>
 <script>
+//$(".btn-send").click(function(){
+//	alert("bbbbbb")
+//});
 //グローバルに使う関数群の宣言
-let makeKanaDist,
-	loadDB,
-	GetYomi,
-	separateKana,
-	convertBar,
-	wordlist,
-	getSimilarWord,
-	promise,
-	isParamChanged = false;
-
-
+let	isParamChanged = false;
 
 $("div.container-fluid").hide();
 $(".loading").show();
@@ -112,307 +105,10 @@ const getParam = () => {
 	console.log("param",param);
 	return param;
 }
-const ld_outer = cost => {
-	return (s,t) => zip(s,t).reduce((prev,[v1,v2])=> prev+=cost[v1][v2],0);
-}
-
-//母音同士、子音同士の距離から、ひらがな同士の距離を求める関数
-//outerで、母音同士、子音同士の類似度など必要なファイルを読み込んでおく
-//innerで、その都度パラメータによる微調整を加えた音素間類似度のobjectを返す。
-const makeKanaDist_outer = () => {
-	const configs = {}
-	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
-	$.ajaxSetup({async: false});
-	$.when(
-		$.getJSON("conf/allkanaBi.json"),
-		$.getJSON("conf/simConsonantsSimple.json"),
-		$.getJSON("conf/simVowelsSimple.json"),
-		$.getJSON("conf/vowels.json"),
-		$.getJSON("conf/consonants.json")
-	)
-	.done((allkana, cCost, vCost,vowels,consonants) => {
-		const k = {}
-		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(([v1,v2]) => {
-			configs[v1]=v2[0];
-		});
-		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
-
-		for (let v1 of Object.keys(allkana)){
-			const s1 = allkana[v1];
-			k[v1] = {}
-			for ( let v2 of Object.keys(allkana)){
-				const s2 = allkana[v2];
-				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
-			}
-		}
-		configs["kanaCostElement"] = k;
-		//console.log(configs["kanaCostElement"]);
-	})
-	.fail(function(){
-		console.log("error");
-	})
-	$.ajaxSetup({async: true});
-
-	const reflectParam = (costkana, param) => {
-		const vowels = configs["vowels"],
-			sameVowel = param["sameVowel"],
-			consonants = configs["consonants"],
-			sameConsonant = param["sameConsonant"]
-			;
-
-		//console.log(costkana["ア"]);
-		if(sameVowel != 1){
-			for(let v1 of Object.keys(vowels)){
-				const vowel = vowels[v1];
-				for(let v2 of vowel){
-					for(let v3 of vowel){
-						 costkana[v2][v3] *= sameVowel;
-					 };
-				};
-			}
-		}
-
-		if(sameConsonant != 1){
-			for(let v1 of Object.keys(consonants)){
-				const consonant = consonants[v1];
-				for(let v2 of consonant){
-					for(let v3 of consonant){
-						 costkana[v2][v3] *= sameConsonant;
-					}
-				}
-			}
-		}
-		return costkana;
-	}
-
-	const makeKanaDist_inner = param => {
-		const w = [param["consonant"],param["vowel"]],
-			//sameChar = param["sameChar"],
-			//sameVowel = param["sameVowel"],
-			single = configs["single"],
-			costKanaBi = {},
-			k = configs["kanaCostElement"]
-			;
-		for(let v1 of Object.keys(k)){
-			const s1 = k[v1];
-			costKanaBi[v1] = {}
-			for(let v2 of Object.keys(k)){
-				const s2 = s1[v2];
-				let m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
-				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
-					m = s2[1];
-				}
-				costKanaBi[v1][v2] = Math.round(m*100)/100;
-				if(isNaN(costKanaBi[v1][v2]))
-					console.log(v1,v2);
-			};
-		};
-		return reflectParam(costKanaBi,param);
-	}
-	return makeKanaDist_inner;
-}
-
-const getSimilarWord_outer = param => {
-	const kanadist = makeKanaDist(param),
-		ld = ld_outer(kanadist),
-		memo = {}
-		;
-	console.log("kanadist",kanadist["ア"]["カ"],kanadist["ア"]["イ"]);
 
 
-	const getSimilarWord_inner = (wordlist, target, length = 1) => {
-		const orglen = target.length,
-			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
-			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
-			cand2 = {}
-		let	sims = [],
-			words = []
-			;
-		//console.log("targetlength",orglen,target);
-
-		for(let val of cand){
-			const tmplength = val.length;
-			if(Object.keys(cand2).indexOf(tmplength)<0)
-				cand2[tmplength] = []
-			cand2[tmplength].push(val);
-		};
-
-		for(let i of Object.keys(cand2)){
-			sims = sims.concat(
-					wordlist[i].map(w => {
-						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
-						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
-					})
-				);
-			words = words.concat(wordlist[i]);
-		}
-
-		return argsort(sims)
-				.slice(0,length) //指定された長さまでを切り取る
-				.map(val => {
-					const tmpW = words[val];
-					return [target.join(""), tmpW[1],tmpW[0], sims[val],tmpW[3]];
-				});
-	}
-
-	return getSimilarWord_inner;
-
-}
-
-const soramimi_dp = (text, wordlist, para) => {
-	const param = setDefaultParameters(para),
-		gs = getSimilarWord_outer(param),
-		gy = GetYomi,
-		splitter=param["splitter"],
-    	repeat = param["repeat"],
-	    isDuplicate = param["duplicate"],
-	    penaBreak = param["bunsetsu"],
-	    wordsNum = param["wordsNum"],
-	    takeLen = param["length"],
-	    number = Object.keys(wordlist).map(i => Number(i)),
-	    phrases = text.split(splitter),
-	    phraselen = phrases.length,
-		//phraseの基本的な構造を解析
-	    base_info = phrases.reduce((prev,val)=>{
-			prev["raws"].push(val);
-			prev["targets"].push(separateKana(gy(val)));
-			return prev;
-		},{"raws":[],"targets":[],"indexBreaks":[]}),
-	    results = ["relativeScores","scores","words"].reduce((prev,val)=>{
-			prev[val] = Array(phraselen);
-			prev[val].fill([]);
-			return prev;
-		},{});
-	    ;
-
-
-	//base_infoの確認
-	for (let v of Object.keys(base_info)){
-		console.log(v, base_info[v]);
-	}
-
-	const dp = index => {
-		const target = base_info["targets"][index],
-        	//breaks = base_info["indexBreaks"][index],
-        	tarlen = target.length,
-        	//used = results["words"].map(v => v.map(v2 => v2.slice(-1)[0])).flat(),//mapやforEachではなぜかだめだった
-        	used = [],
-        	memo = {0:[]},
-        	error = null
-        	;
-
-		//mapやforEachではなぜか参照できなかったので、これを使う
-		//console.log("result_word",results["words"][0]);
-		for(let v of results["words"]){
-			for(let v2 of v)
-				used.push(v2.slice(-1)[0]);
-		}
-		//console.log("used",used);
-
-
-		const dp_inner = t => {
-			const mini_result = {"scores":[],"words":[]}
-			if(Object.keys(memo).indexOf(String(t))>=0){
-				return memo[t];
-			}else{
-			}
-
-			for (let i = 0; i<t; i++){
-
-				if ( number.indexOf(t-i)<0 ){
-					continue
-				}
-
-				let words = dp_inner(i);
-				if(words === error)
-					continue;
-				else{
-					words = words.slice();
-				}
-
-				let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
-				const currentUsed = words.map(v => v[v.length-1]),
-					newWord = []
-				;
-
-				//console.log("target_out",target);
-				for(let w of gs(wordlist,target.slice(i,t),100)){
-					const wid = w.slice(-1)[0],
-						wscore = w.slice(-2)[0]
-						;
-					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
-						continue;
-					words.push(w);
-					//console.log("newWord",w,wscore,scoreb,score);
-					score += wscore;
-					break;
-				}
-				//console.log("score",i,t,scoreb,score);
-				score += words.length*wordsNum;
-				mini_result["scores"].push(score);
-				mini_result["words"].push(words);
-			}
-			if(mini_result["scores"].length > 0){
-				const arg = argmin(mini_result["scores"]);
-				memo[t] = mini_result["words"][arg];
-				return memo[t];
-			}
-			else{
-				memo[t] = error;
-				return memo[t];
-			}
-
-		}
-		return dp_inner(tarlen+1);
-	}
-
-	//progressBarの初期値設定
-
-	const bar = $(".progress-bar.convert-progress");
-	bar.css("width","0%");
-	//bar.attr("aria-valuenow","0");
-	//bar.attr("aria-valuenmin","0");
-	//bar.attr("aria-valuenmax",phraselen);
-
-	phrases.forEach((v,i)=>{
-		const r = dp(i);
-		if ( r != null)
-			results["words"][i] = r;
-		//progressBarの変更
-		const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
-		bar.css("width", percentStr);
-		bar.html(percentStr);
-	});
-	return results["words"];
-	//dp(0);
-
-}
-
-promise = MakeTokenizer()
-promise
-.then((tokenizer) => {
-	GetYomi = GetYomi_outer(tokenizer);
-	makeKanaDist = makeKanaDist_outer();
-	loadDB = loadDatabaseText;
-	separateKana = separateKana_outer();
-	convertBar = convertBar_outer();
-	const param = getParam();
-	console.log(param);
-	getSimilarWord = getSimilarWord_outer(param);
-
-	wordlist = {}
-	$('.radio-file').find("input[type=radio]").prop("disabled",true);
-	$('.radio-file').find("input[type=radio]").each(function(index, element){
-		const path = $(element).val();
-		wordlist[path] = loadDatabaseFile(path);
-		$(element).prop("disabled",false);
-	});
-	wordlist["original"] = wordlist["words/nations.txt"];
-	$(".container-fluid").show();
-	$(".loading").remove();
-
-});
-
+$(".container-fluid").show();
+$(".loading").remove();
 //textareaだとコメントアウトできなくて面倒なので
 //$( '.ipt-word' ).keypress( function ( e ) {
 //	if ( e.which == 13 ) {
@@ -467,7 +163,7 @@ const makeDialog = () => {
 	$(".ta-original-wordlist").height("99%");
 	$(".ta-original-wordlist").val(localStorage.getItem(storageKey));
 }
-makeDialog();
+//makeDialog();
 
 $(".radio-original").click(function(){
 	$(".dialog-original").dialog("open");
@@ -486,6 +182,7 @@ $(".ipt-parameter").on("input",function(){
 })
 
 $(".btn-send").click(function(){
+
 	$(".loading2").show();
 	let text = $(".ipt-word").val();
 	console.log(text);
@@ -502,7 +199,7 @@ $(".btn-send").click(function(){
 	*/
 	const wordfile = $("input[name=wordfile]:checked").val();
 
-	console.log("GetYomi",GetYomi(text));
+	//console.log("GetYomi",GetYomi(text));
 	//text = GetYomi(text);
 	//console.log("afterGetYomi",text);
 	//text = separateKana(text);
@@ -510,15 +207,15 @@ $(".btn-send").click(function(){
 	//console.log(text);
 	if(isParamChanged){
 		const param = getParam();
-		getSimilarWord = getSimilarWord_outer(param);
+		//getSimilarWord = getSimilarWord_outer(param);
 		isParamChanged = false;
 		console.log("isParamChanged",isParamChanged);
 	}
 	//console.time("getSimilarWord");
 	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	//console.timeEnd("getSimilarWord");
-	console.time("soramimi_dp");
-	console.log("soramimi",soramimic.soramimi_dp("こんにちは",soramimic.WORD_LIST_.BASEBALL,{}));
+	console.time("soramimi_dp",text,wordfile);
+	const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],{});
 	//const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});
 	console.timeEnd("soramimi_dp");
 
