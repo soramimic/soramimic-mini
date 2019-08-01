@@ -210,31 +210,36 @@ class Soramimic {
 					}
 
 					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
-					const currentUsed = words.map(v => v[v.length-1]),
-						newWord = []
+					const currentUsed = words.map(v => v[v.length-1]);
+					const newWord = []
 					;
 
 					//console.log("target_out",target);
+					let isFind = false;
 					for(let w of gs(wordlist,target.slice(i,t),100)){
 						const wid = w.slice(-1)[0],
 							wscore = w.slice(-2)[0]
 							;
-						if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
+						if(isDuplicate == false && used.includes(wid) || currentUsed.includes(wid))
 							continue;
 						words.push(w);
 						//console.log("newWord",w,wscore,scoreb,score);
 						score += wscore;
+						isFind = true;
 						break;
 					}
-					//console.log("score",i,t,scoreb,score);
-					score += words.length*wordsNum;
-					mini_result["scores"].push(score);
-					mini_result["words"].push(words);
-					//console.log(mini_result);
+					if(isFind){
+						//console.log("score",i,t,scoreb,score);
+						score += words.length*wordsNum;
+						mini_result["scores"].push(score);
+						mini_result["words"].push(words);
+						//console.log(mini_result);
+
+					}
 				}
 				if(mini_result["scores"].length > 0){
 					if(t == tarlen+1){
-						console.log("mini_result",mini_result["words"]);
+						//console.log("mini_result",mini_result["words"]);
 						const targetstr = target.join("");
 						for(let i=0;i<mini_result["scores"].length;i++){
 							const resultstr = mini_result["words"][i].map(v=>v[0]).join("");
@@ -243,7 +248,8 @@ class Soramimic {
 								//console.log(i,resultstr,mini_result["scores"][i]);
 							}
 						}
-						console.log("mini_result",mini_result);
+						console.log("mini_result",target,mini_result);
+						console.log("memo",memo);
 					}
 					const arg = argmin(mini_result["scores"]);
 					memo[t] = mini_result["words"][arg];
@@ -675,11 +681,18 @@ class Soramimic {
 				if(last in vowels && vowels[last].includes(resulttext[resulttext.length-2])){
 					resulttext += splitter;
 				}
+				else if(p=="ウ" && i<kana.length-1 && "ァィェォ".includes(kana[i+1])){
+					resulttext += splitter;
+				}
+				else{
+					resulttext += "ー";
+					continue;
+				}
 			}
 			else if(smallChars.includes(p)){
 				if("ァィェォ".includes(p) && last == "ウ" && vowels[last].includes(last2)){
 					//console.log(kana);
-					resulttext = resulttext.slice(0,-1)+splitter+last;
+					//resulttext = resulttext.slice(0,-1)+splitter+last;
 					//console.log(resulttext);
 				}
 				else if("ーンッ".includes(p) && last in vowels && vowels[last].includes(last2)){
