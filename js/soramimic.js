@@ -67,6 +67,7 @@ class Soramimic {
 		this.KANA_UNITS_LIST_ = Object.keys(this.KANA_UNITS_);
 		this.SMALL2LARGE_ = this.getSmall2Large(this.SMALL_VOWELS_,this.LARGE_VOWELS_);//小さい母音を大きい母音に変換するオブジェクト
 
+
 		this.VOWEL_SIMILARTIY_FILE_PATH_ = "conf/simVowelsSimple.json";
 		this.CONSONANT_SIMILARITY_FILE_PATH_ = "conf/simConsonantsSimple.json";
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
@@ -92,12 +93,9 @@ class Soramimic {
 				STATION: "words/stations.txt"
 		}
 		this.WORD_LIST_ = {}
-
-		console.time("buildTokenizer");
+		//console.time("buildTokenizer");
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
-			console.timeEnd("buildTokenizer");
-			console.log("yomi waokitsune",this.getYomi("ワオキツネザル"));
 			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
 			console.timeEnd("loadWordList");
@@ -115,6 +113,7 @@ class Soramimic {
 			console.timeEnd("dp");
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
+
 
 
 	}
@@ -210,31 +209,36 @@ class Soramimic {
 					}
 
 					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
-					const currentUsed = words.map(v => v[v.length-1]),
-						newWord = []
+					const currentUsed = words.map(v => v[v.length-1]);
+					const newWord = []
 					;
 
 					//console.log("target_out",target);
+					let isFind = false;
 					for(let w of gs(wordlist,target.slice(i,t),100)){
 						const wid = w.slice(-1)[0],
 							wscore = w.slice(-2)[0]
 							;
-						if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
+						if(isDuplicate == false && used.includes(wid) || currentUsed.includes(wid))
 							continue;
 						words.push(w);
 						//console.log("newWord",w,wscore,scoreb,score);
 						score += wscore;
+						isFind = true;
 						break;
 					}
-					//console.log("score",i,t,scoreb,score);
-					score += words.length*wordsNum;
-					mini_result["scores"].push(score);
-					mini_result["words"].push(words);
-					//console.log(mini_result);
+					if(isFind){
+						//console.log("score",i,t,scoreb,score);
+						score += words.length*wordsNum;
+						mini_result["scores"].push(score);
+						mini_result["words"].push(words);
+						//console.log(mini_result);
+
+					}
 				}
 				if(mini_result["scores"].length > 0){
 					if(t == tarlen+1){
-						console.log("mini_result",mini_result["words"]);
+						//console.log("mini_result",mini_result["words"]);
 						const targetstr = target.join("");
 						for(let i=0;i<mini_result["scores"].length;i++){
 							const resultstr = mini_result["words"][i].map(v=>v[0]).join("");
@@ -243,7 +247,8 @@ class Soramimic {
 								//console.log(i,resultstr,mini_result["scores"][i]);
 							}
 						}
-						console.log("mini_result",mini_result);
+						console.log("mini_result",target,mini_result);
+						console.log("memo",memo);
 					}
 					const arg = argmin(mini_result["scores"]);
 					memo[t] = mini_result["words"][arg];
@@ -348,7 +353,7 @@ class Soramimic {
 	}
 
 	loadDatabaseText(text){
-		const words = text.split("\n").map(val=>{
+		let words = text.split("\n").map(val=>{
 			val = val.replace(/\u200B/g, "");//エスケープ処理
 			val = val.split("#")[0].split(",");//各行において#以降をコメントアウトして、カンマでスプリット
 			return val;
@@ -377,8 +382,10 @@ class Soramimic {
 		return words.reduce((prev,v,index)=>{
 				if(v.length == 1)
 					v.push(this.getYomi(v[0]));
+
 				const title = v[0];
 				for(let v2 of v.slice(1)){
+
 					const yomi = this.getYomi(v2);
 					if(index<10)
 						console.time("separateKana");
@@ -387,6 +394,7 @@ class Soramimic {
 						console.timeEnd("separateKana");
 					const ptn = this.getPronunciationVariation(sep);
 					//console.log("yomi",yomi);
+
 					for(let v3 of ptn){
 						const v3len = v3.length;
 						//console.log("prev:",prev);
@@ -396,6 +404,7 @@ class Soramimic {
 						}
 						prev[v3len].push([title,v2,v3,index]);
 					}
+
 				}
 				return prev;
 			},{});
@@ -617,31 +626,58 @@ class Soramimic {
 
 	//kanaListのkeysの単位で文字列を分割する
 	separateKana(kanaStr){//kanaUnitsはカナのリスト(not object)を想定
-		const S2L = this.SMALL2LARGE_,
-			KANA_UNITS_ = this.KANA_UNITS_LIST_,
-			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
-			LEN_MAX_ = 3
-			;
 
+		const S2L = this.SMALL2LARGE_,
+			KANA_UNITS_ = this.KANA_UNITS_LIST_
+			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
+			//LEN_MAX_ = 3
+			;
+		//console.timeEnd("1");
+		//console.time("2");
 		//伸ばし棒に変換可能な小文字を変換する
-		let kana = [].map.call(kanaStr,(v,i)=>{
+		//1文字めが小文字だったら大文字に直す
+		if(kanaStr.length>0 && SMALL_VOWELS_.includes(kanaStr[0]))
+			kanaStr = S2L[kanaStr[0]]+kana.slice(1);
+		//2文字目が小文字母音で1--2文字目がカナユニットに含まれていないとき
+		if(kanaStr.length>1 && SMALL_VOWELS_LIMITED_.includes(kanaStr[1]) && KANA_UNITS_.includes(kanaStr.slice(0,2)) == false){
+			const str = kanaStr[0]+S2L[kanaStr[1]];
+			//2文字目を大文字に変換したやつがカナユニットに含まれていたとき、2文字目を伸ばし棒に変換する
+			if(KANA_UNITS_VOWEL_END_.includes(str))
+				kanaStr = kanaStr[0]+"ー"+kanaStr.slice(2);
+		}
+		let kana = kanaStr.slice(0,2)+[].map.call(kanaStr.slice(2),(v,i)=>{
+			//コメントアウトしてたときのやり方より気持ち早い
+			if(SMALL_VOWELS_LIMITED_.includes(v)){
+				let str = kanaStr[i+1]+S2L[v];
+				if(KANA_UNITS_VOWEL_END_.includes(str) || KANA_UNITS_VOWEL_END_.includes(kanaStr[i]+str))
+					return "ー";
+				else
+					return v;
+			}
+			else{
+				return v;
+			}
+			/*
 			switch(v){
 			case "ァ": case "ィ": case "ゥ": case "ェ": case "ォ":
 				if(i>0){
 					const str = kanaStr[i-1]+S2L[v];
-					if(KANA_UNITS_.indexOf(str)>=0)
+					if(KANA_UNITS_.includes(str))
 						return "ー";
 				}
 				if(i>1){
 					const str = kanaStr.slice(i-2,i)+S2L[v];
-					if(KANA_UNITS_.indexOf(str)>=0)
+					if(KANA_UNITS_.includes(str))
 						return "ー";
 				}
 				return v;
 			default:
 				return v;
 			}
+			*/
 		}).join("");
+		//console.timeEnd("2");
+		//console.time("3");
 		//連続してても意味のない音を一音に置き換える
 		/*
 		for(let v of ["ー","ッ","ン"]){
@@ -675,11 +711,18 @@ class Soramimic {
 				if(last in vowels && vowels[last].includes(resulttext[resulttext.length-2])){
 					resulttext += splitter;
 				}
+				else if(p=="ウ" && i<kana.length-1 && "ァィェォ".includes(kana[i+1])){
+					resulttext += splitter;
+				}
+				else{
+					resulttext += "ー";
+					continue;
+				}
 			}
 			else if(smallChars.includes(p)){
 				if("ァィェォ".includes(p) && last == "ウ" && vowels[last].includes(last2)){
 					//console.log(kana);
-					resulttext = resulttext.slice(0,-1)+splitter+last;
+					//resulttext = resulttext.slice(0,-1)+splitter+last;
 					//console.log(resulttext);
 				}
 				else if("ーンッ".includes(p) && last in vowels && vowels[last].includes(last2)){
@@ -704,21 +747,17 @@ class Soramimic {
 			}else{
 				let isBreak = false;
 				for(let j = LEN_MAX_; j>0; j--){
-					//for(let k = LEN_MAX_ - j; k>-1; k--){
-						if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
-							//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
-							if(j>1 && "アイウエオ".indexOf(kana[i+j-1])>=0 && KANA_UNITS_.indexOf(kana.slice(i,i+j-1))>=0){
-								prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
-							}
-							else{
-								prev.push(kana.slice(i,i+j));
-							}
-							isBreak = true;
-							break;
+					if(KANA_UNITS_.includes(kana.slice(i,i+j))){
+						//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
+						if(j>1 && "アイウエオ".includes(kana[i+j-1]) && KANA_UNITS_.includes(kana.slice(i+j-1,i+j+1))){
+							prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
 						}
-					//}
-					if(isBreak == true)
+						else{
+							prev.push(kana.slice(i,i+j));
+						}
+						isBreak = true;
 						break;
+					}
 				}
 				if(isBreak == false)
 					console.log(kana,kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
@@ -751,9 +790,15 @@ class Soramimic {
 	//母音連続時の変換パターンのリスト("アア"を[["アー"],["ア","ア"]]にするなど)
 	getPronunciationVariation(kana){
 		const kanaUnits = this.KANA_UNITS_;
+		//const kanaUnitsList = this.KANA_UNITS_LIST_;
 		const variations = kana.map(v => {
+<<<<<<< HEAD
 			//if(Object.keys(kanaUnits).indexOf(v)>=0)
 			if(v in kanaUnits)
+=======
+			if(v in kanaUnits)
+			//if(kanaUnitsList.includes(v))
+>>>>>>> branch 'soramimic' of ssh://git@github.com/JiroShimaya/SoramimicJS.git
 				return kanaUnits[v];
 			else
 				return [v];
