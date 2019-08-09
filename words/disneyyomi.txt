@@ -1,0 +1,720 @@
+Mickey Mouse,ミッキーマウス,ミッキー
+Minnie Mouse,ミニーマウス,ミニー
+Donald Duck,ドナルドゥダック,ドナルドダック,ドナルドゥ,ドナルド
+Daisy Duck,デイジーダック,デイジー
+Huey Duck,ヒューイダック,ヒューイ
+Dewey Duck,デューイダック,デューイ
+Louie Duck,ルーイダック,ルーイ
+Scrooge McDuck,スクルージマクダック,スクルージ
+Goofy,グーフィー
+Pluto,プルート
+#Chip 'n Dale,チッペンデイル
+Dale,デイル
+Chip,チップ
+Clarice,クラリス
+Pete,ピートゥ,ピート
+Clarabelle Cow,クララベルカウ,クララベル,カウ
+Max Goof,マックスグーフ,マックス,グーフ
+Horace Horsecollar,ホーラスホースカラー,ホーレスホースカラー,ホーレス,ホーラス,ホースカラー
+Clara Cluck,クラーラクラック,クララクラック,クララ,クラック
+Bashful,バッシュフル
+Doc,ドック
+Dopey,ドーピ,ドゥーピ
+Grumpy,グランピー
+Happy,ハッピー
+Humbert the Huntsman,ハンベルトザハンツマン,ハンベルト,ハーベルト,ハンツマン,ザハンツマン
+The Magic Mirror,ザマジックミラー,マジックミラー
+The Prince(snow-white),ザプリンス,プリンス
+Evil Queen,イーブルクィーン,イービルクイーン,イービルクィーン,クイーン
+Sleepy,スリーピー
+Sneezy,スニージー
+Snow White,スノウホワイトゥ,スノウホワイト
+The Blue Fairy,ザブルーフェアリー,ブルーフェアリー
+Cleo,クレオ
+Figaro,フィガロ
+Foulfellow the Fox,ファルフェロウウザフォックス,ファウルフェロウ,オーネストジョン,ワシントン,ジョンワシントン,ジョン,ジョンワシントンファウルフェロウ
+Geppetto,ゼペット
+Gideon the Cat,ギデオンザキャットゥ,キャット,ザキャット,キャットゥ,ザキャットゥ
+Jiminy Cricket,ジミニイクリケットゥ,ジミニー,クリケット
+Lampwick,ランプウィック
+Monstro,モンストロ,モンストゥロ
+Pinocchio,ピノキオウ
+Stromboli,ストランボリ,ストロンボリ
+The Coachman,ザコーチマン,コーチマン
+Casey Junior,ケイシイジュニア,ケイシー
+Dumbo,ダンボ
+Timothy Q. Mouse,ティモシーキューマウス,ティモシー
+Mrs. Jumbo,ミセスジャンボ,ジャンボ
+Mr. Stork,ミスターストーク,ストーク
+Jim Crow,ジムクロウ,ジム,クロウ
+Brer Bear,ブラーベアー,ブラー,ベアー
+Brer Fox,ブラーフォックス,ブラー,フォックス
+Brer Rabbit,ブラーラビットゥ,ブラー,ラビットゥ
+Anastasia Tremaine,アナスタシアトレメイン,アナスタシア,トレメイン,トゥレメイン,トレマイン,トレマイン
+Bruno,ブルーノ
+Cinderella,シンデレラ
+Drizella Tremaine,ドリゼラトレメイン,ドリゼラ,ドゥリゼラ,トレメイン
+Fairy Godmother,フェアリーゴッドゥマザー,ゴッドマザー,フェアリー
+Jaq,ジャク
+Lady Tremaine,レイディートレマイン,トレマイン,レディ
+Octavius (Gus),オクタビス,ガス
+Prince Charming,プリンスチャーミング,チャーミング,プリンス
+The King,ザキング,キング
+The Grand Duke,ザグランドゥデューク,グランドデューク,デューク
+Lucifer,ルシファー
+The Baker,ザベイカー,ベイカー
+Sir Hugh,サーヒュー,ヒュー
+Bert,バートゥ,バート
+Flower Vendor,フラワーベンダー
+Prudence,プルードゥンス
+Pom-Pom,ポンポン
+Mary Mouse,メアリーマウス,メアリー
+Beatrice,ビーアトゥリス
+Daphne,ダフネ
+Alice,アリス
+Time,タイム
+Bill,ビル
+Catapiller,キャタピラー
+Chessur,チェシャ,チェッサ
+Dinah,ダイナ
+Dodo,ドゥードゥー
+Doorknob,ドアノブ
+Dormouse,ドーマウス
+Mad Hatter,マッドゥハッター
+March Hare,マーチヘアー
+Queen of Hearts,クィーンオブハーツ,クイーン,ハーツ
+Tweedle Dee,トゥウィードゥルディー
+Tweedle Dum,トゥウィードゥルダム
+White Rabbit,ホワイトゥラビットゥ,ラビット
+The white Queen,ザホワイトゥクィーン,ホワイトクイーン,クイーン
+Hamish,ハミッシュ
+Ms.Kingsly,ミスキングスリー,キングスリー
+Captain Hook,キャプテンフック,フック,キャプテン
+The Crocodile/Tic Toc,ザクロコダイル,クロコダイル,ティックトック,ティックタック
+George Darling,ジョージダーリング,ジョージ,ダーリング
+John Darling,ジョンダーリング,ジョン,ダーリング
+The Lost Boys,ザロストゥボーイズ,ロストボーイズ
+Mary Darling,メアリーダーリング,メアリー,ダーリング
+Michael Darling,マイケルダーリング,マイケル,ダーリング
+Nana,ナナ
+Peter Pan,ピーターパン,ピーター
+Mr. Smee,ミスタースミー,スミー
+Tiger Lily,タイガーリリー,リリー,タイガー
+Tinker Bell,ティンカーベル,ベル,ティンカー
+Wendy Darling,ウェンディーダーリング,ウェンディ,ダーリング
+Aunt Sarah,アーントゥサラ,アント,サラ
+Darling,ダーリング
+Jim Dear,ジムディア,ジム,ディア
+Jock,ジョック
+Lady,レイディー
+Si and Am,シーエンダム
+Tramp,トゥランプ,トランプ
+Trusty,トゥラスティー
+Peg,ペグ
+King Stephan,キングシュテファン,キング,シュテファン
+King Hubert,キングヒューバートゥ,キング,ヒューバート,ヒューバートゥ
+Aurora/Briar Rose,オーロラ,ブライア,ブライアロウズ
+Fauna,フォーナ
+Flora,フローラ
+Maleficent,マレフィセントゥ
+Merryweather,メリーウェザー
+Prince Philip,プリンスフィリップ,フィリップ,プリンス
+Anita,アニータ
+Coco,ココ
+Cruella de Vil,クルエラデヴィル,クルエラ
+Danny,ダニー
+Lucky,ラッキー
+Cadpig,キャドピグ,キャッピグ
+Wally,ウォリー
+Spot,スポットゥ
+Dipstick,ディプスティック
+Domino,ドミノ
+Freckles,フレックルズ
+Horace,ホーラス
+Jasper,ジャスパー
+Duffy,ダフィイ
+Nanny,ナニイ
+Oddball,アッボール,アッドボール
+Patch,パッチ
+Penny,ペニー
+Pepper,ペッパー
+Perdita,パーディタ
+Pongo,ポンゴ
+Roger,ロジャー
+Rolly,ロリー
+Sarge,サージ
+Tibbs,ティブス
+Archimedes,アーカミーディーズ
+Sir Ector,サーエクタ,エクタ
+Sir Kay,サーケイ,ケイ
+Merlin,マーリン
+Madam Mim,マダムミム,ミム,マダム
+Wart/Arthur,ウォルト,ワート,アーサー
+Bert,バートゥ
+Mrs. Banks,ミセスバンクス,バンクス
+Mr. Banks,ミスターバンクス,バンクス
+Jane,ジェイン
+Mary Poppins,メアリーポピンズ,メリーポピンズ,メアリー,メリー,ポピンズ
+Michael,マイケル
+Winnie the Pooh,ウィニーザプー,プー
+Christopher Robin,クリストファーロビン,クリストファー,ロビン
+Piglet,ピグレット
+Eeyore,イーヨー
+Kanga,カンガ
+Roo,ルー
+Tigger,ティガー
+Rabbit,ラビットゥ
+Owl,アウル
+Gopher,ゴウファー
+Mrs. Heffalump,ミセスヘッフォラン,ミセスエレファン,エレファン,ヘッフォラン
+Lumpy,ランピ
+Cassy,キャシー
+Jagular,ジャグラー
+Woozles,ウーズルズ,ウーズル
+Mowgli,モーグリ
+Baloo,バルー
+Bagheera,バギーラ
+Shere Khan,シェアカーン
+King Louie,キングルーイ,ルーイ
+Akela,アキーラ
+Kaa,カー
+Colonel Hathi,カーナルハシ
+Grey Brother,グレイブラザー,グレイ
+Raksha,ラクシャ
+Shanti,シャンティ
+Ranjan,ランジャン
+Alan-a-Dale,アランアデイル,デイル,アラン
+Friar Tuck,フライアータック,フライアー,ダック
+Captain of the Guard,キャプテンオブザガードゥ,キャプテン,ガード,ザガード
+Father Mouse,ファザーマウス,ファザー
+Mother Mouse,マザーマウス,マザー
+Lady Kluck,レイディークラック,クラック
+Little John,リトゥルジョン,ジョン
+Maid Marian,メイドゥマリアン,マリアン
+Mother Rabbit,マザーラビットゥ,マザー,ラビット
+Otto,オットー
+Prince John,プリンスジョン,プリンス,ジョン
+Robin Hood,ロビンフッドゥ,ロビン,フッド
+Sheriff of Nottingham,シェリフオブノッティンガム,ノッティンガム,シェリフ
+Sir Hiss,サーヒス,ヒス
+Sis,シス
+Skippy,スキッピ
+Tagalong,タガログ
+Toby,トビイ
+Trigger,トゥリガー
+Nutsey,ナッツェイ
+Baby Herman,ベイビイハーマン,ハーマン
+Benny the Cab,ベニイザキャブ,ベニー,ザキャブ,キャブ
+Eddie Valiant,エディーバリアントゥ,エディ,バリアント,バリアントゥ
+Jessica Rabbit,ジェシカラビットゥ,ジェシカ,ラビット,ラビットゥ
+Judge Doom,ジャッジドゥーム,ジャッジ,ドゥーム,ドーム
+Roger Rabbit,ロジャーラビットゥ,ロジャー,ラビットゥ
+The Toon Patrol,ザトゥーンパトゥロウル,トゥーンパトゥロル,パトロル,トゥーン
+Ariel,アリエル
+Adella,アデラ
+Alana,アラナ
+Andrina,アンドリナ
+Arista,アリスタ
+Atina,アティナ
+Aquata,アクアータ
+Carlotta,カロッタ,キャルロッタ,カルロッタ
+Chef Louis,シェフルイ,ルイ,シェフ
+Flotsam,フロッサム
+Flounder,フラウンダー,フランダー
+Grimsby,グリンスビー,グリスビー
+Jetsam,ジェットサム,ジェッサム
+King Triton,キングトゥライトン,キングトリトン,キングトゥリトゥン,トリトン,トライトン,トゥリトゥン
+Max,マックス
+Prince Eric,プリンスエリック,エリック,プリンス
+Scuttle,スカトゥル
+Sebastian,セバスティアン,セバスチャン
+Ursula/Vanessa,ウルスラ,アースラ,バネッサ,ヴァネッサ
+Athena,アシーナ
+Melody,メロディー
+Morgana,モーガーナ
+Undertow,アンダータウ
+Tip,ティップ
+Dash,ダッシュ
+Max the Sheepdog,マックスザシープドッグ,マックス,シープドッグ
+Beast/Prince Adam,ビースト,プリンスアダム,アダム
+Belle,ベル
+Chip,チップ
+Cogsworth,コグスワース
+Gaston,ガストン
+LeFou,ルフォー
+Lumiere,ルミヤ
+Maurice,モーリス
+Mrs. Potts,ミセスポッツ,ポッツ
+Aladdin,アラディン
+Princess Jasmine,プリンセスジャスミン,ジャスミン
+Genie,ジェニー
+Rajah,ラージャ
+Abu,アブー
+Jafar,ジャファー
+Iago,イヤゴウ,イヤーゴ
+Magic Carpet,マジックカーペットゥ,マジッカーペット
+The Sultan,ザサルタン,サルタン
+Ali Baba,アリババ
+Cassim,カシム
+Daliah,ダリア
+Hakeem,ハキーム
+Simba,シンバ
+Mufasa,ムファサ
+Sarabi,サラビ
+Nala,ナラ
+Timon,ティモン
+Pumbaa,プンバ
+Rafiki,ラフィキ
+Zazu,ザズ
+Scar/Taka,スカー,タカ
+Shenzi,シェンジ
+Banzai,バンザイ
+Ed,エドゥ
+Ben,ベン
+Chief Powhatan,チーフポウハタン,ポウハタン
+Flit,フリットゥ
+Governor Ratcliffe,ガバナーラトクリフ,ガバナー,ラトクリフ
+Grandmother Willow,グランドマザーウィロウ,グランドマザー,ウィロウ
+John Smith,ジョンスミス,ジョン,スミス
+Kekata,ケカタ
+Kocoum,コクーム
+Lon,ロン
+Meeko,ミーコ
+Nakoma,ナコマ
+Percy,パーシー
+Pocahontas,ポカホンタス
+Thomas,トーマス
+Wiggins,ウィジンズ
+Woody,ウッディー
+Buzz Lightyear,バズライトイヤー,バズ,ライトイヤー
+Jessie,ジェシー
+Mr. Potato head,ミスターポテイトウヘッドゥ,ミスターポテトヘッド,ポテトヘッド
+Rex,レックス
+Hamm,ハム
+Slinky,スリンキイ
+Bullseye,ブルズアイ
+Mrs. Potato head,ミセスポテイトウヘッドゥ,ミスターポテトヘッド,ポテトヘッド
+Bo Peep,ボピープ
+Andy Davis,アンディデイビス,アンディ,デイビス
+Al,アル
+Sarge,サージ
+Sid Philips,シッドゥフィリップス,シド,フィリップス
+Stinky Pete the prospector,スティンキイピートゥザプロスペクター,スティンキーピート,スティンキー
+Wheezy,ウィージ
+Lots-o'-Huggin' Bear, Lotso for short,ロッソ,ロッソフォーショートゥ,ロッソハギンベア
+Dolly,ドーリイ
+Mr. Prickle Pants,ミスタープリックルパンツ,プリックルパンツ,プリックル,パンツ
+Buttercup,バターカップ
+Trixie,トリクシ,トゥリクシ
+Peas-In-Pod,ピアスインポッド,ピアス
+Big Baby,ビッグベイビイ
+Chatter Telephone,チャターテレフォウン,チャター,テレフォン
+Bookworm,ブックワーム
+Stretch,ストゥレッチ
+Chunk,チャンク
+The Archdeacon,アークディーコン
+Judge Claude Frollo,ジャッジクロードゥフロロ,ジャッジ,クロード,フロロ
+Clopin,クロピン
+Djali,ダリ
+Esmeralda,エスメラルダ
+Hugo,ヒューゴウ
+Laverne,ラビーン,ラバン
+Madellaine,マデライン
+Captain Phoebus,キャプテンフィーバス,フィーバス
+Quasimodo,カジモド
+Sarousch,サロス
+Victor,ビクター
+Zephyr,ゼファー
+Alcmene,アルクミン
+Amphitryon,アンフィトリオン
+Atropos,アトロポス
+Clotho,クロッソ
+Hades,ハデス
+Hera,ヘラ
+Hermes,ハーメス
+Hercules,ハーキュリイズ
+Megara,メガラ
+Muses,ミュージズ
+Nessus,ネサス
+Pegasus,ペガサス
+Pain,ペイン
+Panic,パニック
+Phil,フィル
+Zeus,ゼウス
+Kiara,キアラ
+Kovu,コブ
+Zira,ジラ
+Vitani,ヴィタニ
+Nuka,ヌーカ
+Fa Mulan/Ping,ファミュラン,ミュラン,ピング
+Mushu,ムシュー
+Li Shang,リーシャン,リー,シャン
+Shan Yu,シャンユ,ユ,シャン
+Chien-Po,チェンポ,チェン,ポ
+Chi-Fu,チーフ,チー,フ
+Fa Zhou,ファゾウ,ファ,ゾウ
+Cri-Kee,クリキー,クリ,キー
+Yao,ヤオ
+The Matchmaker,ザマッチメイカー,マッチメイカー
+Ling,リン
+Grandmother Fa,グランマザーファ,グランマザー,ファ
+Fa Li,ファリ,ファ,リ
+The Emperor of China,ザエンペラーオブチャイナ,エンペラー
+General Li,ジェネラルリ,リ,ジェネラル
+First Ancestor Fa,ファーストゥアンセスターファ,ファ,ファーストアンセスター
+Flik,フリック
+Princess Atta,プリンセスアッタ,アッタ
+Dot,ドットゥ
+Heimlich,ヘイムリク
+Francis,フランシス
+Slim,スリム
+The Queen,ザクィーン,クイーン
+Hopper,ホッパー
+P.T. Flea,ピーティーフリー,フリー
+Dim,ディム
+Rosie,ロウジー
+Gypsy,ジプシー
+Manny,マニ
+Tuck and Roll,タックアンドゥロウル,タック,ロウル
+Molt,モルトゥ
+Bird,バードゥ
+Professor Archimedes Q. Porter,プロフェッサーアーカミーディーズキューポーター,キューポーター,プロフェッサー,ポーター
+Mr. Clayton,ミスタークレイトン,クレイトン
+Jane,ジェイン
+Kala,カラ
+Kerchak,カーチャク
+Tantor,タンター
+Tarzan,ターザン
+Terk/Terkina,ターク,タキナ
+Sparks,スパークス,スパーク
+Chicha,チチャ
+Kronk,クロンク
+Kuzco,クズコ
+Pacha,パカ
+Yzma,イズマ
+Tito,チトー
+Sulley,サリー
+Mike,マイク
+Boo,ブー
+Randall,ランダル
+Mr. Waternoose,ミスターウォータヌーズ,ウォータヌーズ
+Roz,ロズ
+Celia,セリア
+Fungus,ファンガス
+George Sanderson,ジョージサンダーソン,ジョージ,サンダーソン
+Needleman,ニードルマン 
+Smitty,スミッティ
+Abominable Snowman,アボミナブルスノウマン,アボミナブルス,スノウマン
+Ms. Flint,ミスフリントゥ,フリント,フリントゥ
+Mr. Bile,ミスターバイル
+Nana II,ナナセカンド
+Slightly,スライトリ
+Cubby,キュビー
+Jane,ジェイン
+Danny,ダニー
+Edward,エドゥワードゥ
+Nibs,ニブズ
+Twins,トゥインズ
+Tootles,トゥートゥルズ
+Jim Hawkins,ジムホーキンス,ジム,ホーキンス
+Dr. Delbert Doppler,ドクターデルバートドプラー,ドクター,デルバート,ドプラー,デルバートドプラー
+Captain Amelia,キャプテンアミーリア,アミーリア
+Benjamin Ben Gunn,ベンジャミンベングン,ベンジャミン,ベン,グン
+John Silver,ジョンシルバー,ジョン,シルバー
+Mr. Arrow,ミスターアロウ
+Sarah Hawkins,サラホーキンス,サラ,ホーキンス
+Morph,モーフ
+Scroop,スクループ
+Billy Bones,ビリーボーンズ,ビリー
+Lilo,リロ
+Stitch,スティッチ
+Nani,ナニ
+David Kawena,デイビッドゥカウェナ,デイビッド,カウェナ
+Jumba,NA
+Agent Pleakley,エイジェントゥプリークリ,プリークリ
+Captain Gantu,キャプテンガンツ,ガンツ
+Grand Councilwoman,グランドゥカンシルウーマン,カンシルウーマン
+Cobra Bubbles,コブラバブルズ,コブラ,バブルズ
+Mrs. Hasagawa,ミセスハセガワ,ハセガワ
+Beary,ベリー
+Big Al,ビッグアル
+Country Bears,カントゥリーベアズ
+Dex,デックス
+Shaker,シェイカー
+Ted Betterhead,テッドゥベターヘッド,デッドゥ,ベターヘッド
+Thimble,スィンブル
+Marlin,マーリン
+Dory,ドーリイ
+Nemo,ネモ
+Gill,ギル
+Bloat,ブロウトゥ
+Peach,ピーチ
+Bubbles,バブルズ
+Gurgle,ガーグル
+Deb/Flo,デブ,フロ
+Jacques,ジャーク
+Nigel,ナイジェル
+Bruce,ブルース
+Anchor,アンカー
+Chum,チャム
+Crush,クラッシュ
+Squirt,スクワートゥ
+Mr. Ray,ミスターレイ,レイ
+Tad,タッドゥ
+Pearl,パール
+Sheldon,シェルドン
+Bootstrap Bill Turner,ブートゥストゥラップビルターナー,ブートストラップ,ビル,ターナー,ビルターナー
+Captain Teague,キャプテンティーグ,ティーグ
+Cutler Beckett,キャトゥラーベケット,ベケット
+Davy Jones,デイビイジョーンズ,デイビー,ジョーンズ
+Elizabeth Swann,エリザベススワン,スワン
+Hector Barbossa,ヘクターバーボッサ,ヘクター,バーボッサ,バルボッサ,ヘクターバルボッサ
+Jack Sparrow,ジャックスパロウ,ジャック,スパロウ
+James Norrington,ジェイムズノリントン,ノリントン,ジェイムズ
+Joshamee Gibbs,ジョシュミーギブズ,ジョシュミー,ギブズ
+Pintel,ピンテル
+Ragetti,ラゲッティ
+Sao Feng,サオフェン,サオ,フェン
+Tia Dalma,ティアダルマ,ティア,ダルマ
+Will Turner,ウィルターナー,ウィル,ターナー
+Denahi,デナヒ
+Kenai,ケナイ
+Koda,コダ
+Rutt,ラット
+Sitka,シトゥカ
+Tanana,タナカ
+Tug,タグ
+Tuke,テューク
+Mr Incredible (Robert "Bob" Parr),ミスターインクレディブル,インクレディブル,ロバートボブパー,ロバード,ボブ,パー
+Syndrome,シンドゥロウム
+Elastigirl (Helen Parr),エラスティガール,ヘレン,パー
+Dashiell Robert "Dash" Parr,ダシェルロバートゥダッシュパー,ダシェル,ロバートゥ,ダッシュ,パー
+Violet Parr,バイオレットゥパー,バイオレットゥ,パー
+Jack-Jack Parr,ジャックジャックパー,ジャック,パー,ジャックジャック
+Edna,エドゥナ
+Frozone (Lucius Best),フローズン,ルシウスベスト,ルシウス,ベスト
+Mirage,ミラージュ
+Bomb Voyage,ボンボヤッジ,ボン,ボヤッジ
+Screenslaver,スクリーンスレイヴァ
+Voyd,ヴォイド
+The Underminer,ザアンダーマイナー,アンダーマイナー
+Chicken Little,チキンリトゥル,チキン,リトゥル
+Buck "Ace" Cluck,バックエイスクラック,バック,クラック,エイス
+Abby Mallard,アビーマラードゥ,アビー,マラードゥ
+Fish Out of Water,フィッシュアウトゥオブウォーター,フィッシュ
+Runt of the Litter,ラントゥオブザリター,ラントゥ
+Foxy Loxy,フォクシーロクシー,フォクシー,ロクシー
+Kirby,カービイ
+Goosey Loosey,グーシイルーシイ,グーシイ,ルーシイ
+Morkubine Porcupine,モークバインポークパイン,モークバイン,ポークパイン
+Turkey Lurkey,ターキーラーキー,ターキー,ラーキー
+Melvin,メルビン
+Tina,ティーナ
+Mr. Woolensworth,ミスターウーレンスウォース,ウーレンスウォース
+Couch Bear,カウチベアー
+Lightning McQueen,ライトゥニングマクウィーン,ライトゥニング,マクウィーン
+Mater,メイター
+Sally Carrera,サリーカレラ
+Doc Hudson,ドックハドゥソン
+Sheriff,シェリフ
+Sarge,サージ
+Fillmore,フィルモア
+Ramone,ラモン
+Luigi,ルイギ,リギ
+Guido,グイド,ギド
+Flo,フロウ
+Mack,マック
+The King,ザキング,キング
+Chick Hicks,チックヒックス,チック,ヒックス
+Finn McMissile,フィンマクミセル,フィン,マクミセル
+Holley Shiftwell,ホリーシフトウェル,ホリー,シフトウェル
+Professor Zündapp,プロフェッサーザンダップ,ザンダップ
+Miles Axelrod,マイルズアクセロッド,アクセロッド,マイルズ
+Francesco Bernoulli,フランシスコベルヌーイ,フランシスコ,ベルヌーイ
+Grem,グレム
+Acer,エイサー
+Jackson Storm,ジャクソンストーム,ジャクソン,ストーム
+Bowler Hat Guy,ボウラーハットゥガイ,マイケル,ヤゴオビアン,マイケルヤゴオビアン,グウブ
+Cornelius Robinson,コーネリアスロビンソン,コーネリアス,ロビンソン
+Frany (Mrs. Robinson),フラニー,ミセスロビンソン,ロビンソン
+Goob,グーブ
+Lefty,レフティー
+Lewis,ルイス
+Singing Frogs,シンギングフロッグス,シンギング,フロッグス
+Tiny,タイニー
+Wilbur Robinson,ウィルバーロビンソン,ウィルバー,ロビンソン
+Alfredo Linguini,アルフレッドリングイニ,アルフレッド,リングイニ
+Colette,コレッテ
+Emile,エミール
+Remy,エミー
+Chef Skinner,シェフスキナー,スキナー
+Anton Ego,アントン,イーゴウ
+Gusteau,ガステュー
+Horst,ホースト
+Lalo,ラロ
+Larousse,ラルス
+Mustafa,ムスタファ
+Django,ジャンゴ
+EVE,イーブ
+WALL-E,ウォーリー
+Captain B. McCrea,キャプテンビーマクレア,ビーマクレア,マクレア,ザキャプテン,キャプテン
+BURN-E,バーニー
+Shelby Forthright,シェルビイフォースライトゥ,シェルビー,フォースライトゥ
+Steward Bots,ステュワードゥボッツ,ステュワードゥ,ボッツ
+#PR-T,ピーアーティー
+Ship’s Computer,シップスコンピューター
+#M-O,エムオー
+AUTO,オート
+Bolt,ボルトゥ
+Mittens,ミットゥンズ
+Dr. Calico,ドクターキャリコ,キャリコ
+Penny,ペニー
+Penny’s Mom,ペニーズマム,マム
+Mindy,ミンディ
+Rhino,ライノウ
+Dr. Forrester,ドクターフォレスター,フォレスター
+The Director,ザダイレクター,ザディレクター,ディレクター,ダイレクター
+Joey,ジョーイー
+Ester,エスター
+Vinnie,ヴィニー
+Martin,マーティン
+Saul,サウ
+Thug,サグ
+Lloyd,ロイドゥ
+Tom,トム
+Bobby,ボビー
+Blake,ブレイク
+Louie,ルーイ
+Billy,ビリー
+Russell,ラッセル
+Carl Fredricksen,カールフリドゥリクセン,カール,フリドゥリクセン
+Dug,ダグ
+Ellie Fredricksen,エリーフリドゥリクセン,エリー,フリドゥリクセン
+Charles Muntz,チャールズムンツ,チャールズ,ムンツ
+Kevin,ケビン
+Alpha,アルファ
+Beta,ベーター
+Gamma,ガンマ
+Omega,オメガ
+Tiana,ティアナ
+Prince Naveen,プリンスナヴィーン
+Dr. Facilier,ドクターファシリア,ファシリア
+Mama Odie,ママオディエ,オディエ,ママ
+Charlotte LaBouff,シャーロッテラバフ,シャーロッテ,ラバフ
+Eli ‘Big Daddy’ LaBouff,イーライビッグダディラバフ,イーライ,ビッグダディ,ラバフ
+Cousin Randy,カズンランディー,ランディー,カズン
+Marlon the Gator,マーロンザガター,マーロン,ザガター,ガター
+Eudora,ユードーラ
+Ian the Gator,イアンザガター,イアン,ガター
+Louis,ルイ
+Ray,レイ
+Rapunzel,ラプンツェル
+Flynn Rider/Eugene,フリンライダー,フリン,ユージーン
+Pascal,パスカル
+Mother Gothel,マザーゴッセル,ゴッセル
+Stabbington Brother #1,スタビントンブラザーナンバーワン,ナンバーワン
+Stabbington Brother #2,スタビントンブラザーナンバートゥー,ナンバートゥー
+Hook Hand Thug,フッハンサグ
+Captain of the Guard,キャプテンオブザガードゥ
+Maximus,マクシマス
+Merida,メリダ
+Queen Elinor,クィーンエリナー,エリナー,クイーン
+King Fergus,キングファーガス,ファーガス,キング
+Lord MacGuffin,ロードゥマクガフィン,マクガフィン
+Lord Macintosh,ロードゥマッキントッシュ,マッキントッシュ
+Lord Dingwall,ロードゥ,ディンウォール
+Wee Dingwall,ウィーディンウォール,ディンウォール
+The Witch,ザウィッチ,ウィッチ
+Maudie,ムーディ
+Gordon,ゴードン
+Martin,マーティン
+Hamish,ハミッシュ
+Hubert,ヒューバートゥ
+Harris,ハリス
+Wreck-It Ralph,レックイットゥラルフ,ラルフ
+Vanellope Von Schweetz,ヴェネロペフォンスクウィーツ,ヴェネロペ,スクウィーツ
+Fix-It Felix, Jr.,フィクシットフェリックスジュニア,フィクシット,フェリックス,ジュニア
+Sergeant Calhoun,サージェントゥカルフーン,サージェント,カルフーン
+King Candy,キングキャンディー,キャンディー
+Taffyta Muttonfudge,タフィタマトゥンファッジ,タフィタ,マトゥンファッジ
+Marakowski,マラコスキ
+Mr. Litwak,ミスターリトゥワック,リトゥワック
+General Hologram,ジェネラルホログラム,ホログラム,ジェネラル
+Moppet Girl,モペットガール,モペット
+Mayor Gene,メイアージーン,メイアー,ジーン
+Qbert,キューバート
+Satan,セイタン,サタン
+Sour Bill,サワービル,ビル,サワー
+Turbo,ターボ
+Sonic,ソニック
+Bowser,ボウサー
+Elsa,エルサ
+Anna,アナ
+Olaf,オラフ
+Kristoff,クリストフ
+Sven,スヴェン
+Hans,ハンス
+Duke of Wesselton,デュークオブウェッセルトン,デューク,ウェッセルトン
+Pabbie,パビー
+Oaken,アーケン
+Marshmallow,マシュマロウ
+Baymax,ベイマックス
+Hiro Hamada,ヒロハマダ,ハマダヒロ,ハマダ,ヒロ
+Tadashi Hamada,タダシハマダ,ハマダタダシ,ハマダ,タダシ
+Fred,フレッドゥ
+Honey Lemon,ハニーレモン
+GoGo,ゴーゴ
+Wasabi,ワサビ
+Professor Robert Callaghan,プロフェッサーロバートゥキャラハン,ロバート,キャラハン,ロバートキャラハン
+Joy,ジョイ
+Sadness,サドゥネス
+Fear,フィアー
+Anger,アンガー
+Disgust,ディスガスト
+Bing Bong,ビングボング
+Riley Andersen,リレイアンダースン
+Jill Andersen,ジルアンダースン
+Bill Andersen,ビルアンダースン
+Lt. Judy Hopps,エルティージュディホップス,ホップス,ジュディ,ジュディホップス
+Nick Wilde,ニックワイルドゥ,ニックウィルドゥ,ニック,ウィルドゥ,ワイルドゥ
+Finnick,フィニック
+Chief Bogo,チーフボーゴ,ボーゴ
+Officer Clawhauser,オフィサークロウホーサー,クロウホーサー
+Yax,ヤックス
+Duke Weaselton,デュークウェッセルトン,ウェッセルトン
+Gideon Grey,ギデオングレイ,グレイ,ギデオン
+Mayor Lionheart,メイアーライオンハート,ライオンハート,メイアー
+Mrs. Otterton,ミセスオタートン,オタートン
+Machas,マーカス
+Jerry Jumbeaux Jr.,ジェリイジャンビュクスジュニア,ジェリイ,ジャンビュクス
+Stu Hopps,ステュホップス,ステュ,ホップス
+Bonnie Hopps,ボニーホップス,ボニー,ホップス
+Bellwether,ベルウェザー
+Gazelle,ガゼル
+Flash,フラッシュ
+Dory,ドーリイ
+Marlin,マーリン
+Nemo,ニモ
+Hank,ハンク
+Destiny,デスティニー
+Bailey,ベイリイ
+Fluke,フルーク
+Rudder,ラダー
+Gerald,ジェラルドゥ
+Becky,ベッキー
+Moana,モアナ
+Hei Hei the Rooster,ヘイヘイザルースター,ルースター,ヘイヘイ
+Tamatoa,タマトア
+Maui,マウイ,マウィ
+Chief Tui,チーフテューイ
+Gramma Tala,グランマタラ,タラ
+Sina,シナ
+Pua the Pig,プアザピッグ,プア,ピッグ
+Miguel,ミグウェル
+Hector,ヘクター
+Mamma Coco,ママココ,ココ
+Ernesto De La Cruz,アーネストダラクルーズ,アーネスト,クルーズ
+Mama Imelda,ママイメルダ,イメルダ
+Dante,ダンテ
+Miguel’s Father,ミグウェルズファザー,ファザー
+Miguel’s Mother,ミグウェルズマザー,マザー

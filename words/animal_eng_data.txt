@@ -1,0 +1,549 @@
+Butterfly,バタフライ
+Kelp gull,ケルプガル
+Red lava crab,レッドゥラーバクラブ
+Old world fruit bat,オウルドゥワールドゥフルートゥバットゥ
+Racer snake,レイサースネイク
+North American river otter,ノースアメリカンリバーオッター
+Monster,モンスター
+Long finned pilot whale,ロングフィンドゥパイロットゥホエイル
+Elephant,エレファントゥ
+Ring necked pheasant,リングネックトゥフェザントゥ
+Tern,ターン
+Grizzly bear,グリズリーベアー
+Hawk,ホーク
+Hare,ヘアー
+Ocelot,オセロトゥ
+Dromedary camel,ドゥロマデリーキャメル
+Savannah deer,サバナディアー
+Sun gazer,サンゲイザア
+Agile wallaby,アジルワラビー
+Insect,インセクトゥ
+Green heron,グリーンヘロン
+Great egret,グレイトゥイーグレトゥ
+Bobcat,ボブキャットゥ
+Three banded plover,スリーバンディドゥプルバー
+American bison,アメリカンバイソン
+Harbor seal,ハーバーシール
+White bellied sea eagle,ホワイトゥベリイドゥシーイーグル
+Black vulture,ブラックバルチャー
+Wombat,ウォンバットゥ
+Cape Barren goose,ケイプバレングース
+Sage grouse,セイジグラウス
+Eastern fox squirrel,イースタンフォックススクワーレル
+Swallow tail gull,スワロウテイルガル
+Ant,アントゥ
+Butterfly,バタフライ
+Wild boar,ワイルドゥボー
+Skimmer,スキマー
+Wolf,ウルフ
+Turkey vulture,ターキーバルチャー
+Snake,スネイク
+African darter,アフリカンダーター
+Eastern indigo snake,イースタンインディゴスネイク
+House sparrow,ハウススパロウ
+Snowy egret,スノウイーイーグレトゥ
+Brazilian otter,ブラジリアンオッター
+European red squirrel,ユーロピアンレッドゥスクワーレル
+Wild water buffalo,ワイルドゥウォーターバッファロー
+Bengal vulture,ベネガルバルチャー
+Common zebra,コモンゼブラ
+Rhesus monkey,リーサスモンキー
+Timber wolf,ティンバーウルフ
+Peregrine falcon,ペリグリンフォルカン
+River wallaby,リバーワラビー
+Mountain duck,マウンテンダック
+Striped skunk,ストゥライプトゥスカンク
+Trotter,トゥロッター
+Penguin,ペングイン
+African wild cat,アフリカンワイルドゥキャットゥ
+Lava gull,ラーバガル
+Radiated tortoise,レイディエイティドゥトータス
+Hippopotamus,ヒポポタマス
+Swallow,スワロウ
+Red howler monkey,レッドゥハウラーモンキー
+Tree porcupine,トゥリーポーキュパイン
+Little heron,リトゥルヘロン
+Lynx,リンクス
+Dolphin,ドルフィン
+Starling,スターリング
+Mountain goat,マウンテンゴウトゥ
+Dusky gull,ダスキーガル
+Flicker,フリッカー
+Gaur,ガウアー
+Burmese brown mountain tortoise,バーミースブラウンマウンテントータス
+Mouse,マウス
+Otter,オッター
+American badger,アメリカンバジャー
+Giant otter,ジャイアントゥオッター
+Striated heron,ストゥライエイティドゥヘロン
+Black spider monkey,ブラックスパイダーモンキー
+Madagascar fruit bat,マダガスカーフルートゥバットゥ
+Western grey kangaroo,ウェスタングレイカンガルー
+Beaver,ビーバー
+Common wombat,コモンウォンバットゥ
+Anteater,アントイーター
+Indian star tortoise,インディアンスタートータス
+Salmon,サモン
+Striped hyena,ストゥライプトゥハイエナ
+Eastern white pelican,イースタンホワイトゥペリカン
+Pelican,ペリカン
+Coyote,カイオウトゥ
+Snake necked turtle,スネイクネックトゥタートゥル
+Killer whale,キラーホエイル
+Red squirrel,レッドゥスクワーレル
+Gerenuk,ジェレヌク
+African bush squirrel,アフリカンブッシュスクワーレル
+King vulture,キングバルチャー
+Masked booby,マスクトゥブーバイ
+Possum,ポッサム
+Blue racer,ブルーレイサー
+Grebe,グリーブ
+Lappet faced vulture,ラペトゥフェイストゥバルチャー
+Badger,バジャー
+Egyptian goose,エジプシャングース
+Black rhinoceros,ブラックライノサラス
+Madagascar hawk owl,マダガスカーホークアウル
+Mule deer,ミュールディアー
+Indian red admiral,インディアンレッドゥアドゥミラル
+Alpaca,アルパカ
+Rock dove,ロックダブ
+Eastern cottontail rabbit,イースタンコットンテイルラビットゥ
+Magistrate black colobus,マジストゥレイトゥブラックコロバス
+Lion,ライオン
+Turtle,タートゥル
+Asiatic wild ass,エイジアティックワイルドゥアス
+Greater sage grouse,グレイターセイジグラウス
+Huron,ヒューロン
+Kite,カイトゥ
+Pacific gull,パシフィックガル
+Tarantula,タランチュラ
+Golden eagle,ゴウルデンイーグル
+Pie,パイ
+Bat,バットゥ
+Bee eater,ビーイーター
+Stanley bustard,スタンリーバスタードゥ
+Snake,スネイク
+Greater kudu,グレイタークードゥー
+Egyptian vulture,エジプシャンバルチャー
+Land iguana,ランドゥイグアナ
+Ferret,フェレトゥ
+Fairy penguin,フェアリーペングイン
+Native cat,ネイティブキャットゥ
+Cobra,コブラ
+Greater adjutant stork,グレイターアジュタントゥストーク
+Shark,シャーク
+White eye,ホワイトゥアイ
+Lizard,リザードゥ
+Savannah deer,サバナディアー
+Rhesus macaque,リーサスマカク
+Little cormorant,リトゥルコーモラントゥ
+Great cormorant,グレイトゥコーモラントゥ
+Tapir,テイパー
+Shrew,シュルー
+Gull,ガル
+Arctic lemming,アークティックレミング
+African snake,アフリカンスネイク
+Silver backed fox,シルバーバックトゥフォックス
+Japanese macaque,ジャパニーズマカク
+Savanna baboon,サバナバブーン
+Bare faced go away bird,ベアーフェイストゥゴーアウェイバードゥ
+Little brown dove,リトゥルブラウンダブ
+Python,パイソン
+Paddy heron,パディーヘロン
+Seal,シール
+Southern sea lion,サザンシーライオン
+Greater flamingo,グレイターフラミンゴウ
+Four spotted skimmer,フォースポッティドゥスキマー
+Crab eating raccoon,クラブイーティングラクーン
+Whale,ホエイル
+Southern screamer,サザンスクリーマー
+Gray heron,グレイヘロン
+Hoary marmot,ホアリーマーモットゥ
+Rat,ラットゥ
+North American red fox,ノースアメリカンレッドゥフォックス
+Black and white colobus,ブラックアンドゥホワイトゥコロバス
+American crow,アメリカンクロウ
+Toddy cat,トディーキャットゥ
+Bleeding heart monkey,ブリーディングハートゥモンキー
+Black backed jackal,ブラックバックトゥジャッカル
+Two toed sloth,トゥートウドゥスロウス
+White necked stork,ホワイトゥネックトゥストーク
+Spotted deer,スポッティドゥディアー
+Two banded monitor,トゥーバンディドゥモニター
+American buffalo,アメリカンバッファロー
+Chameleon,カミーレオン
+Great white pelican,グレイトゥホワイトゥペリカン
+Crab eating fox,クラブイーティングフォックス
+Gazelle,ガゼル
+Striped dolphin,ストゥライプトゥドルフィン
+Roller,ロウラー
+Goat,ゴウトゥ
+Vulture,バルチャー
+American racer,アメリカンレイサー
+Galapagos penguin,ガラパゴスペングイン
+Roe deer,ロウディアー
+Vine snake,バインスネイク
+Chestnut weaver,チェスナットゥウィーバー
+Elk,エルク
+Mississippi alligator,ミシシッピアリゲイター
+Porcupine,ポーキュパイン
+Ring dove,リングダブ
+Field flicker,フィールドゥフリッカー
+Indian leopard,インディアンレパードゥ
+House crow,ハウスクロウ
+Cape cobra,ケイプコブラ
+Galapagos albatross,ガラパゴスアルバトゥロス
+Albatross,アルバトゥロス
+Asian elephant,エイジアンエレファントゥ
+Crimson breasted shrike,クリムゾンブレスティドゥシュライク
+Trumpeter swan,トゥランペッタースワン
+Desert kangaroo rat,デザートゥカンガルーラットゥ
+African fish eagle,アフリカンフィッシュイーグル
+Sloth bear,スロウスベアー
+Netted rock dragon,ネッティドゥロックドゥラゴン
+Carmine bee eater,カーミンビーイーター
+Galapagos sea lion,ガラパゴスシーライオン
+Weaver,ウィーバー
+Tiger cat,タイガーキャットゥ
+Koala,コアラ
+Cape fox,ケイプフォックス
+Wood pigeon,ウッピジョン
+Northern fur seal,ノーザンファーシール
+Bee eater,ビーイーター
+Cottonmouth,コットンマウス
+American beaver,アメリカンビーバー
+Owl,アウル
+North American beaver,ノースアメリカンビーバー
+Indian tree pie,インディアントゥリーパイ
+Spider,スパイダー
+Indian giant squirrel,インディアンジャイアントゥスクワーレル
+Egret,イーグレトゥ
+Black kite,ブラックカイトゥ
+Cape starling,ケイプスターリング
+Savanna fox,サバナフォックス
+Cardinal,カーディナル
+South American sea lion,サウスアメリカンシーライオン
+Bandicoot,バンディクート
+Sea birds,シーバーズ
+Herring gull,ヘリングガル
+Common wolf,コモンウルフ
+Eagle owl,イーグルアウル
+Salmon pink bird eater tarantula,サモンピンクバードゥイータータランチュラ
+Australian masked owl,オーストゥレイリアンマスクトゥアウル
+Deer,ディアー
+Green backed heron,グリーンバックトゥヘロン
+Pocket gopher,ポケットゥゴウファー
+American black bear,アメリカンブラックベアー
+Constrictor,コンストゥリクター
+Ground monitor,グラウンドゥモニター
+African lynx,アフリカンリンクス
+Lark,ラーク
+European beaver,ユーロピアンビーバー
+Roan antelope,ロウンアンテロウプ
+Royal tern,ロイヤルターン
+Australian brush turkey,オーストゥレイリアンブラッシュターキー
+Monitor,モニター
+Cape white eye,ケイプホワイトゥアイ
+Asiatic jackal,エイジアティックジャッカル
+Flamingo,フラミンゴウ
+Eagle,イーグル
+Dog,ドッグ
+Squirrel glider,スクワーレルグライダー
+Skunk,スカンク
+Crow,クロウ
+Galapagos hawk,ガラパゴスホーク
+Asian water buffalo,エイジアンウォーターバッファロー
+Laughing kookaburra,ラフィングクーカバーラ
+Giant heron,ジャイアントゥヘロン
+Tiger,タイガー
+Sportive lemur,スポーティブリーマー
+Raccoon dog,ラクーンドッグ
+Crocodile,クロコダイル
+Snowy owl,スノウイーアウル
+Baboon,バブーン
+Gazer,ゲイザア
+Turtle,タートゥル
+European wild cat,ユーロピアンワイルドゥキャットゥ
+Asian red fox,エイジアンレッドゥフォックス
+Chimpanzee,チンパンジーー
+Red capped cardinal,レッドゥキャップトゥカーディナル
+Red necked wallaby,レッドゥネックトゥワラビー
+Stilt,スティルトゥ
+Osprey,オスプリー
+Parakeet,パラキートゥ
+Teal,ティール
+Fowl,ファウル
+Desert spiny lizard,デザートゥスパイニーリザードゥ
+Fisher,フィッシャー
+Antelope ground squirrel,アンテロウプグラウンドゥスクワーレル
+Hyena,ハイエナ
+African ground squirrel,アフリカングラウンドゥスクワーレル
+Robin,ロビン
+Sparrow,スパロウ
+Cape raven,ケイプレイブン
+Ass,アス
+Chilean flamingo,チリーンフラミンゴウ
+Oriental white backed vulture,オリエンタルホワイトゥバックトゥバルチャー
+Asian water dragon,エイジアンウォータードゥラゴン
+Sloth,スロウス
+Bird,バードゥ
+African wild dog,アフリカンワイルドゥドッグ
+Comb duck,コウムダック
+Dingo,ディンゴウ
+Racer,レイサー
+Little blue penguin,リトゥルブルーペングイン
+Bald eagle,ボールドゥイーグル
+Canadian river otter,カナディアンリバーオッター
+Cobra,コブラ
+Eurasian beaver,ユーレイジャンビーバー
+Arctic hare,アークティックヘアー
+Little brown bat,リトゥルブラウンバットゥ
+Carpet python,カーペットゥパイソン
+European stork,ユーロピアンストーク
+Javanese cormorant,ジャバニーズコーモラントゥ
+Swamp deer,スワンプディアー
+Painted stork,ペインティドゥストーク
+Golden jackal,ゴウルデンジャッカル
+Egyptian viper,エジプシャンバイパー
+Jungle cat,ジャングルキャットゥ
+White headed vulture,ホワイトゥヘッディドゥバルチャー
+Brown pelican,ブラウンペリカン
+Sifaka,シファーカ
+Kingfisher,キングフィッシャー
+Chickadee,チケディイ
+Jaguar,ジャガー
+Moose,ムース
+Emu,イーミュー
+Australian spiny anteater,オーストゥレイリアンスパイニーアントイーター
+Colobus,コロバス
+Crab,クラブ
+Water monitor,ウォーターモニター
+African elephant,アフリカンエレファントゥ
+Carpet snake,カーペットゥスネイク
+Pygmy possum,ピグミーポッサム
+Black faced kangaroo,ブラックフェイストゥカンガルー
+Red kangaroo,レッドゥカンガルー
+Dragon,ドゥラゴン
+Kangaroo,カンガルー
+Pine snake,パインスネイク
+Grey mouse lemur,グレイマウスリーマー
+Australian pelican,オーストゥレイリアンペリカン
+Eastern box turtle,イースタンボックスタートゥル
+Nelson ground squirrel,ネルソングラウンドゥスクワーレル
+Marmot,マーモットゥ
+Stone sheep,ストウンシープ
+Spotted hyena,スポッティドゥハイエナ
+Lemur,リーマー
+Quail,クエイル
+Lilac breasted roller,ライラックブレスティドゥロウラー
+Puffin,パフィン
+Stanley crane,スタンリークレイン
+Emerald spotted wood dove,エメラルドゥスポッティドゥウッダブ
+Grey footed squirrel,グレイフッティドゥスクワーレル
+Pheasant,フェザントゥ
+Black swan,ブラックスワン
+Reindeer,レインディアー
+Hawk eagle,ホークイーグル
+Viper,バイパー
+Lemming,レミング
+Agouti,アグーチ
+Egyptian cobra,エジプシャンコブラ
+Grey fox,グレイフォックス
+Lesser masked weaver,レサーマスクトゥウィーバー
+Large cormorant,ラージコーモラントゥ
+Southern brown bandicoot,サザンブラウンバンディクート
+Antelope,アンテロウプ
+Grouse,グラウス
+Galapagos tortoise,ガラパゴストータス
+Wild turkey,ワイルドゥターキー
+Buffalo,バッファロー
+Two toed tree sloth,トゥートウドゥトゥリースロウス
+Worm snake,ワームスネイク
+Shrike,シュライク
+Brown hyena,ブラウンハイエナ
+Lesser flamingo,レサーフラミンゴウ
+Green vine snake,グリーンバインスネイク
+Sable antelope,セイブルアンテロウプ
+South American puma,サウスアメリカンピューマ
+Partridge,パートゥリッジ
+Stork,ストーク
+White faced whistling duck,ホワイトゥフェイストゥホイッスリングダック
+Rabbit,ラビットゥ
+Canada goose,カナダグース
+Plover,プルバー
+Ostrich,オストゥリッチ
+Sociable weaver,ソウシャブルウィーバー
+Bunting,バンティング
+Cape wild cat,ケイプワイルドゥキャットゥ
+Square lipped rhinoceros,スクェアーリップトゥライノサラス
+Camel,キャメル
+American alligator,アメリカンアリゲイター
+Magnificent frigate bird,マグニフィセントゥフリゲットゥバードゥ
+Crab,クラブ
+Ornate rock dragon,オーネイトゥロックドゥラゴン
+Blue fox,ブルーフォックス
+Common green iguana,コモングリーンイグアナ
+Red sheep,レッドゥシープ
+Southern black backed gull,サザンブラックバックトゥガル
+Superb starling,サパーブスターリング
+Bird,バードゥ
+Water moccasin,ウォーターモカシン
+Glider,グライダー
+Arctic tern,アークティックターン
+Polar bear,ポウラーベアー
+Hedgehog,ヘッジホッグ
+Jackal,ジャッカル
+Aardwolf,アードウルフ
+Wallaby,ワラビー
+Bison,バイソン
+Sheep,シープ
+Zebra,ゼブラ
+Heron,ヘロン
+Kudu,クードゥー
+White necked raven,ホワイトゥネックトゥレイブン
+Bustard,バスタードゥ
+Cormorant,コーモラントゥ
+Kookaburra,クーカバーラ
+Eurasian red squirrel,ユーレイジャンレッドゥスクワーレル
+Stick insect,スティックインセクトゥ
+Hawk headed parrot,ホークヘッディドゥパロットゥ
+Blue crane,ブルークレイン
+Jungle kangaroo,ジャングルカンガルー
+Dove,ダブ
+Cattle egret,キャトゥルイーグレトゥ
+Lizard,リザードゥ
+African lion,アフリカンライオン
+Squirrel,スクワーレル
+Wapiti,ワピティー
+Rhinoceros,ライノサラス
+Frog,フロッグ
+Bush dog,ブッシュドッグ
+Black bear,ブラックベアー
+Booby,ブーバイ
+Mountain lion,マウンテンライオン
+Olive baboon,オリーブバブーン
+Burmese black mountain tortoise,バーミースブラックマウンテントータス
+Leopard,レパードゥ
+Black capped chickadee,ブラックキャップトゥチケディイ
+African buffalo,アフリカンバッファロー
+Australian sea lion,オーストゥレイリアンシーライオン
+Wolf spider,ウルフスパイダー
+Grey heron,グレイヘロン
+Sage hen,セイジヘン
+Blue footed booby,ブルーフッティドゥブーバイ
+Lily trotter,リリートゥロッター
+Tawny eagle,トーニーイーグル
+Feral rock pigeon,フィアラルロックピジョン
+Puma,ピューマ
+Falcon,フォルカン
+Thrasher,スラッシャー
+Blue duck,ブルーダック
+Macaque,マカク
+Four striped grass mouse,フォーストゥライプトゥグラスマウス
+Southern elephant seal,サザンエレファントゥシール
+Eastern grey kangaroo,イースタングレイカンガルー
+White faced tree rat,ホワイトゥフェイストゥトゥリーラットゥ
+Red deer,レッドゥディアー
+Woolly necked stork,ウーリーネックトゥストーク
+African porcupine,アフリカンポーキュパイン
+Brown lemur,ブラウンリーマー
+Western pygmy possum,ウェスタンピグミーポッサム
+Fox,フォックス
+Giraffe,ジラーフ
+Mexican wolf,メキシカンウルフ
+Western spotted skunk,ウェスタンスポッティドゥスカンク
+Llama,ラーマ
+Pale white eye,ペイルホワイトゥアイ
+Little grebe,リトゥルグリーブ
+Raven,レイブン
+Euro wallaby,ユーロウワラビー
+Honey badger,ハニーバジャー
+Pine squirrel,パインスクワーレル
+Gerbil,ジャービル
+Yellow baboon,イェローバブーン
+Common seal,コモンシール
+Long necked turtle,ロングネックトゥタートゥル
+Desert tortoise,デザートゥトータス
+Blue shark,ブルーシャーク
+Ox,オックス
+Nile crocodile,ナイルクロコダイル
+Tiger snake,タイガースネイク
+Hen,ヘン
+Lesser mouse lemur,レサーマウスリーマー
+Common raccoon,コモンラクーン
+Crane,クレイン
+Platypus,プラティパス
+White rhinoceros,ホワイトゥライノサラス
+Secretary bird,セクレタリーバードゥ
+South African hedgehog,サウスアフリカンヘッジホッグ
+Snow goose,スノウグース
+European badger,ユーロピアンバジャー
+Iguana,イグアナ
+Devil,デビル
+Common pheasant,コモンフェザントゥ
+Darter,ダーター
+Common dolphin,コモンドルフィン
+Laughing dove,ラフィングダブ
+Cow,カウ
+White stork,ホワイトゥストーク
+Caribou,カリブー
+Yellow bellied marmot,イェローベリイドゥマーモットゥ
+Giant anteater,ジャイアントゥアントイーター
+Common turkey,コモンターキー
+Cormorant,コーモラントゥ
+Trumpeter,トゥランペッター
+Turkey,ターキー
+Boar,ボー
+Duck,ダック
+Marine iguana,マリーンイグアナ
+Galapagos dove,ガラパゴスダブ
+Blue faced booby,ブルーフェイストゥブーバイ
+Alligator,アリゲイター
+Glossy starling,グロシイスターリング
+Southern right whale,サザンライトゥホエイル
+Western lowland gorilla,ウェスタンローランドゥゴリラ
+Silver backed jackal,シルバーバックトゥジャッカル
+Indian porcupine,インディアンポーキュパイン
+Coot,クートゥ
+Gorilla,ゴリラ
+Northern elephant seal,ノーザンエレファントゥシール
+Swan,スワン
+Black footed ferret,ブラックフッティドゥフェレトゥ
+Bottle nose dolphin,ボトゥルノウズドルフィン
+Pigeon,ピジョン
+Arctic ground squirrel,アークティックグラウンドゥスクワーレル
+Arctic fox,アークティックフォックス
+Screamer,スクリーマー
+California sea lion,カリフォルニアシーライオン
+Bear,ベアー
+Brazilian tapir,ブラジリアンテイパー
+Eurasian badger,ユーレイジャンバジャー
+Parrot,パロットゥ
+Bonnet macaque,ボンネットゥマカク
+Monitor lizard,モニターリザードゥ
+Cougar,クーガー
+Asian lion,エイジアンライオン
+Anaconda,アナコンダ
+Malay squirrel,マレイスクワーレル
+Moccasin,モカシン
+Asian false vampire bat,エイジアンフォールスバンパイアーバットゥ
+Goose,グース
+Cat,キャットゥ
+Impala,インパラ
+Orca,オーカ
+Monkey,モンキー
+Palm squirrel,パームスクワーレル
+Creeper,クリーパー
+Prairie falcon,プレイリーフォルカン
+North American porcupine,ノースアメリカンポーキュパイン
+Admiral,アドゥミラル
+Western bearded dragon,ウェスタンビアーディドゥドゥラゴン
+Black necked stork,ブラックネックトゥストーク
+King cormorant,キングコーモラントゥ
+Musk ox,マスクオックス
+Indian jackal,インディアンジャッカル
+Raccoon,ラクーン
+Tortoise,トータス
+Silver gull,シルバーガル
+Mexican beaded lizard,メキシカンビーディドゥリザードゥ
+Sugar glider,シュガーグライダー
