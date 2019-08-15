@@ -137,7 +137,7 @@ class Soramimic {
 		const splitter=param.SPLITTER;
 		const repeat = param.REPEAT;
 		const isDuplicate = param.DUPLICATE;
-		const penaBreak = param.SAME_PHRASE_BREAK_REWARD;
+		const samePhraseBreak = param.SAME_PHRASE_BREAK_REWARD;
 		const samaKana = param.SAME_KANA_REWARD;
 		const sameVowel = param.SAME_VOWEL_REWARD;
 		const sameConsonant = param.SAME_CONSONANT_REWARD;
@@ -154,9 +154,12 @@ class Soramimic {
 		console.time("dpDef3");
 		    const base_info = phrases.reduce((prev,val)=>{
 				prev["raws"].push(val);
-				prev["targets"].push(this.separateKana(this.getYomi(val)));
+				const yomi = this.getYomiAndPhraseBreak(val);
+				//prev["targets"].push(this.separateKana(this.getYomi(val)));
+				prev["targets"].push(yomi["kana"]);
+				prev["phrasebreak"].push(yomi["phrasebreak"]);
 				return prev;
-			},{"raws":[],"targets":[],"indexBreaks":[]});
+			},{"raws":[],"targets":[],"phrasebreak":[]});
 		    const results = ["relativeScores","scores","words"].reduce((prev,val)=>{
 				prev[val] = Array(phraselen);
 				prev[val].fill([]);
@@ -171,7 +174,7 @@ class Soramimic {
 
 		const dp = index => {
 			const target = base_info["targets"][index],
-	        	//breaks = base_info["indexBreaks"][index],
+	        	phraseBreaks = base_info["phrasebreak"][index],
 	        	tarlen = target.length,
 	        	//used = results["words"].map(v => v.map(v2 => v2.slice(-1)[0])).flat(),//mapやforEachではなぜかだめだった
 	        	used = [],
@@ -210,6 +213,7 @@ class Soramimic {
 					}
 
 					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
+					//console.log("score_org",score);
 					const currentUsed = words.map(v => v[v.length-1]),
 						newWord = []
 					;
@@ -221,13 +225,19 @@ class Soramimic {
 							;
 						if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
 							continue;
+						//console.log("wscore",wscore);
 						words.push(w);
 						//console.log("newWord",w,wscore,scoreb,score);
 						score += wscore;
 						break;
 					}
+					//console.log("score1",score);
 					//console.log("score",i,t,scoreb,score);
 					score += words.length*wordsNum;
+					if(phraseBreaks.includes(t))
+						score*=samePhraseBreak;
+					//console.log("words.length*wordsNum",words.length,wordsNum);
+					//console.log("score",score);
 					mini_result["scores"].push(score);
 					mini_result["words"].push(words);
 					//console.log(mini_result);
@@ -239,7 +249,7 @@ class Soramimic {
 						for(let i=0;i<mini_result["scores"].length;i++){
 							const resultstr = mini_result["words"][i].map(v=>v[0]).join("");
 							if(resultstr != targetstr){
-								mini_result["scores"][i]+=10000;
+								mini_result["scores"][i]+=10000*t;
 								//console.log(i,resultstr,mini_result["scores"][i]);
 							}
 						}
@@ -551,7 +561,6 @@ class Soramimic {
 							},{});
 				return prev1;
 			},{});
-
 	}
 	////parametersに存在しないkeyをthis.DEFAULT_PARAMETER_VALUESを埋めて返す
 	assignDefaultParameter(parameters){
@@ -731,17 +740,35 @@ class Soramimic {
 
 	getYomi(strVal){
 		const tokenizer = this.TOKENIZER_;
-		const yomi = tokenizer.tokenize(strVal)
-					.reduce((prev,v)=>{
-						let tYomi = v.pronunciation;
-						if(typeof tYomi === "undefined")
-							tYomi = hiraToKana(v.surface_form);
-						//console.log(tYomi);
-						return prev+tYomi;
-					},"");
+		const maresult = tokenizer.tokenize(strVal);
+		let yomi = "";
+		for(let v of maresult){
+			let tYomi = v.pronunciation;
+			if(typeof tYomi === "undefined")
+				tYomi = hiraToKana(v.surface_form);
+			yomi += tYomi;
+		}
 		return removeSign(yomi);
 	}
-
+	getYomiAndPhraseBreak(strVal){
+		const tokenizer = this.TOKENIZER_;
+		const maresult = tokenizer.tokenize(strVal);
+		let yomi = [];
+		let phraseBreak = [];
+		for(let v of maresult){
+			let tYomi = v.pronunciation;
+			if(typeof tYomi === "undefined")
+				tYomi = hiraToKana(v.surface_form);
+			tYomi = removeSign(tYomi);//記号削除
+			tYomi = this.separateKana(tYomi);//kanaUnitに変換
+			if(["名詞","動詞","副詞","形容詞","形容動詞","感動詞"].includes(v.pos)){
+				phraseBreak.push(yomi.length);
+			}		
+			yomi = yomi.concat(tYomi);//yomiに結合
+		}
+		return {"kana":yomi,"phrasebreak":phraseBreak}		
+	}
+	
 	jpn2kanaUnits(strVal){
 		const yomi = this.getYomi(strVal);
 		return this.separateKana(yomi);
@@ -807,6 +834,10 @@ class Soramimic {
 }
 
 const soramimic = new Soramimic();
+setTimeout(()=>{
+	const res = soramimic.getYomiAndPhraseBreak("ツィ");
+	console.log("phrase",res);
+},2000);
 //soramimic.getYomi("アイウエオ");
 //db.separateKana("ヴォオーギン");
 //testText = "ーー、ーーーー、ーー、ーーー";

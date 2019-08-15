@@ -64,21 +64,21 @@
 						</div>
 						<div class="col-xs-1 param-value">0.5</div>
 					</div>
-					<div class="col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-md-6">
 						<div class="col-xs-2" style="text-align:right">子音</div>
 						<div class="col-xs-7">
 							<input type="range" class="form-control form-control-range ipt-parameter" name="consonant" min="0" max="1" step="0.1" value="0.5">
 						</div>
 						<div class="col-xs-1 param-value-consonant">0.5</div>
 					</div>
-					<div class="col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-md-6">
 						<div class="col-xs-2" style="text-align:right">文節</div>
 						<div class="col-xs-7">
 							<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="1" step="0.1" value="0.5">
 						</div>
 						<div class="col-xs-1 param-value-phrasebreak">0.5</div>
 					</div>
-					<div class="col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-md-6">
 						<div class="col-xs-2" style="text-align:right">単語数</div>
 						<div class="col-xs-7">
 							<input type="range" class="form-control form-control-range ipt-parameter" name="wordnum" min="0" max="1" step="0.1" value="0.5">
@@ -120,23 +120,17 @@ $(".loading2").hide();
 
 const getParam = () => {
 
-	let val = $("input[name=consonant_vowel]").val(),
-		param = {}
-
-	if(val == 0){
-
-	}
-	else if(val > 0){
-		if(val == 1)
-			val = 0.99;
-		param["sameVowel"] = (1-val);
-	}
-	else{
-		if(val == -1)
-			val = -0.99;
-		param["sameConsonant"] = (1+val);
-	}
-	param = setDefaultParameters(param);
+	let param = {}
+	//consnant
+	param.SAME_CONSONANT_REWARD = Number($("input[name=consonant]").val())*10;
+	//vowel
+	param.SAME_VOWEL_REWARD = Number($("input[name=vowel]").val())*10;
+	//phrasebreak
+	param.SAME_PHRASE_BREAK_REWARD = Number($("input[name=phrasebreak]").val())*10;
+	//wordnum
+	param.WORD_NUMBER_PENALTY = Number($("input[name=wordnum]").val())*10;
+	
+	param = soramimic.assignDefaultParameter(param);
 	console.log("param",param);
 	return param;
 }
@@ -191,7 +185,7 @@ const makeDialog = () => {
 	$(".ta-original-wordlist").height("99%");
 	$(".ta-original-wordlist").val(localStorage.getItem(storageKey));
 }
-makeDialog();
+//makeDialog();
 
 $(".radio-original").click(function(){
 	$(".dialog-original").dialog("open");
@@ -205,7 +199,7 @@ $(".ipt-parameter").on("input",function(){
 	const val = $(this).val();
 	//if (val == 1)val=0.99;
 	//else if(val == -1)val=-0.99;
-	$(this).closest(".row").find(".param-value").html(val);
+	$(this).closest(".input-param").find(".param-value").html(val);
 
 })
 
@@ -233,17 +227,19 @@ $(".btn-send").click(function(){
 	//text = separateKana(text);
 	//console.log("afterSeparateKana",text);
 	//console.log(text);
-	if(isParamChanged){
+	
+	//if(isParamChanged){
 		const param = getParam();
 		//getSimilarWord = getSimilarWord_outer(param);
-		isParamChanged = false;
-		console.log("isParamChanged",isParamChanged);
-	}
+		//isParamChanged = false;
+		//console.log("isParamChanged",isParamChanged);
+	//}
+	
 	//console.time("getSimilarWord");
 	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	//console.timeEnd("getSimilarWord");
 	console.time("soramimi_dp",text,wordfile);
-	const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],{});
+	const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],param);
 	//const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});
 	console.timeEnd("soramimi_dp");
 
