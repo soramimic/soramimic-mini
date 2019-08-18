@@ -86,12 +86,12 @@ class Soramimic {
 
 		this.WORD_FILE_PATH_ = {
 				BASEBALL: "words/baseball.txt",
-				CREATURE: "words/creature.txt",
+				//CREATURE: "words/creature.txt",
 				NATION: "words/nations.txt",
 				PHYSICIST: "words/physicist.txt",
 				POKEMON: "words/pokemon.txt",
 				SEKITSUI: "words/sekitsui.txt",
-				SHOGI: "words/shogi.txt",
+				//SHOGI: "words/shogi.txt",
 				STATION: "words/stations.txt"
 		}
 		this.WORD_LIST_ = {}
@@ -397,8 +397,23 @@ class Soramimic {
 	set wordList(filepathobj){
 		for(let k of Object.keys(filepathobj)){
 			const path = filepathobj[k];
-			this.WORD_LIST_[k] = this.loadDatabaseFile(path);
+			switch(k){
+			case "BASEBALL":
+			case "SEKITSUI":
+			case "STATION":
+			case "PHYSICIST":
+			case "POKEMON":
+			case "NATION":
+				this.WORD_LIST_[k] = this.constructor.loadJsonFile("wordsFormatted/"+path.split("/")[1]);
+				break;
+			default:
+				//console.log(k);
+				this.WORD_LIST_[k] = this.loadDatabaseFile(path);
+				//console.log(JSON.stringify(this.WORD_LIST_[k]));
+				break;
+			}
 		}
+		
 	}
 	set wordListOrg(text){
 		this.WORD_LIST_["ORIGINAL"] = this.loadDatabaseText(text);
