@@ -7,7 +7,7 @@ class Soramimic {
 				SAME_PHRASE_BREAK_REWARD: 1,//文節が一致しているとき掛け算する
 				SAME_KANA_REWARD: 1,//同じカナに対して掛け算する
 				SAME_VOWEL_REWARD: 1,//同じ母音に対して掛け算する
-				SAME_CONSONANT_REWARD: 1,//同じ母音に対して掛け算する
+				SAME_CONSONANT_REWARD: 1,//同じ子音に対して掛け算する
 				SAME_BAR_REWARD: 1, //拗音同士に対して掛け算する
 				SAME_HATSUON_REWARD: 1, //撥音同士に対して掛け算する(pronunciationではない)
 				SAME_SOKUON_REWARD: 1,//促音同士に対して掛け算する
@@ -112,9 +112,9 @@ class Soramimic {
 			console.log("similarWord",this.getSimilarWord(this.KANA_SIMILARITY_,this.WORD_LIST_.BASEBALL,target,{},100));
 			console.timeEnd("getSimWord");
 
-			console.time("dp");
-			console.log("soramimi",this.soramimi_dp("こんにちは",this.WORD_LIST_.BASEBALL,{}))
-			console.timeEnd("dp");
+			//console.time("dp");
+			//console.log("soramimi",this.soramimi_dp("こんにちは",this.WORD_LIST_.BASEBALL,{}))
+			//console.timeEnd("dp");
 			//getSimilarWord(kanaDist,wordlist,target,param,length=1){
 		});
 
@@ -191,19 +191,26 @@ class Soramimic {
 					used.push(v2.slice(-1)[0]);
 			}
 			//console.log("used",used);
-
+			console.log("tarlen",tarlen);
 
 			const dp_inner = t => {
+				console.log("dp_inner t=",t);
 				const mini_result = {"scores":[],"words":[]}
+				//let mini_result = null;
+				//mini_result = {"scores":[1000000],"words":[["unknown","unknown","unknown",1000000,-1]]}
+				//mini_result["scores"].shift();
+				//mini_result["words"].shift();
+				//const mini_result_ = {"scores":[],"words":[]}
 				//if(Object.keys(memo).indexOf(String(t))>=0){
 				if(t in memo){
 					return memo[t];
 				}else{
 				}
-
+				console.log("0",JSON.stringify(mini_result));
 				for (let i = 0; i<t; i++){
-
-					if ( number.indexOf(t-i)<0 ){
+					console.log("1",JSON.stringify(mini_result));
+					console.log("in_loop i=",i);
+					if ( number.includes(t-i) == false ){
 						continue
 					}
 
@@ -215,24 +222,28 @@ class Soramimic {
 					}
 
 					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
-					//console.log("score_org",score);
-					const currentUsed = words.map(v => v[v.length-1]),
-						newWord = []
-					;
-
+					console.log("score_org",score);
+					const currentUsed = words.map(v => v[v.length-1]);
+					let newWord = null;
 					//console.log("target_out",target);
+					
 					for(let w of gs(wordlist,target.slice(i,t),100)){
 						const wid = w.slice(-1)[0],
 							wscore = w.slice(-2)[0]
 							;
-						if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
+						if(used.includes(wid) || currentUsed.includes(wid))
 							continue;
+						newWord = [w,wscore];
 						//console.log("wscore",wscore);
-						words.push(w);
+						//words.push(w);
 						//console.log("newWord",w,wscore,scoreb,score);
-						score += wscore;
+						//score += wscore;
 						break;
 					}
+					if(newWord == null)
+						continue;
+					words.push(newWord[0]);
+					score += newWord[1];
 					//console.log("score1",score);
 					//console.log("score",i,t,scoreb,score);
 					score += words.length*wordsNum;
@@ -242,11 +253,11 @@ class Soramimic {
 					//console.log("score",score);
 					mini_result["scores"].push(score);
 					mini_result["words"].push(words);
-					//console.log(mini_result);
+					console.log("t,i,miniresult",t,i,JSON.stringify(mini_result));
 				}
 				if(mini_result["scores"].length > 0){
 					if(t == tarlen+1){
-						console.log("mini_result",mini_result["words"]);
+						//console.log("mini_result",mini_result["words"]);
 						const targetstr = target.join("");
 						for(let i=0;i<mini_result["scores"].length;i++){
 							const resultstr = mini_result["words"][i].map(v=>v[0]).join("");
@@ -619,6 +630,7 @@ class Soramimic {
 	}
 
 	set kanaSimilarity(param){
+		console.log("set param:",JSON.stringify(param));
 		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_, param);
 	}
 
@@ -871,8 +883,10 @@ class Soramimic {
 
 const soramimic = new Soramimic();
 setTimeout(()=>{
-	console.log(soramimic.separateKana("アウエオエイーオウーンッカアアケアキーアエイエイオウオウ"));
-	const res = soramimic.getYomiAndPhraseBreak("ツィ");
+	//console.log(soramimic.separateKana("アウエオエイーオウーンッカアアケアキーアエイエイオウオウ"));
+	//const res = soramimic.getYomiAndPhraseBreak("ツィ");
+	const text = "君はシンデレラガール";
+	const res = soramimic.soramimi_dp(text,soramimic.WORD_LIST_.POKEMON);
 	console.log("phrase",res);
 },2000);
 //soramimic.getYomi("アイウエオ");
