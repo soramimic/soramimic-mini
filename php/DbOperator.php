@@ -121,6 +121,30 @@ class DbOperator{
 			return false;
 		}
 	}
+	
+	/*
+	 * 変換の情報を記録する
+	 */
+	static function AddConversionInfo($user_id,$user_name,$text_length,$wordfile,$conversion_param){
+	        
+	        $dbh = Utils::GetPDO();
+	        $add = $dbh->prepare("insert into conversion(user_id,user_name,text_length,wordfile,conversion_param,time_stamp)values(?,?,?,?,?,now())");
+	        $add->bindParam(1, $user_id);
+	        $add->bindParam(2, $user_name);
+	        $add->bindParam(3, $text_length);
+	        $add->bindParam(4, $wordfile);
+	        $add->bindParam(5, $conversion_param);
+	        
+	        if($add->execute()){
+	            $last_insert_id = $dbh->lastInsertId('id');
+	            return $last_insert_id;
+	        }
+	        else{
+	            return null;
+	        }
+	        
+	}
+	
 	/*
 	 * idからuser情報を取得する
 	 */

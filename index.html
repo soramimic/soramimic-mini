@@ -127,8 +127,25 @@
 //$(".btn-send").click(function(){
 //	alert("bbbbbb")
 //});
+const ProcessResult = (command,content) => {
+	switch(command){
+	default:
+		console.log(command,content);
+	}
+}
 //グローバルに使う関数群の宣言
 let	isParamChanged = false;
+const ag = new AjaxGateway();
+if (localStorage.getItem("user_id") === null) {
+	localStorage.setItem("user_id","Soramimic_"+getRandomText(12));
+}
+const user_id = localStorage.getItem("user_id");
+ag.Login();
+
+//windowを閉じたらログアウト情報を保存
+$(window).on("beforeunload unload",function(e){
+	ag.Logout(false);
+});
 
 $("div.container-fluid").hide();
 $(".loading").show();
@@ -257,6 +274,12 @@ $(".btn-send").click(function(){
 	//const result = getSimilarWord(wordlist[wordfile],text,length=1000);
 	//console.timeEnd("getSimilarWord");
 	console.time("soramimi_dp",text,wordfile);
+	sendParam = {}
+	for(let v of ["SAME_VOWEL_REWARD","SAME_CONSONANT_REWARD","SAME_PHRASE_BREAK_REWARD","WORD_NUMBER_PENALTY"]){
+		sendParam[v] = param[v];
+	}
+	//ag.SendConversionInfo(text.length,wordfile,JSON.stringify(sendParam));
+	ag.SendConversionInfo(text.length,wordfile,sendParam);
 	const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],param);
 	//const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],{});
 	//const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});

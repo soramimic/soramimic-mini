@@ -23,7 +23,8 @@ require_once 'autoloader.php';
 //$res = DbOperator::SetOpinionNumber("a",DbOperator::GetOpinionNumber("a"));
 //$res = DbOperator::GetNewOpinions("a");
 //$res = DbOperator::GetCurrentPhase("b");
-$res = DbOperator::AddLoginInfo("b","c","d");
+//$res = DbOperator::AddLoginInfo("b","c","d");
+$res = DbOperator::AddConversionInfo("a","b",12,"base",1);
 var_dump($res);
 //Utils::ChangeConfig('room','value');
 

@@ -50,152 +50,17 @@ if(Utils::CheckPostParameters(["answer"], $obj) and $obj['answer']!=""){
 switch($command){
 	case 'log_in':
 		//ユーザーがログインしたことをBBへ通知
-		DbOperator::AddLoginInfo($user_id,$obj['user_name'],Constants::$LOG_IN,$obj["password"]);
+		DbOperator::AddLoginInfo($user_id,$obj['user_name'],Constants::$LOG_IN);
 		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, null);
 		break;
 	case 'log_out':
 		DbOperator::AddLoginInfo($user_id,$obj['user_name'],Constants::$LOG_OUT);
 		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, null);
 		break;
-	case "log_in_questionnaire":
-		DbOperator::AddLoginInfo($user_id,$obj['user_name'],Constants::$LOG_IN_QUESTIONNAIRE,$obj["password"]);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, null);
-		break;
-	case 'get_user_id':
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $user_id);
-		break;
-	case 'get_active_user_names':
-		$active_user_names = DbOperator::GetActiveUserNames();
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $active_user_names);
-		break;
-	case 'add_opinion':
-		if(Utils::CheckPostParameters(["opinion"], $obj)){
-			$new_opinion = DbOperator::AddOpinion($user_id, $obj['user_name'],$obj['password'],$obj['opinion']);
-			if($new_opinion != null){
-				Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $new_opinion);
-			}
-		}
-		else {
-			Utils::SendResponse(Constants::$STATUS_FAILED, Constants::$MESSAGE_101, null);
-		}
-		break;
-	case 'get_opinions':
-		if(Utils::CheckPostParameters(["last_id"], $obj)){
-			$new_opinions = DbOperator::GetNewOpinions($obj['last_id']);
-			Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $new_opinions);
-		}
-		else{
-			Utils::SendResponse(Constants::$STATUS_FAILED, Constants::$MESSAGE_101, null);
-		}
-		break;
-	case 'get_opinions_with_password':
-		$opinions = DbOperator::GetOpinionsWithPassword($obj['password']);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $opinions);
-		break;
-	case 'get_reactions':
-		$reactions = DbOperator::GetReactions($obj['last_id']);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $reactions);
-		break;
-	case 'get_fixed_reactions':
-		$like = DbOperator::GetFixedReactions(Constants::$REACTION_LIKE,-1);
-		$question = DbOperator::GetFixedReactions(Constants::$REACTION_QUESTION,-1);
-		$count = array(
-				Constants::$REACTION_LIKE => $like,
-				Constants::$REACTION_QUESTION => $question
-		);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $count);
-		break;
-	case 'get_latest_fixed_reaction':
-		$like = DbOperator::GetLatestFixedReaction(Constants::$REACTION_LIKE);
-		$question = DbOperator::GetLatestFixedReaction(Constants::$REACTION_QUESTION);
-		$count = array(
-				Constants::$REACTION_LIKE => $like,
-				Constants::$REACTION_QUESTION => $question
-		);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $count);
-		break;
-	case 'get_total_reactions':
-		$like = DbOperator::GetTotalReactions(Constants::$REACTION_LIKE);
-		$question = DbOperator::GetTotalReactions(Constants::$REACTION_QUESTION);
-		$count = array(
-				Constants::$REACTION_LIKE => $like,
-				Constants::$REACTION_QUESTION => $question
-		);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $count);
-		break;
-	case 'add_like':
-		$id = DbOperator::AddReaction($user_id, $user_name, $obj['password'],Constants::$REACTION_LIKE);
-		Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $id);
-		break;
-	case 'add_question' :
-		$id = DbOperator::AddReaction ( $user_id, $user_name,  $obj['password'], Constants::$REACTION_QUESTION);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $id );
-		break;
-	case 'set_presentation':
-		$id = DbOperator::AddPresentation($obj['presentation']);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $id );
-		break;
-	case 'get_presentation':
-		$presentation = DbOperator::GetPresentation();
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $presentation );
-		break;
-	case 'delete_presentation':
-		$presentation = DbOperator::DeletePresentation();
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $presentation );
-		break;
-	case 'allow_presentation':
-		$presentation = DbOperator::SetPresentationStatus($obj['presentation'],Constants::$USER_STATUS_ALLOWED);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $presentation );
-		break;
-	case 'ban_presentation':
-		$presentation = DbOperator::SetPresentationStatus($obj['presentation'],Constants::$USER_STATUS_BANNED);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $presentation );
-		break;
-	case 'check_password_allowed':
-		$isAllowed = DbOperator::CheckPasswordAllowed($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $isAllowed );
-		break;
-	case 'ban_user':
-		DbOperator::SetUserStatus($obj["password"], Constants::$USER_STATUS_BANNED);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $obj["password"]);
-		break;
-	case 'allow_user':
-		DbOperator::SetUserStatus($obj["password"], Constants::$USER_STATUS_ALLOWED);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $obj["password"]);
-		break;
-	case 'add_password':
-		DbOperator::AddPassword($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $obj["password"]);
-		break;
-	case 'delete_password':
-		DbOperator::DeletePassword($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $obj["password"]);
-		break;
-	case 'get_passwords':
-		//$passwords = DbOperator::GetPasswords($obj["password"]);
-		$passwords = DbOperator::UpdateAndGetPasswords($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $passwords);
-		break;
-	case 'check_user_allowed':
-		$isAllowed = DbOperator::CheckUserAllowed($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $isAllowed);
-		break;
-	case 'check_user_knockout':
-		$isAllowed = DbOperator::CheckUserKnockout($obj["password"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $isAllowed);
-		break;
-	case 'add_questionnaire':
-		//$obj["answer"]=(array)$obj["answer"];
-		$answer = (array)$obj["answer"];
-		//文字数チェック
-
-		$id = DbOperator::AddQuestionnaire($answer,$obj["password"],$obj["user_name"]);
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $id);
-		break;
-	case 'get_rest_time':
-		$sec = DbOperator::GetRestTimeSec();
-		Utils::SendResponse ( Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, $sec);
-		break;
+	case "send_conversion_info":
+	    DbOperator::AddConversionInfo($user_id,$obj["user_name"],$obj["text_length"],$obj["wordfile"],$obj["conversion_param"]);
+	    Utils::SendResponse(Constants::$STATUS_SUCCESS, Constants::$MESSAGE_SUCCESS, null);
+	    break;
 	default:
 		var_dump($obj);
 		break;
