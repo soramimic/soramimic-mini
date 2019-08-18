@@ -60,6 +60,7 @@ class Soramimic {
 		this.VOWELS_ = ["ア","イ","ウ","エ","オ"];
 		this.SMALL_VOWELS_ = "ァィゥェォャュョヮ";
 		this.LARGE_VOWELS_ = "アイウエオヤユヨワ";
+		
 
 		this.KANA2VOWEL_ = this.getKana2Vowel(this.KANA2PHONON_);
 		this.KANA2CONSONANT_ = this.getKana2Consonant(this.KANA2PHONON_);
@@ -76,7 +77,7 @@ class Soramimic {
 		console.timeEnd("gksb");
 		console.time("gks");
 		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
-		console.log(Object.keys(this.KANA_SIMILARITY_));
+		//console.log(Object.keys(this.KANA_SIMILARITY_));
 		console.timeEnd("gks");
 		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
 		this.TOKENIZER_ = null;
@@ -502,6 +503,18 @@ class Soramimic {
 		return Object.keys(k2r).reduce((prev,kana)=>{
 			const romaVowelOfKana = k2r[kana][1].slice(-1);//kanaのローマ字表記の最後の文字(=母音)を取得
 			prev[kana] = roma2vowel[romaVowelOfKana];//kanaを母音カナに変換
+			//足してみた20190818
+			if("ンッ".includes(kana)){
+				
+			}
+			else{
+				prev[kana+"ー"] = prev[kana];
+				if(prev[kana] == "エ")
+					prev[kana+"イ"] = prev[kana];
+				else if(prev[kana] == "オ")
+					prev[kana+"ウ"] == prev[kana];
+			}
+				
 			return prev;
 		},{});
 	}
@@ -537,12 +550,12 @@ class Soramimic {
 		//伸ばし棒を追加
 		for(let k1 of Object.keys(k2p)){
 		//for(let k1 of k2plist){
-			const hasVowel = ("aiueo".indexOf(k2p[k1][1].slice(-1))>=0);
+			const hasVowel = ("aiueo".includes(k2p[k1][1].slice(-1)));
 			//console.log(k1,hasVowel);
 			if(hasVowel == true){
 				k2p[k1+"ー"] = [k2p[k1][0],k2p[k1][1]+":"];
-				k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
-				k2p[k1+"ッ"] = k2p[k1];//ッは、なにもないのと同じ
+				//k2p[k1+"ン"] = [k2p[k1][0],k2p[k1][1]+":"];//ンはーと同じ
+				//k2p[k1+"ッ"] = k2p[k1];//ッは、なにもないのと同じ
 			}
 		}
 		let k2plist = Object.keys(k2p);
@@ -554,7 +567,8 @@ class Soramimic {
 				prev1[k1] = k2plist
 							.reduce( (prev2,k2) => {
 								const p2 = k2p[k2];//k2のphonon
-								if(Object.keys(sims[1]).indexOf(p1[1])<0)
+								//if(Object.keys(sims[1]).indexOf(p1[1])<0)
+								if(!(p1[1] in sims[1]))
 									console.log("k1,p1",k1,p1);
 								prev2[k2] = (sims[0][p1[0]][p2[0]]+sims[1][p1[1]][p2[1]])/2;//子音同士、母音同士の類似度の平均をk1とk2の類似度のベースとして定義
 								return prev2;
@@ -628,9 +642,61 @@ class Soramimic {
 	separateKana(kanaStr){//kanaUnitsはカナのリスト(not object)を想定
 		const S2L = this.SMALL2LARGE_,
 			KANA_UNITS_ = this.KANA_UNITS_LIST_,
+			K2V = this.KANA2VOWEL_,
 			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
-			LEN_MAX_ = 3
+			LEN_MAX_ = 2
 			;
+		let result = [],
+			i=0;
+		kanaStr = kanaStr.replace(/ーー/g, "ー").replace(/ンン/g, "ン").replace(/ッッ/,"ッ");
+		let kanaStrLen = kanaStr.length;
+		kanaStr += "//";
+		
+		while(i<kanaStrLen){
+			let p = kanaStr.slice(i,i+LEN_MAX_+1);
+			if(p[0] in S2L){
+				p = S2L[p[0]] + p.slice(1);
+			}
+			let moji = "";
+			for(let si = LEN_MAX_; si>0; si--){
+				let p1 = p.slice(0,si);
+				let p2 = p[si];
+				if(p1 in KANA_UNITS_){
+					if(p2 == "ー"){
+						if(K2V[p1] == "エ" && p1[p1.length-1] == "イ")
+							moji = p1[0];
+						else if(K2V[p1] == "オ" && p1[p1.length-1] == "ウ"){
+							moji = p1[0];
+						}
+						else if(p1 == "ン"){
+							result.push(p1);
+							i += 1;
+							moji = p1;
+						}
+						else{
+							moji = p1+p2;
+						}
+					}
+					else if(p2 == "エ" && K2V[p1] == "エ" && p1[p1.length-1] == "イ")
+						moji = p1;
+					else if(p2 == "オ" && K2V[p1] == "オ" && p1[p1.length-1] == "ウ")
+						moji = p1;
+					else if("アイウエオ".includes(p2) && K2V[p1] == p2 && p1[p1.length-1] != "ー")
+						moji = p1 + p2;
+					else
+						moji = p1;
+					break;
+				}
+			}
+			if(moji == "")
+				break;
+			result.push(moji);
+			i+=result[-1].length;
+		}
+		//p = kanaStr.slice(kanaStrLen);
+		return result;
+		
+		/*
 
 		//伸ばし棒に変換可能な小文字を変換する
 		let kana = [].map.call(kanaStr,(v,i)=>{
@@ -652,12 +718,6 @@ class Soramimic {
 			}
 		}).join("");
 		//連続してても意味のない音を一音に置き換える
-		/*
-		for(let v of ["ー","ッ","ン"]){
-			const reg = new RegExp(v+"+","g");
-			kana = kana.replace(reg,v);
-		};
-		*/
 		kana = kana.replace(/ーー/g, "ー").replace(/ンン/g, "ン").replace(/ッッ/,"ッ");
 
 		//console.time("def");
@@ -706,34 +766,6 @@ class Soramimic {
 			resulttext += p;
 		}
 		return resulttext.split(splitter).slice(1);
-		/*
-		return [].reduce.call(kana, (prev, v, i) =>{
-			if(i<prev.join("").length){//iが現在の文字数より小さければスキップ
-
-			}else{
-				let isBreak = false;
-				for(let j = LEN_MAX_; j>0; j--){
-					//for(let k = LEN_MAX_ - j; k>-1; k--){
-						if(KANA_UNITS_.indexOf(kana.slice(i,i+j))>=0){
-							//切り取り可能文字が長さ1以上で、最後の文字が母音で、その次が伸ばし棒(ー)のとき
-							if(j>1 && "アイウエオ".indexOf(kana[i+j-1])>=0 && KANA_UNITS_.indexOf(kana.slice(i,i+j-1))>=0){
-								prev.push(kana.slice(i,i+j-1));//最後の文字は次とつながるほうが良いと判断する
-							}
-							else{
-								prev.push(kana.slice(i,i+j));
-							}
-							isBreak = true;
-							break;
-						}
-					//}
-					if(isBreak == true)
-						break;
-				}
-				if(isBreak == false)
-					console.log(kana,kana.slice(i,i+LEN_MAX_),"does not exist in KanaUnits");
-			}
-			return prev;
-		},[] );
 		*/
 
 	}
@@ -835,6 +867,7 @@ class Soramimic {
 
 const soramimic = new Soramimic();
 setTimeout(()=>{
+	console.log(soramimic.separateKana("アウエオケアキーアエイエイオウオウ"));
 	const res = soramimic.getYomiAndPhraseBreak("ツィ");
 	console.log("phrase",res);
 },2000);
