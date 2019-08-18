@@ -63,6 +63,7 @@ class Soramimic {
 		
 
 		this.KANA2VOWEL_ = this.getKana2Vowel(this.KANA2PHONON_);
+		console.log(this.KANA2VOWEL_);
 		this.KANA2CONSONANT_ = this.getKana2Consonant(this.KANA2PHONON_);
 		this.KANA_UNITS_ = this.getKanaUnits(this.KANA2PHONON_,this.KANA2VOWEL_);
 		this.KANA_UNITS_LIST_ = Object.keys(this.KANA_UNITS_);
@@ -98,7 +99,7 @@ class Soramimic {
 		this.buildTokenizer()//tokenizerをセットする
 		.then(() => {
 			console.timeEnd("buildTokenizer");
-			console.log("yomi waokitsune",this.getYomi("ワオキツネザル"));
+			//console.log("yomi waokitsune",this.getYomi("ワオキツネザル"));
 			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
 			console.timeEnd("loadWordList");
@@ -507,12 +508,15 @@ class Soramimic {
 			if("ンッ".includes(kana)){
 				
 			}
+			else if(kana == "sp"){
+				
+			}			
 			else{
 				prev[kana+"ー"] = prev[kana];
 				if(prev[kana] == "エ")
 					prev[kana+"イ"] = prev[kana];
 				else if(prev[kana] == "オ")
-					prev[kana+"ウ"] == prev[kana];
+					prev[kana+"ウ"] = prev[kana];
 			}
 				
 			return prev;
@@ -661,7 +665,7 @@ class Soramimic {
 			for(let si = LEN_MAX_; si>0; si--){
 				let p1 = p.slice(0,si);
 				let p2 = p[si];
-				if(p1 in KANA_UNITS_){
+				if(p1 in K2V){
 					if(p2 == "ー"){
 						if(K2V[p1] == "エ" && p1[p1.length-1] == "イ")
 							moji = p1[0];
@@ -691,7 +695,7 @@ class Soramimic {
 			if(moji == "")
 				break;
 			result.push(moji);
-			i+=result[-1].length;
+			i+=result[result.length-1].length;
 		}
 		//p = kanaStr.slice(kanaStrLen);
 		return result;
@@ -867,7 +871,7 @@ class Soramimic {
 
 const soramimic = new Soramimic();
 setTimeout(()=>{
-	console.log(soramimic.separateKana("アウエオケアキーアエイエイオウオウ"));
+	console.log(soramimic.separateKana("アウエオエイーオウーンッカアアケアキーアエイエイオウオウ"));
 	const res = soramimic.getYomiAndPhraseBreak("ツィ");
 	console.log("phrase",res);
 },2000);
