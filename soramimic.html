@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-145894423-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-145894423-1');
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Soramimic</title>
@@ -42,7 +52,7 @@
 					<label class="radio-inline"><input type="radio" name="wordfile" value="PHYSICIST">物理学者</label>
 				</div>
 				<div>
-					<label class="radio-inline radio-original"><input type="radio" name="wordfile" value="original">自作の単語リストを使用</label>
+					<label class="radio-inline radio-original"><input type="radio" name="wordfile" value="ORIGINAL">自作の単語リストを使用</label>
 				</div>
 			</div>
 			<div class="col-xs-12">
@@ -54,39 +64,39 @@
 							<label class="radio-inline"><input type="radio" name="duplication" value="true" checked="checked">あり</label>
 						</div>
 						<div class="col-xs-4 col-md-2">
-							<label class="radio-inline"><input type="radio" name="duplication" value="false">なし</label>
+							<label class="radio-inline"><input type="radio" name="duplication" value="false"  checked="checked">なし</label>
 						</div>
 
 					</div>
 				</div>
 				<div class="row">
-					<div class="input-param col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-2" style="text-align:right">母音</div>
 						<div class="col-xs-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="vowel" min="0" max="100" step="1" value="90">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="vowel" min="0" max="100" step="1" value="95">
 						</div>
-						<div class="col-xs-1 param-value">90</div>
+						<div class="col-xs-1 param-value">95</div>
 					</div>
-					<div class="input-param col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-2" style="text-align:right">子音</div>
 						<div class="col-xs-7">
 							<input type="range" class="form-control form-control-range ipt-parameter" name="consonant" min="0" max="100" step="1" value="90">
 						</div>
 						<div class="col-xs-1 param-value">90</div>
 					</div>
-					<div class="input-param col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-2" style="text-align:right">文節</div>
 						<div class="col-xs-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="100s" step="1" value="90">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="100s" step="1" value="20">
 						</div>
-						<div class="col-xs-1 param-value">90</div>
+						<div class="col-xs-1 param-value">20</div>
 					</div>
-					<div class="input-param col-xs-12 col-md-6">
+					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-2" style="text-align:right">単語数</div>
 						<div class="col-xs-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="wordnum" min="0" max="1" step="0.1" value="0.5">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="wordnum" min="0" max="100" step="1" value="10">
 						</div>
-						<div class="col-xs-1 param-value">0.5</div>
+						<div class="col-xs-1 param-value">10</div>
 					</div>
 				</div>
 			</div>
@@ -98,14 +108,15 @@
 				<button class="btn btn-block btn-primary btn-send">Convert</button>
 			</div>
 			<div class="col-xs-12">出力結果(上から、入力読み,出力読み,出力元単語)</div>
-			<!--
+			<!-- 
 			<div class="col-xs-12">
 				<div class="progress">
 					<div class="progress-bar progress-bar-striped convert-progress" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
 				</div>
 			</div>
 			 -->
-			<span class="loading">Converting...<img src='gif/ajax-loader.gif'></span>
+			
+			<span class="loading2">Converting...<span class="span-progress">0/0</span><img src='gif/ajax-loader.gif'></span>
 			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
@@ -134,14 +145,16 @@ const getParam = () => {
 	//wordnum
 	param.WORD_NUMBER_PENALTY = Number($("input[name=wordnum]").val())*1;
 	
+	param.DUPLICATE = ($("input[name=duplication]:checked").val() == "true");
+	
 	param = soramimic.assignDefaultParameter(param);
 	console.log("param",param);
 	return param;
 }
 
 
-$(".container-fluid").show();
-$(".loading").remove();
+//$(".container-fluid").show();
+//$(".loading").remove();
 
 
 const makeDialog = () => {
@@ -168,7 +181,7 @@ const makeDialog = () => {
 				class: "btn-register",
 				click: function(){
 					var text = $(".ta-original-wordlist").val();
-					wordlist["original"] = loadDatabaseText(text);
+					soramimic.WORD_LIST_.ORIGINAL = soramimic.loadDatabaseText(text);
 					localStorage.setItem("originalWordlist",text);
 					$(this).dialog("close");
 				}
@@ -248,6 +261,7 @@ $(".btn-send").click(function(){
 	//const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});
 	console.timeEnd("soramimi_dp");
 
+	/*
 	console.log(result);
 	if(result.length == 0){
 		$(".loading2").hide();
@@ -270,6 +284,7 @@ $(".btn-send").click(function(){
 
 	$(".div-result").html(resultText.join("<br>"));
 	$(".loading2").hide();
+	*/
 });
 </script>
 </html>

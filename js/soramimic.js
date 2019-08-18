@@ -78,6 +78,7 @@ class Soramimic {
 		console.timeEnd("gksb");
 		console.time("gks");
 		this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_,{}); //ひらがなの置換コストの微調整後の値
+		console.log(this.KANA_SIMILARITY_BASE_["ウ"]);
 		//console.log(Object.keys(this.KANA_SIMILARITY_));
 		console.timeEnd("gks");
 		this.KUROMOJI_PATH_ = "js/kuromoji/dict";
@@ -103,14 +104,21 @@ class Soramimic {
 			console.time("loadWordList");
 			this.wordList = this.WORD_FILE_PATH_;
 			console.timeEnd("loadWordList");
-			const target = this.jpn2kanaUnits("こんにちは");
+			//for(let path of Object.keys(this.WORD_LIST_)){
+			//	console.log(JSON.stringify(this.WORD_LIST_[path]));
+			//}
+
+			$(".container-fluid").show();
+			$(".loading").remove();
+
+			//const target = this.jpn2kanaUnits("こんにちは");
 			//const yomi = jpn2kanaUnits("こんにちは");
 			//const sep =
-			console.log("target",target);
-			console.log("wordlist",this.WORD_LIST_);
-			console.time("getSimWord");
-			console.log("similarWord",this.getSimilarWord(this.KANA_SIMILARITY_,this.WORD_LIST_.BASEBALL,target,{},100));
-			console.timeEnd("getSimWord");
+			//console.log("target",target);
+			//console.log("wordlist",this.WORD_LIST_);
+			//console.time("getSimWord");
+			//console.log("similarWord",this.getSimilarWord(this.KANA_SIMILARITY_,this.WORD_LIST_.BASEBALL,target,{},100));
+			//console.timeEnd("getSimWord");
 
 			//console.time("dp");
 			//console.log("soramimi",this.soramimi_dp("こんにちは",this.WORD_LIST_.BASEBALL,{}))
@@ -194,7 +202,7 @@ class Soramimic {
 			console.log("tarlen",tarlen);
 
 			const dp_inner = t => {
-				console.log("dp_inner t=",t);
+				//console.log("dp_inner t=",t);
 				const mini_result = {"scores":[],"words":[]}
 				//let mini_result = null;
 				//mini_result = {"scores":[1000000],"words":[["unknown","unknown","unknown",1000000,-1]]}
@@ -208,8 +216,8 @@ class Soramimic {
 				}
 				console.log("0",JSON.stringify(mini_result));
 				for (let i = 0; i<t; i++){
-					console.log("1",JSON.stringify(mini_result));
-					console.log("in_loop i=",i);
+					//console.log("1",JSON.stringify(mini_result));
+					//console.log("in_loop i=",i);
 					if ( number.includes(t-i) == false ){
 						continue
 					}
@@ -222,18 +230,26 @@ class Soramimic {
 					}
 
 					let score =  words.reduce((s, data) => {return s + data.slice(-2)[0]},0);
-					console.log("score_org",score);
+					//console.log("score_org",score);
 					const currentUsed = words.map(v => v[v.length-1]);
 					let newWord = null;
 					//console.log("target_out",target);
 					
 					for(let w of gs(wordlist,target.slice(i,t),100)){
-						const wid = w.slice(-1)[0],
-							wscore = w.slice(-2)[0]
-							;
-						if(used.includes(wid) || currentUsed.includes(wid))
+						const wid = w.slice(-1)[0];
+						if(isDuplicate == false && (used.includes(wid) || currentUsed.includes(wid)))
 							continue;
-						newWord = [w,wscore];
+						
+						let w2 = w.slice();
+						let wscore = w2.slice(-2)[0];
+						if(phraseBreaks.includes(t)){
+							wscore -= samePhraseBreak*100;
+						}
+						else{
+							
+						}
+						w2[w2.length-2] = wscore;
+						newWord = [w2,wscore];
 						//console.log("wscore",wscore);
 						//words.push(w);
 						//console.log("newWord",w,wscore,scoreb,score);
@@ -247,13 +263,28 @@ class Soramimic {
 					//console.log("score1",score);
 					//console.log("score",i,t,scoreb,score);
 					score += words.length*wordsNum;
-					if(phraseBreaks.includes(t))
-						score*=samePhraseBreak;
+					/*
+					console.log("phraseBreaks",phraseBreaks.includes(t),phraseBreaks,t)
+					if(phraseBreaks.includes(t)){
+						console.log(score,score-samePhraseBreak);
+						//score-=(samePhraseBreak*(t-i));
+						score -= 1000;
+						console.log("pb",score);
+					}
+					
+					else{
+						//score+=(samePhraseBreak*(t-i));
+						console.log("pb",score);
+					}
+					*/
+						
 					//console.log("words.length*wordsNum",words.length,wordsNum);
 					//console.log("score",score);
 					mini_result["scores"].push(score);
+					//console.log(JSON.stringify(mini_result["scores"]));
 					mini_result["words"].push(words);
-					console.log("t,i,miniresult",t,i,JSON.stringify(mini_result));
+					//console.log("t,i,miniresult",t,i,JSON.stringify(mini_result));
+					//console.log("t,i,miniresult",t,i,mini_result);
 				}
 				if(mini_result["scores"].length > 0){
 					if(t == tarlen+1){
@@ -284,13 +315,69 @@ class Soramimic {
 		}
 
 		//progressBarの初期値設定
-
-		const bar = $(".progress-bar.convert-progress");
-		bar.css("width","0%");
+		//const bar = $(".progress-bar.convert-progress");
+		const bar = $(".span-progress");
+		//bar.css("width","10%");
+		bar.html("0/"+String(phraselen));
+		$(".div-result").html("");
+		
 		//bar.attr("aria-valuenow","0");
 		//bar.attr("aria-valuenmin","0");
 		//bar.attr("aria-valuenmax",phraselen);
+		let dpIndex = 0;
+		
+		//dpをset_timeoutで実行するための関数
+		const dp_outer = i => {
+			if(i>=phraselen || i<0){
+				//bar.css("width","26%");
+				const result = results["words"];
+				console.log(result);
+				if(result.length == 0){
+					$(".loading2").hide();
+					$(".div-result").html("うまく変換できる単語を見つけられませんでした");
+					return;
+				}
+				let resultText = result.map(v=>{
+					return v.reduce((prev2,v2)=>{
+						prev2[0].push(v2[0]);//org
+						prev2[1].push(v2[1]);//yomi
+						prev2[2].push(v2[2]);//word
+						return prev2
+					},[[],[],[]])
+					.map(v=>v.join("/"))
+					.concat([""])
+					;
+				})
+				.flat()//平坦化
+				;
 
+				$(".div-result").html(resultText.join("<br>"));
+				$(".loading2").hide();
+
+				return results;
+			}
+				
+			console.time("dp_"+String(i));
+			const r = dp(i);
+			//$("body").append("<div>"+String(i)+"</div>");
+			console.log(r);
+			if ( r != null)
+				results["words"][i] = r;
+			//progressBarの変更
+			const percentStr = String(orgRound((i+1)*100/phraselen,1))+"%";
+			//bar.css("width", percentStr);
+			//bar.html(percentStr+"/"+String(phraselen));
+			bar.html(String(i+1)+"/"+String(phraselen));
+			setTimeout(function(){
+				dp_outer(i+1);
+			},0);
+		}
+		setTimeout(function(){
+			dp_outer(0);
+		},0);
+		
+
+		/*
 		phrases.forEach((v,i)=>{
 			console.time("dp_"+String(i));
 			const r = dp(i);
@@ -304,6 +391,7 @@ class Soramimic {
 			console.timeEnd("dp_"+String(i));
 		});
 		return results["words"];
+		*/
 	}
 
 	set wordList(filepathobj){
@@ -367,7 +455,7 @@ class Soramimic {
 		if(wordlisttext == ""){
 			return null;
 		}
-		return this.loadDatabaseText(wordlisttext);
+		return this.loadDatabaseText(wordlisttext);		
 	}
 
 	loadDatabaseText(text){
@@ -882,13 +970,14 @@ class Soramimic {
 }
 
 const soramimic = new Soramimic();
-setTimeout(()=>{
+//setTimeout(()=>{
 	//console.log(soramimic.separateKana("アウエオエイーオウーンッカアアケアキーアエイエイオウオウ"));
 	//const res = soramimic.getYomiAndPhraseBreak("ツィ");
 	const text = "君はシンデレラガール";
-	const res = soramimic.soramimi_dp(text,soramimic.WORD_LIST_.POKEMON);
-	console.log("phrase",res);
-},2000);
+	//const res = soramimic.soramimi_dp(text,soramimic.WORD_LIST_.POKEMON);
+	//console.log("phrase",res);
+//},2000);
+
 //soramimic.getYomi("アイウエオ");
 //db.separateKana("ヴォオーギン");
 //testText = "ーー、ーーーー、ーー、ーーー";
