@@ -74,21 +74,21 @@
 					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-3 col-sm-2" style="text-align:right">母音</div>
 						<div class="col-xs-6 col-sm-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="vowel" min="0" max="100" step="1" value="95">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="vowel" min="0" max="100" step="1" value="50">
 						</div>
-						<div class="col-xs-1 param-value">95</div>
+						<div class="col-xs-1 param-value">50</div>
 					</div>
 					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-3 col-sm-2" style="text-align:right">子音</div>
 						<div class="col-xs-6 col-sm-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="consonant" min="0" max="100" step="1" value="90">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="consonant" min="0" max="100" step="1" value="10">
 						</div>
-						<div class="col-xs-1 param-value">90</div>
+						<div class="col-xs-1 param-value">10</div>
 					</div>
 					<div class="input-param col-xs-12 col-sm-6">
 						<div class="col-xs-3 col-sm-2" style="text-align:right">文節</div>
 						<div class="col-xs-6 col-sm-7">
-							<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="100s" step="1" value="20">
+							<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="100" step="1" value="20">
 						</div>
 						<div class="col-xs-1 param-value">20</div>
 					</div>
@@ -121,7 +121,7 @@
 			<div class="col-xs-12 div-result"></div>
 		</div>
 	</div>
-	<div id="footer"><br>-----------<br>※当サイトの開発・運営費の一部に下記の皆様からの寄付金を使用させていただきました。心より感謝申し上げます<br>ご寄付いただいた皆様（順不同）：篠永康平 様、増田一也 様、中崎宏祐 様、ちら@修羅ひよこ大学院生 様、高橋仁 様、久保井亮一 様、藤原政彦 様、さいとてつや 様、横田将志 様、松田実 様、細田一史 様、渡辺祐太 様</div>
+	<div id="footer"><br>-----------<br>※開発者：<a target="_blank">Jiro Shimaya</a><br>※当サイトの開発・運営費の一部に下記の皆様からの寄付金を使用させていただきました。心より感謝申し上げます<br>ご寄付いただいた皆様（順不同）：篠永康平 様、増田一也 様、中崎宏祐 様、ちら@修羅ひよこ大学院生 様、高橋仁 様、久保井亮一 様、藤原政彦 様、さいとてつや 様、横田将志 様、松田実 様、細田一史 様、渡辺祐太 様</div>
 </body>
 <script>
 //$(".btn-send").click(function(){
@@ -155,9 +155,9 @@ const getParam = () => {
 
 	let param = {}
 	//consnant
-	param.SAME_CONSONANT_REWARD = (100-Number($("input[name=consonant]").val()))*0.1;
+	param.SAME_CONSONANT_REWARD = (100-Number($("input[name=consonant]").val()))*0.01;
 	//vowel
-	param.SAME_VOWEL_REWARD = (100-Number($("input[name=vowel]").val()))*0.1;
+	param.SAME_VOWEL_REWARD = (100-Number($("input[name=vowel]").val()))*0.01;
 	//phrasebreak
 	param.SAME_PHRASE_BREAK_REWARD = Number($("input[name=phrasebreak]").val())*1;
 	//wordnum
