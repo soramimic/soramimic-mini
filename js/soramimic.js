@@ -408,17 +408,17 @@ class Soramimic {
 			const path = filepathobj[k];
 			switch(k){
 			//case "BASEBALL":
-			case "SEKITSUI":
-			case "STATION":
-			case "PHYSICIST":
-			case "POKEMON":
-			case "NATION":
-				this.WORD_LIST_[k] = this.constructor.loadJsonFile("wordsFormatted/"+path.split("/")[1]);
-				break;
+			//case "SEKITSUI":
+			//case "STATION":
+			//case "PHYSICIST":
+			//case "POKEMON":
+			//case "NATION":
+			//	this.WORD_LIST_[k] = this.constructor.loadJsonFile("wordsFormatted/"+path.split("/")[1]);
+			//	break;
 			default:
-				//console.log(k);
+				console.log(k);
 				this.WORD_LIST_[k] = this.loadDatabaseFile(path);
-				//console.log(JSON.stringify(this.WORD_LIST_[k]));
+				console.log(JSON.stringify(this.WORD_LIST_[k]));
 				break;
 			}
 		}
