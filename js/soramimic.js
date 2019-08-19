@@ -60,7 +60,7 @@ class Soramimic {
 		this.VOWELS_ = ["ア","イ","ウ","エ","オ"];
 		this.SMALL_VOWELS_ = "ァィゥェォャュョヮ";
 		this.LARGE_VOWELS_ = "アイウエオヤユヨワ";
-		
+
 
 		this.KANA2VOWEL_ = this.getKana2Vowel(this.KANA2PHONON_);
 		console.log(this.KANA2VOWEL_);
@@ -196,10 +196,11 @@ class Soramimic {
 			//console.log("result_word",results["words"][0]);
 			for(let v of results["words"]){
 				for(let v2 of v)
-					used.push(v2.slice(-1)[0]);
+					//used.push(v2.slice(-1)[0]);
+					used.push(v2[v2.length-1]);
 			}
 			//console.log("used",used);
-			console.log("tarlen",tarlen);
+			console.log("index,tarlen",index,tarlen);
 
 			const dp_inner = t => {
 				//console.log("dp_inner t=",t);
@@ -234,19 +235,27 @@ class Soramimic {
 					const currentUsed = words.map(v => v[v.length-1]);
 					let newWord = null;
 					//console.log("target_out",target);
-					
+
 					for(let w of gs(wordlist,target.slice(i,t),100)){
-						const wid = w.slice(-1)[0];
-						if(isDuplicate == false && (used.includes(wid) || currentUsed.includes(wid)))
+						//const wid = w.slice(-1)[0];
+						const wid = w[w.length-1];
+						if(isDuplicate == false && (used.includes(wid) || currentUsed.includes(wid))){
+							//console.log("skip: t,i,used,current,w",t,i,used,currentUsed,w);
 							continue;
-						
+						}
+						else{
+							//console.log("ok: t,i,used,current,w",t,i,used,currentUsed,w);
+						}
+
+
 						let w2 = w.slice();
-						let wscore = w2.slice(-2)[0];
+						//let wscore = w2.slice(-2)[0];
+						let wscore = w2[w2.length-2];
 						if(phraseBreaks.includes(t)){
 							wscore -= samePhraseBreak*100;
 						}
 						else{
-							
+
 						}
 						w2[w2.length-2] = wscore;
 						newWord = [w2,wscore];
@@ -271,13 +280,13 @@ class Soramimic {
 						score -= 1000;
 						console.log("pb",score);
 					}
-					
+
 					else{
 						//score+=(samePhraseBreak*(t-i));
 						console.log("pb",score);
 					}
 					*/
-						
+
 					//console.log("words.length*wordsNum",words.length,wordsNum);
 					//console.log("score",score);
 					mini_result["scores"].push(score);
@@ -320,12 +329,12 @@ class Soramimic {
 		//bar.css("width","10%");
 		bar.html("0/"+String(phraselen));
 		$(".div-result").html("");
-		
+
 		//bar.attr("aria-valuenow","0");
 		//bar.attr("aria-valuenmin","0");
 		//bar.attr("aria-valuenmax",phraselen);
 		let dpIndex = 0;
-		
+
 		//dpをset_timeoutで実行するための関数
 		const dp_outer = i => {
 			if(i>=phraselen || i<0){
@@ -356,7 +365,7 @@ class Soramimic {
 
 				return results;
 			}
-				
+
 			console.time("dp_"+String(i));
 			const r = dp(i);
 			//$("body").append("<div>"+String(i)+"</div>");
@@ -375,7 +384,7 @@ class Soramimic {
 		setTimeout(function(){
 			dp_outer(0);
 		},0);
-		
+
 
 		/*
 		phrases.forEach((v,i)=>{
@@ -398,7 +407,7 @@ class Soramimic {
 		for(let k of Object.keys(filepathobj)){
 			const path = filepathobj[k];
 			switch(k){
-			case "BASEBALL":
+			//case "BASEBALL":
 			case "SEKITSUI":
 			case "STATION":
 			case "PHYSICIST":
@@ -413,7 +422,7 @@ class Soramimic {
 				break;
 			}
 		}
-		
+
 	}
 	set wordListOrg(text){
 		this.WORD_LIST_["ORIGINAL"] = this.loadDatabaseText(text);
@@ -470,7 +479,7 @@ class Soramimic {
 		if(wordlisttext == ""){
 			return null;
 		}
-		return this.loadDatabaseText(wordlisttext);		
+		return this.loadDatabaseText(wordlisttext);
 	}
 
 	loadDatabaseText(text){
@@ -620,11 +629,11 @@ class Soramimic {
 			prev[kana] = roma2vowel[romaVowelOfKana];//kanaを母音カナに変換
 			//足してみた20190818
 			if("ンッ".includes(kana)){
-				
+
 			}
 			else if(kana == "sp"){
-				
-			}			
+
+			}
 			else{
 				prev[kana+"ー"] = prev[kana];
 				if(prev[kana] == "エ")
@@ -632,7 +641,7 @@ class Soramimic {
 				else if(prev[kana] == "オ")
 					prev[kana+"ウ"] = prev[kana];
 			}
-				
+
 			return prev;
 		},{});
 	}
@@ -770,7 +779,7 @@ class Soramimic {
 		kanaStr = kanaStr.replace(/ーー/g, "ー").replace(/ンン/g, "ン").replace(/ッッ/,"ッ");
 		let kanaStrLen = kanaStr.length;
 		kanaStr += "//";
-		
+
 		while(i<kanaStrLen){
 			let p = kanaStr.slice(i,i+LEN_MAX_+1);
 			if(p[0] in S2L){
@@ -814,7 +823,7 @@ class Soramimic {
 		}
 		//p = kanaStr.slice(kanaStrLen);
 		return result;
-		
+
 		/*
 
 		//伸ばし棒に変換可能な小文字を変換する
@@ -914,12 +923,12 @@ class Soramimic {
 			tYomi = this.separateKana(tYomi);//kanaUnitに変換
 			if(["名詞","動詞","副詞","形容詞","形容動詞","感動詞"].includes(v.pos)){
 				phraseBreak.push(yomi.length);
-			}		
+			}
 			yomi = yomi.concat(tYomi);//yomiに結合
 		}
-		return {"kana":yomi,"phrasebreak":phraseBreak}		
+		return {"kana":yomi,"phrasebreak":phraseBreak}
 	}
-	
+
 	jpn2kanaUnits(strVal){
 		const yomi = this.getYomi(strVal);
 		return this.separateKana(yomi);
