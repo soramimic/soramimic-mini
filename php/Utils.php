@@ -8,7 +8,7 @@ class Utils{
 			return $_COOKIE[Constants::$COOKIE_USERID];
 		}
 		else {
-			$uuid = Utils::GenerateUniqID("chega_system_");
+			$uuid = Utils::GenerateUniqID("Soramimic_");
 			setcookie(Constants::$COOKIE_USERID,$uuid);
 			return $uuid;
 		}
