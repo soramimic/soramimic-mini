@@ -1,3 +1,15 @@
+/*
+======================================================================
+Project Name    : Soramimic
+File Name       : soramimic.js
+Encoding        : utf-8
+Creation Date   : 2019/08/19
+ 
+Copyright © 2019 Jiro Shimaya. All rights reserved.
+======================================================================
+
+ */
+
 class Soramimic {
 	constructor(){
 		this.DEFAULT_PARAMETER_VALUES_ = {
