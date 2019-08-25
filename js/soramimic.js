@@ -83,8 +83,11 @@ class Soramimic {
 
 		this.VOWEL_SIMILARTIY_FILE_PATH_ = "conf/simVowelsSimple.json";
 		this.CONSONANT_SIMILARITY_FILE_PATH_ = "conf/simConsonantsSimple.json";
+		this.ENGLISH2KANA_FILE_PATH_ = "conf/bep-eng.json";
 		this.VOWEL_SIMILARITY_ = this.constructor.loadJsonFile(this.VOWEL_SIMILARTIY_FILE_PATH_);
 		this.CONSONANT_SIMILARITY_ = this.constructor.loadJsonFile(this.CONSONANT_SIMILARITY_FILE_PATH_);
+		this.ENGLISH2KANA_ = this.constructor.loadJsonFile(this.ENGLISH2KANA_FILE_PATH_);//key値のアポストロフィはAPOSTROPHEに変換されている
+		
 		console.time("gksb");
 		this.KANA_SIMILARITY_BASE_ = this.getKanaSimilarityBase(this.CONSONANT_SIMILARITY_,this.VOWEL_SIMILARITY_,this.KANA2PHONON_); //ひらがなの置換コストのベースの値
 		console.timeEnd("gksb");
@@ -451,6 +454,7 @@ class Soramimic {
 			});
 		});
 	}
+	
 
 
 
@@ -924,13 +928,23 @@ class Soramimic {
 	}
 	getYomiAndPhraseBreak(strVal){
 		const tokenizer = this.TOKENIZER_;
+		const e2k = this.ENGLISH2KANA_;
+		strVal = strVal.toUpperCase();//英語は大文字に直しておく
+		strVal = strVal.replace("’","'").replace(/\'/g,"APOSTROPHE");//アポストロフィをAPOSTROPHEにする
 		const maresult = tokenizer.tokenize(strVal);
 		let yomi = [];
 		let phraseBreak = [];
 		for(let v of maresult){
 			let tYomi = v.pronunciation;
-			if(typeof tYomi === "undefined")
-				tYomi = hiraToKana(v.surface_form);
+			if(typeof tYomi === "undefined"){
+				tYomi = v.surface_form;
+				if(tYomi.match(/^[A-Za-z]*$/)){
+					tYomi = tYomi.toUpperCase();
+					if(tYomi in e2k)
+						tYomi = e2k[tYomi];
+				}
+				tYomi = hiraToKana(tYomi);
+			}
 			tYomi = removeSign(tYomi);//記号削除
 			tYomi = this.separateKana(tYomi);//kanaUnitに変換
 			if(["名詞","動詞","副詞","形容詞","形容動詞","感動詞"].includes(v.pos)){
