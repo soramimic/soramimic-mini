@@ -920,8 +920,38 @@ class Soramimic {
 		let yomi = "";
 		for(let v of maresult){
 			let tYomi = v.pronunciation;
-			if(typeof tYomi === "undefined")
-				tYomi = hiraToKana(v.surface_form);
+			if(typeof tYomi === "undefined"){
+				tYomi = v.surface_form;
+				if(tYomi.match(/^[A-Za-z]*$/)){
+					tYomi = tYomi.toUpperCase();
+					if(tYomi in e2k)
+						tYomi = e2k[tYomi];
+					else{
+						if(tYomi.includes(strApos) && tYomi != strApos)
+							tYomi = tYomi.replace(/APOSTROPHE/g,"");//アポストロフィあるのに辞書に読みがなかった場合、アポストロフィを無視して読む
+						tYomi = convertRomanToKana(tYomi);//英単語辞書になかったらローマ字読みする
+						console.log("tYomi=",tYomi);
+						//それでもアルファベットが残っていればそのまま読む
+						let found = tYomi.match(/[A-Z]/g);//iは大文字小文字無視。
+						if(found){
+							for(let v of found){
+								console.log("found loop v=",v);
+								let count = 0;
+								while(tYomi.includes(v)){
+									tYomi = tYomi.replace(v,e2k[v]);
+									if(count>tYomi.length)
+										break;
+									else
+										count += 1;
+								}
+							}
+							
+						}
+						
+					}
+				}
+				tYomi = hiraToKana(tYomi);
+			}
 			yomi += tYomi;
 		}
 		return removeSign(yomi);
@@ -930,7 +960,8 @@ class Soramimic {
 		const tokenizer = this.TOKENIZER_;
 		const e2k = this.ENGLISH2KANA_;
 		strVal = strVal.toUpperCase();//英語は大文字に直しておく
-		strVal = strVal.replace("’","'").replace(/\'/g,"APOSTROPHE");//アポストロフィをAPOSTROPHEにする
+		const strApos = "APOSTROPHE";
+		strVal = strVal.replace("’","'").replace(/\'/g,strApos);//アポストロフィをAPOSTROPHEにする
 		const maresult = tokenizer.tokenize(strVal);
 		let yomi = [];
 		let phraseBreak = [];
@@ -942,6 +973,27 @@ class Soramimic {
 					tYomi = tYomi.toUpperCase();
 					if(tYomi in e2k)
 						tYomi = e2k[tYomi];
+					else{
+						if(tYomi.includes(strApos) && tYomi != strApos)
+							tYomi = tYomi.replace(/APOSTROPHE/g,"");//アポストロフィあるのに辞書に読みがなかった場合、アポストロフィを無視して読む
+						tYomi = convertRomanToKana(tYomi);//英単語辞書になかったらローマ字読みする
+						console.log("tYomi=",tYomi);
+						//それでもアルファベットが残っていればいち文字ずつ読む
+						let found = tYomi.match(/[A-Z]/g);//iは大文字小文字無視。
+						if(found){
+							for(let v of found){
+								console.log("found loop v=",v);
+								let count = 0;
+								while(tYomi.includes(v)){
+									tYomi = tYomi.replace(v,e2k[v]);
+									if(count>tYomi.length)
+										break;
+									else
+										count += 1;
+								}
+							}							
+						}						
+					}
 				}
 				tYomi = hiraToKana(tYomi);
 			}
