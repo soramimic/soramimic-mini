@@ -267,7 +267,7 @@ class Soramimic {
 						//let wscore = w2.slice(-2)[0];
 						let wscore = w2[w2.length-2];
 						if(phraseBreaks.includes(t)){
-							wscore -= samePhraseBreak*100;
+							wscore -= samePhraseBreak*1;
 						}
 						else{
 
@@ -959,6 +959,8 @@ class Soramimic {
 	getYomiAndPhraseBreak(strVal){
 		const tokenizer = this.TOKENIZER_;
 		const e2k = this.ENGLISH2KANA_;
+		const S2L = this.SMALL2LARGE_;
+		const k2p = this.KANA2PHONON_;
 		strVal = strVal.toUpperCase();//英語は大文字に直しておく
 		const strApos = "APOSTROPHE";
 		strVal = strVal.replace("’","'").replace(/\'/g,strApos);//アポストロフィをAPOSTROPHEにする
@@ -998,6 +1000,13 @@ class Soramimic {
 				tYomi = hiraToKana(tYomi);
 			}
 			tYomi = removeSign(tYomi);//記号削除
+			if(tYomi.length > 0){
+				if(tYomi[0] in S2L && yomi.length>0){
+					if( (yomi[yomi.length-1]+tYomi[0]) in k2p){
+						tYomi = yomi.pop() + tYomi;
+					}
+				}
+			}
 			tYomi = this.separateKana(tYomi);//kanaUnitに変換
 			if(["名詞","動詞","副詞","形容詞","形容動詞","感動詞"].includes(v.pos)){
 				phraseBreak.push(yomi.length);
