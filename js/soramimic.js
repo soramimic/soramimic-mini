@@ -916,6 +916,7 @@ class Soramimic {
 
 	getYomi(strVal){
 		const tokenizer = this.TOKENIZER_;
+		const e2k = this.ENGLISH2KANA_;
 		const maresult = tokenizer.tokenize(strVal);
 		let yomi = "";
 		for(let v of maresult){
