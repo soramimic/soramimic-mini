@@ -4,22 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SoramimicMini</title>
-<!--
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
- -->
-<script src="jquery/ajax-1.7.0-jquery.min.js"></script>
-<script src="jquery/jquery-1.11.0.min.js"></script>
-<script src="jquery/jquery.cookie.js"></script>
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<script src="bootstrap/js/bootstrap.min.js"></script>
-
-<script src="js/kuromoji/build/kuromoji.js"></script>
 <script src="js/utils.js"></script>
-<script src="js/soramimic.js"></script>
+<script src="js/kuromoji/build/kuromoji.js"></script>
 </head>
 <script>
 </script>
@@ -80,7 +71,7 @@ $("div.container-fluid").hide();
 $(".loading").show();
 $(".loading2").hide();
 
-const getParam = () => {
+function getParam(){
 	let val = $("input[name=consonant_vowel]").val(),
 		param = {}
 
@@ -101,15 +92,23 @@ const getParam = () => {
 	console.log("param",param);
 	return param;
 }
-const ld_outer = cost => {
-	return (s,t) => zip(s,t).reduce((prev,[v1,v2])=> prev+=cost[v1][v2],0);
+function ld_outer(cost){
+	function ld_inner(s,t){
+		let score = 0;
+		zip(s,t).forEach(function([v1,v2]){
+			//console.log(v1,v2,cost[v1][v2]);
+			score+=cost[v1][v2]
+		});
+		return score;
+	}
+	return ld_inner;
 }
 
 //母音同士、子音同士の距離から、ひらがな同士の距離を求める関数
 //outerで、母音同士、子音同士の類似度など必要なファイルを読み込んでおく
 //innerで、その都度パラメータによる微調整を加えた音素間類似度のobjectを返す。
-const makeKanaDist_outer = () => {
-	const configs = {}
+function makeKanaDist_outer(){
+	let configs = {}
 	configs["single"] = ["sp","ン","ッ","ア","イ","ウ","エ","オ","アー","イー","ウー","エー","オー"];
 	$.ajaxSetup({async: false});
 	$.when(
@@ -119,21 +118,21 @@ const makeKanaDist_outer = () => {
 		$.getJSON("conf/vowels.json"),
 		$.getJSON("conf/consonants.json")
 	)
-	.done((allkana, cCost, vCost,vowels,consonants) => {
-		const k = {}
-		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(([v1,v2]) => {
+	.done(function(allkana, cCost, vCost,vowels,consonants){
+		let k = {}
+		zip(["allkana","cCost","vCost","vowels","consonants"],[allkana,cCost,vCost,vowels,consonants]).forEach(function([v1,v2]){
 			configs[v1]=v2[0];
 		});
 		allkana = configs["allkana"], cCost = configs["cCost"], vCost = configs["vCost"];
 
-		for (let v1 of Object.keys(allkana)){
-			const s1 = allkana[v1];
+		Object.keys(allkana).forEach(function(v1){
+			s1 = allkana[v1];
 			k[v1] = {}
-			for ( let v2 of Object.keys(allkana)){
-				const s2 = allkana[v2];
+			Object.keys(allkana).forEach(function(v2){
+				s2 = allkana[v2];
 				k[v1][v2] = [ cCost[s1[0]][s2[0]], vCost[s1[1]][s2[1]] ];
-			}
-		}
+			});
+		});
 		configs["kanaCostElement"] = k;
 		//console.log(configs["kanaCostElement"]);
 	})
@@ -142,110 +141,111 @@ const makeKanaDist_outer = () => {
 	})
 	$.ajaxSetup({async: true});
 
-	const reflectParam = (costkana, param) => {
-		const vowels = configs["vowels"],
-			sameVowel = param["sameVowel"],
-			consonants = configs["consonants"],
-			sameConsonant = param["sameConsonant"]
-			;
-
+	function reflectParam(costkana, param){
+		var vowels, sameVowel, consonants, sameConsonant;
+		vowels = configs["vowels"];
+		sameVowel = param["sameVowel"];
+		consonants = configs["consonants"];
+		sameConsonant = param["sameConsonant"];
 		//console.log(costkana["ア"]);
 		if(sameVowel != 1){
-			for(let v1 of Object.keys(vowels)){
-				const vowel = vowels[v1];
-				for(let v2 of vowel){
-					for(let v3 of vowel){
+			for(v1 in vowels){
+				vowels[v1].forEach(function(v2){
+					 vowels[v1].forEach(function(v3){
 						 costkana[v2][v3] *= sameVowel;
-					 };
-				};
+					 });
+				});
 			}
 		}
 
 		if(sameConsonant != 1){
-			for(let v1 of Object.keys(consonants)){
-				const consonant = consonants[v1];
-				for(let v2 of consonant){
-					for(let v3 of consonant){
+			for(v1 in consonants){
+				consonants[v1].forEach(function(v2){
+					 consonants[v1].forEach(function(v3){
 						 costkana[v2][v3] *= sameConsonant;
-					}
-				}
+					 });
+				});
 			}
 		}
 		return costkana;
 	}
 
-	const makeKanaDist_inner = param => {
-		const w = [param["consonant"],param["vowel"]],
+	function makeKanaDist_inner(param){
+		var w = [param["consonant"],param["vowel"]],
 			//sameChar = param["sameChar"],
 			//sameVowel = param["sameVowel"],
-			single = configs["single"],
-			costKanaBi = {},
-			k = configs["kanaCostElement"]
-			;
-		for(let v1 of Object.keys(k)){
-			const s1 = k[v1];
+			single = configs["single"];
+		var costKanaBi = {},
+			k = configs["kanaCostElement"];
+		Object.keys(k).forEach(function(v1){
+			var s1 = k[v1];
 			costKanaBi[v1] = {}
-			for(let v2 of Object.keys(k)){
-				const s2 = s1[v2];
-				let m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
+			Object.keys(k).forEach(function(v2){
+				var s2 = s1[v2],
+					m = (w[0]*s2[0]+w[1]*s2[1])/(w[0]+w[1]);
 				if(single.indexOf(v1) >= 0 || single.indexOf(v2)>=0 ){
 					m = s2[1];
 				}
 				costKanaBi[v1][v2] = Math.round(m*100)/100;
 				if(isNaN(costKanaBi[v1][v2]))
 					console.log(v1,v2);
-			};
-		};
-		return reflectParam(costKanaBi,param);
+			});
+		});
+		costKanaBi = reflectParam(costKanaBi,param);
+		return costKanaBi;
 	}
 	return makeKanaDist_inner;
 }
 
-const getSimilarWord_outer = param => {
-	const kanadist = makeKanaDist(param),
-		ld = ld_outer(kanadist),
-		memo = {}
-		;
+function getSimilarWord_outer(param){
+	var kanadist, ld;
+	kanadist = makeKanaDist(param);
+	ld = ld_outer(kanadist);
 
+	var memo = {}
+	function getSimilarWord_inner(wordlist, target, length = 1){
+		var orglen, cand, cand2, sims, words, args, result, indexes;
+		orglen = target.length;
+		cand = convertBar(target);
 
-	const getSimilarWord_inner = (wordlist, target, length = 1) => {
-
-		const orglen = target.length,
-			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
-			cand = convertBar(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
-			cand2 = {}
-		let	sims = [],
-			words = []
-			;
-
-		console.log(cand);
-		for(let val of cand){
-			const tmplength = val.length;
-			if(Object.keys(cand2).indexOf(tmplength)<0)
+		cand2 = {}
+		cand.forEach(function(val){
+			var tmplength = val.length;
+			if(!(tmplength in cand2)){
 				cand2[tmplength] = []
+			}
 			cand2[tmplength].push(val);
-		};
+		});
 
-		for(let i of Object.keys(cand2)){
-			sims = sims.concat(
-					wordlist[i].map(w => {
-						const tmplist = cand2[i].map(tar=>ld(tar,w[2])/i);
-						return orgRound(Math.min.apply(null,tmplist)*orglen,100);//最小値を見つけて丸める
-					})
-				);
+		sims = [];
+		words = [];
+		for(var i in cand2){
+			if(!(i in wordlist)){
+				continue;
+			}
+			wordlist[i].forEach(function(w){
+				var tmplist, tSim;
+				tmplist = [];
+				cand2[i].forEach(function(tar){
+					//var tmp = ld(tar,w[2]);
+					//console.log(w,tmp);
+					tmplist.push(ld(tar,w[2])/i);
+				});
+				tSim = Math.min.apply(null,tmplist);
+
+				sims.push(tSim*orglen);
+			});
 			words = words.concat(wordlist[i]);
 		}
 
-		return argsort(sims)
-				.slice(0,length) //指定された長さまでを切り取る
-				.map(val => {
-					const tmpW = words[val];
-					return [target.join(""), tmpW[1],tmpW[0], sims[val],tmpW[3]];
-				});
-		/*
-		for(let val of argsort(sims)){
-			const tmpW = words[val],
-				id = tmpW[tmpW.length-1];
+		args = argsort(sims);
+		result = [];
+		indexes = [];
+		for(var i = 0; i<args.length;i++){
+			var val = args[i];
+			var tmpW = words[val];
+
+			var id = tmpW[tmpW.length-1];
 			if(indexes.indexOf(id)<0){
 				indexes.push(id);
 				result.push([target.join(""),tmpW[1], tmpW[0], orgRound(sims[val],100),tmpW[3]]);
@@ -256,174 +256,34 @@ const getSimilarWord_outer = param => {
 			}
 		}
 		return result;
-		*/
 	}
 
 	return getSimilarWord_inner;
 
 }
 
-const isInList = (value, list) => {
-	return (list.indexOf(value) < 0) ? false : true;
-}
-
-
-const soramimi_dp = (text, wordList, para) => {
-	const param = setDefaultParameters(para),
-		gs = getSimilarWord_outer(param),
-		gy = GetYomi,
-		splitter=param["splitter"],
-    	repeat = param["repeat"],
-	    isDuplicate = param["duplicate"],
-	    penaBreak = param["bunsetsu"],
-	    wordsNum = param["wordsNum"],
-	    takeLen = param["length"],
-		wordfile = $("input[name=wordfile]:checked").val(),
-		wordlist = wordList[wordfile],
-	    number = Object.keys(wordlist).map(i => Number(i)),
-	    phrases = text.split(splitter),
-	    phraselen = phrases.length,
-	    base_info = {"raws":[],"targets":[],"indexBreaks":[]},
-	    resultkeys = ["relativeScores","scores","words"],
-	    results = {}
-	    ;
-
-	//phraseの基本的な構造を解析
-	for ( let val of phrases ){
-		const raw = val,
-			yomi = gy(val)
-			;
-		base_info["raws"].push(raw);
-		base_info["targets"].push(separateKana(yomi));
-	}
-
-	for (let val of resultkeys){
-		results[val] = Array(phraselen);
-		results[val].fill([]);
-	}
-
-	//base_infoの確認
-	for (let v of Object.keys(base_info)){
-		console.log(v, base_info[v]);
-	}
-
-	const dp = index => {
-		const target = base_info["targets"][index],
-        	//breaks = base_info["indexBreaks"][index],
-        	tarlen = target.length,
-        	used = [],
-        	memo = {0:[]},
-        	error = null
-        	;
-
-		for(let v2 of results["words"]){
-			for(let v of v2){
-				used.append(v[v.length-1]);
-			}
-		}
-
-		const dp_non_duplicate = t => {
-			const mini_result = {"scores":[],"words":[]}
-			//console.log("memokey",Object.keys(memo),"index",Object.keys(memo).indexOf(t));
-			if(Object.keys(memo).indexOf(String(t))>=0){
-				//console.log("memo",memo);
-				return memo[t];
-			}else{
-				//console.log("t",t,"memo",memo,"memo_t",memo[t]);
-			}
-
-			for (let i = 0; i<t; i++){
-				//console.log("number",number);
-
-				if ( number.indexOf(t-i)<0 ){
-					//console.log("t-i",t-i);
-					continue
-				}
-
-				let words = dp_non_duplicate(i);
-				console.log("i",i);
-				console.log("words",words);
-				if(words === error)
-					continue;
-				else{
-					words = words.slice();
-				}
-
-				let score =  words.reduce((score, data) => {return score + data[data.length-2]},0);
-				//console.log("score",score);
-				const currentUsed = words.map(v => v[v.length-1]),
-					newWord = []
-				;
-
-				for(let w of gw(target.slice(i,t),100)){
-					const wid = w[w.length-1],
-						wscore = w[w.length-1];
-					if(used.indexOf(wid)>=0 || currentUsed.indexOf(wid)>=0)
-						continue;
-					words.append(w);
-					score += wscore;
-					break;
-				}
-				score += words.length*wordsNum;
-				mini_result["scores"].push(score);
-				mini_result["words"].push(words);
-			}
-			if(mimi_result["scores"].length > 0){
-				const arg = argmin(mini_result["scores"]);
-				memo[t] = mini_result["words"][arg];
-				return memo[t];
-			}
-			else{
-				memo[t] = error;
-				return memo[t];
-			}
-
-		}
-
-		const dp_duplicate = t => {
-			return memo[t];
-		}
-		if ( isDuplicate )
-			pass;
-		else
-			return do_non_duplicate(tarlen+1)
-	}
-
-	for ( let i of [...Array(phraselen).keys()] ){
-		console.log(i);
-	}
-	//dp(0);
-
-
-
-
-
-
-}
-
 promise = MakeTokenizer()
 promise
-.then((tokenizer) => {
+.then(function(tokenizer){
 	GetYomi = GetYomi_outer(tokenizer);
 	makeKanaDist = makeKanaDist_outer();
 	loadDB = loadDatabaseText;
 	separateKana = separateKana_outer();
 	convertBar = convertBar_outer();
-	const param = getParam();
+	var param = getParam();
 	console.log(param);
 	getSimilarWord = getSimilarWord_outer(param);
 
 	wordlist = {}
 	$('.radio-file').find("input[type=radio]").prop("disabled",true);
 	$('.radio-file').find("input[type=radio]").each(function(index, element){
-		const path = $(element).val();
+		var path = $(element).val();
 		wordlist[path] = loadDatabaseFile(path);
 		$(element).prop("disabled",false);
 	});
 	wordlist["original"] = wordlist["words/nations.txt"];
 	$(".container-fluid").show();
 	$(".loading").remove();
-	soramimi_dp("こんにちは",wordlist,{});//for test
 
 });
 $( '.ipt-word' ).keypress( function ( e ) {
@@ -434,8 +294,8 @@ $( '.ipt-word' ).keypress( function ( e ) {
 } );
 
 
-const makeDialog = () => {
-	const div = $("<div class='dialog-original'></div>");
+function makeDialog(){
+	var div = $("<div class='dialog-original'></div>");
 	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
 
 
@@ -465,9 +325,9 @@ const makeDialog = () => {
 			},
 		]
 	});
-	const storageKey = "originalWordlist";
+	storageKey = "originalWordlist";
 	if(localStorage.getItem(storageKey) === null){
-		const initVal = [];
+		var initVal = [];
 		initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
 		initVal.push("#ひとつの単語に複数の読み方を登録可能です");
 		initVal.push("#読み方が一つだけの場合は省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
@@ -490,7 +350,7 @@ $(".ipt-parameter").change(function(){
 	console.log("isParamChanged",isParamChanged);
 });
 $(".ipt-parameter").on("input",function(){
-	const val = $(this).val();
+	var val = $(this).val();
 	if (val == 1)val=0.99;
 	else if(val == -1)val=-0.99;
 	$(this).closest(".row").find(".param-value").html(val);
@@ -499,37 +359,32 @@ $(".ipt-parameter").on("input",function(){
 
 $(".btn-send").click(function(){
 	$(".loading2").show();
-	let text = $(".ipt-word").val();
+	var text = $(".ipt-word").val();
 	if(text == ""){
 		return;
 	}else if(containAlphabet(text)){
 		alert("【変換不可能文字の検出】使用できるのはひらがな・カタカナ・漢字のみです");
 		return;
 	}
-	const wordfile = $("input[name=wordfile]:checked").val();
+	var wordfile = $("input[name=wordfile]:checked").val();
 
 	text = GetYomi(text);
-	console.log("afterGetYomi",text);
 	text = separateKana(text);
-	console.log("afterSeparateKana",text);
 	//console.log(text);
 	if(isParamChanged){
-		const param = getParam();
+		var param = getParam();
 		getSimilarWord = getSimilarWord_outer(param);
 		isParamChanged = false;
 		console.log("isParamChanged",isParamChanged);
 	}
-	console.time("getSimilarWord");
-	const result = getSimilarWord(wordlist[wordfile],text,length=1000);
-	console.timeEnd("getSimilarWord");
+	var result = getSimilarWord(wordlist[wordfile],text,length=100);
 	//console.log(result);
 	if(result.length == 0){
 		$(".loading2").hide();
 		$(".div-result").html("うまく変換できる単語を見つけられませんでした");
 		return;
 	}
-	result.forEach((value,index) => {
-		//console.log(value);
+	result.forEach(function(value,index){
 		result[index] = String(index+1)+","+JSON.stringify(value.slice(0,-1)).slice(1,-1);
 	});
 
