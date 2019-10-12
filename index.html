@@ -187,7 +187,7 @@ const getParam = () => {
 
 	param.DUPLICATE = ($("input[name=duplication]:checked").val() == "true");
 
-	param = soramimic.assignDefaultParameter(param);
+	param = SoramimicPublic.getFormatedParam(param);
 	console.log("param",param);
 	return param;
 }
