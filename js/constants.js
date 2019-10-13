@@ -9,7 +9,11 @@ Copyright © 2019 Jiro Shimaya. All rights reserved.
 ======================================================================
 
  */
-const SoramimicVariables = (function(){
+const Constants = (function(){
+	const 
+	
+})();
+const SoramimicPublic = (function(){
 	const DEFAULT_PARAMETER_VALUES_ = {
 			REPEAT: "100",
 			SPLITTER: "/",
@@ -156,102 +160,6 @@ const SoramimicVariables = (function(){
 			consonant: loadJsonFile("conf/simConsonantsSimple.json")
 	}
 	const ENGLISH2KANA_ = loadJsonFile("conf/bep-eng.json");//key値のアポストロフィはAPOSTROPHEに変換されている
-	const getKanaOfEnglish = tYomi => {
-		const e2k = ENGLISH2KANA_;
-		const strApos = "APOSTROPHE";
-		if(tYomi.match(/^[A-Za-z]*$/)){
-			tYomi = tYomi.toUpperCase();
-			if(tYomi in e2k)
-				tYomi = e2k[tYomi];
-			else{
-				if(tYomi.includes(strApos) && tYomi != strApos)
-					tYomi = tYomi.replace(/APOSTROPHE/g,"");//アポストロフィあるのに辞書に読みがなかった場合、アポストロフィを無視して読む
-				tYomi = convertRomanToKana(tYomi);//英単語辞書になかったらローマ字読みする
-				console.log("tYomi=",tYomi);
-				//それでもアルファベットが残っていればいち文字ずつ読む
-				let found = tYomi.match(/[A-Z]/g);//iは大文字小文字無視。
-				if(found){
-					for(let v of found){
-						console.log("found loop v=",v);
-						let count = 0;
-						while(tYomi.includes(v)){
-							tYomi = tYomi.replace(v,e2k[v]);
-							if(count>tYomi.length)
-								break;
-							else
-								count += 1;
-						}
-					}							
-				}						
-			}
-			console.log("tyomi",tYomi);
-			return tYomi;
-		}
-		else{
-			console.log("aaaaa");
-			return null;
-		}
-	}
-	//kanaListのkeysの単位で文字列を分割する
-	const separateKana = kanaStr => {//kanaUnitsはカナのリスト(not object)を想定
-		const S2L = SMALL2LARGE_,
-			KANA_UNITS_ = KANA_UNITS_LIST_,
-			K2V = KANA2VOWEL_,
-			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
-			LEN_MAX_ = 2
-			;
-		let result = [],
-			i=0;
-		kanaStr = kanaStr.replace(/ーー/g, "ー").replace(/ンン/g, "ン").replace(/ッッ/,"ッ");
-		let kanaStrLen = kanaStr.length;
-		kanaStr += "//";
-
-		while(i<kanaStrLen){
-			let p = kanaStr.slice(i,i+LEN_MAX_+1);
-			if(p[0] in S2L){
-				p = S2L[p[0]] + p.slice(1);
-			}
-			let moji = "";
-			for(let si = LEN_MAX_; si>0; si--){
-				let p1 = p.slice(0,si);
-				let p2 = p[si];
-				if(p1 in K2V){
-					if(p2 == "ー"){
-						if(K2V[p1] == "エ" && p1[p1.length-1] == "イ")
-							moji = p1[0];
-						else if(K2V[p1] == "オ" && p1[p1.length-1] == "ウ"){
-							moji = p1[0];
-						}
-						else if(p1 == "ン"){
-							result.push(p1);
-							i += 1;
-							moji = p1;
-						}
-						else{
-							moji = p1+p2;
-						}
-					}
-					else if(p2 == "エ" && K2V[p1] == "エ" && p1[p1.length-1] == "イ")
-						moji = p1;
-					else if(p2 == "オ" && K2V[p1] == "オ" && p1[p1.length-1] == "ウ")
-						moji = p1;
-					else if("アイウエオ".includes(p2) && K2V[p1] == p2 && p1[p1.length-1] != "ー")
-						moji = p1 + p2;
-					else
-						moji = p1;
-					break;
-				}
-			}
-			if(moji == "")
-				break;
-			result.push(moji);
-			i+=result[result.length-1].length;
-		}
-		//p = kanaStr.slice(kanaStrLen);
-		return result;
-
-	}
-
 
 	
 	////parametersに存在しないkeyをthis.DEFAULT_PARAMETER_VALUESを埋めて返す
@@ -365,35 +273,6 @@ const SoramimicVariables = (function(){
 		}			
 	})();
 	
-	//母音連続時の変換パターンのリスト("アア"を[["アー"],["ア","ア"]]にするなど)
-	const getPronunciationVariation = kana => {
-		const kanaUnits = KANA_UNITS_;
-		const variations = kana.map(v => {
-			//if(Object.keys(kanaUnits).indexOf(v)>=0)
-			if(v in kanaUnits)
-				return kanaUnits[v];
-			else
-				return [v];
-		});
-		return product(...variations)
-				.map(v => v.filter(v2=>v2!="").flat())
-				.filter(v => v.length != 0);//長さ0の配列は要素に含めない
-	}
-
-	
-	return {
-		getKanaSimilarity: param=>getKanaSimilarity(param),
-		getKanaOfEnglish: text => getKanaOfEnglish(text),
-		getFormatedParam: param=>getFormatedParam(param),
-		separateKana: text=>separateKana(text),
-		isKana: text=>text in KANA2PHONON_,
-		isSmall: text=>text in SMALL2LARGE_,
-		getPronunciationVariation: kana=>getPronunciationVariation(kana)
-	}
-	
-})();
-const SoramimicPublic = (function(){
-	
 	let TOKENIZER_ = null;
 	const buildTokenizer = (function(){
 		const KUROMOJI_PATH_ = "js/kuromoji/dict";
@@ -415,6 +294,65 @@ const SoramimicPublic = (function(){
 		return loadDatabaseText(wordlisttext);
 	}
 	
+	//kanaListのkeysの単位で文字列を分割する
+	const separateKana = kanaStr => {//kanaUnitsはカナのリスト(not object)を想定
+		const S2L = SMALL2LARGE_,
+			KANA_UNITS_ = KANA_UNITS_LIST_,
+			K2V = KANA2VOWEL_,
+			//KANA_UNITS_WITH_BAR_ = KANA_UNITS_.filter(v=> (["ー","ッ","ン"].indexOf(v.slice(-1))>=0)),
+			LEN_MAX_ = 2
+			;
+		let result = [],
+			i=0;
+		kanaStr = kanaStr.replace(/ーー/g, "ー").replace(/ンン/g, "ン").replace(/ッッ/,"ッ");
+		let kanaStrLen = kanaStr.length;
+		kanaStr += "//";
+
+		while(i<kanaStrLen){
+			let p = kanaStr.slice(i,i+LEN_MAX_+1);
+			if(p[0] in S2L){
+				p = S2L[p[0]] + p.slice(1);
+			}
+			let moji = "";
+			for(let si = LEN_MAX_; si>0; si--){
+				let p1 = p.slice(0,si);
+				let p2 = p[si];
+				if(p1 in K2V){
+					if(p2 == "ー"){
+						if(K2V[p1] == "エ" && p1[p1.length-1] == "イ")
+							moji = p1[0];
+						else if(K2V[p1] == "オ" && p1[p1.length-1] == "ウ"){
+							moji = p1[0];
+						}
+						else if(p1 == "ン"){
+							result.push(p1);
+							i += 1;
+							moji = p1;
+						}
+						else{
+							moji = p1+p2;
+						}
+					}
+					else if(p2 == "エ" && K2V[p1] == "エ" && p1[p1.length-1] == "イ")
+						moji = p1;
+					else if(p2 == "オ" && K2V[p1] == "オ" && p1[p1.length-1] == "ウ")
+						moji = p1;
+					else if("アイウエオ".includes(p2) && K2V[p1] == p2 && p1[p1.length-1] != "ー")
+						moji = p1 + p2;
+					else
+						moji = p1;
+					break;
+				}
+			}
+			if(moji == "")
+				break;
+			result.push(moji);
+			i+=result[result.length-1].length;
+		}
+		//p = kanaStr.slice(kanaStrLen);
+		return result;
+
+	}
 
 
 	const loadDatabaseText = text => {
@@ -433,8 +371,8 @@ const SoramimicPublic = (function(){
 			for(let v2 of v.slice(1)){
 				if(v2.length == 0)console.log("v2",v2);
 				const yomi = getYomi.only(v2);
-				const sep = SoramimicVariables.separateKana(yomi);
-				const ptn = SoramimicVariables.getPronunciationVariation(sep);
+				const sep = separateKana(yomi);
+				const ptn = getPronunciationVariation(sep);
 				for(let v3 of ptn){
 					const v3len = v3.length;
 					if(!(v3len in resultdb))resultdb[v3len]=[]
@@ -445,6 +383,9 @@ const SoramimicPublic = (function(){
 		return resultdb;
 	}
 	const getYomi = (function(){
+		const e2k = ENGLISH2KANA_;
+		const S2L = SMALL2LARGE_;
+		const k2p = KANA2PHONON_;
 		const strApos = "APOSTROPHE";
 		
 		const getMaResult = strVal => {
@@ -461,18 +402,43 @@ const SoramimicPublic = (function(){
 				let tYomi = v.pronunciation;
 				if(typeof tYomi === "undefined"){
 					tYomi = v.surface_form;
-					if(tYomi.match(/^[A-Za-z]*$/))tYomi = SoramimicVariables.getKanaOfEnglish(tYomi);
+					if(tYomi.match(/^[A-Za-z]*$/)){
+						tYomi = tYomi.toUpperCase();
+						if(tYomi in e2k)
+							tYomi = e2k[tYomi];
+						else{
+							if(tYomi.includes(strApos) && tYomi != strApos)
+								tYomi = tYomi.replace(/APOSTROPHE/g,"");//アポストロフィあるのに辞書に読みがなかった場合、アポストロフィを無視して読む
+							tYomi = convertRomanToKana(tYomi);//英単語辞書になかったらローマ字読みする
+							console.log("tYomi=",tYomi);
+							//それでもアルファベットが残っていればいち文字ずつ読む
+							let found = tYomi.match(/[A-Z]/g);//iは大文字小文字無視。
+							if(found){
+								for(let v of found){
+									console.log("found loop v=",v);
+									let count = 0;
+									while(tYomi.includes(v)){
+										tYomi = tYomi.replace(v,e2k[v]);
+										if(count>tYomi.length)
+											break;
+										else
+											count += 1;
+									}
+								}							
+							}						
+						}
+					}
 					tYomi = hiraToKana(tYomi);
 				}
 				tYomi = removeSign(tYomi);//記号削除
 				if(tYomi.length > 0){
-					if(SoramimicVariables.isSmall(tYomi[0]) && yomi.length>0){
-						if( SoramimicVariables.isKana(yomi[yomi.length-1]+tYomi[0])){
+					if(tYomi[0] in S2L && yomi.length>0){
+						if( (yomi[yomi.length-1]+tYomi[0]) in k2p){
 							tYomi = yomi.pop() + tYomi;
 						}
 					}
 				}
-				tYomi = SoramimicVariables.separateKana(tYomi);//kanaUnitに変換
+				tYomi = separateKana(tYomi);//kanaUnitに変換
 				if(["名詞","動詞","副詞","形容詞","形容動詞","感動詞"].includes(v.pos)){
 					phraseBreak.push(yomi.length);
 				}
@@ -518,6 +484,20 @@ const SoramimicPublic = (function(){
 		$(".loading").remove();		
 	});
 	
+	//母音連続時の変換パターンのリスト("アア"を[["アー"],["ア","ア"]]にするなど)
+	const getPronunciationVariation = kana => {
+		const kanaUnits = KANA_UNITS_;
+		const variations = kana.map(v => {
+			//if(Object.keys(kanaUnits).indexOf(v)>=0)
+			if(v in kanaUnits)
+				return kanaUnits[v];
+			else
+				return [v];
+		});
+		return product(...variations)
+				.map(v => v.filter(v2=>v2!="").flat())
+				.filter(v => v.length != 0);//長さ0の配列は要素に含めない
+	}
 
 	//入力にkanaDist下で距離の近い単語を求める
 	const getSimilarWord = (kanaDist,wordlist,target,param,length=1) => {
@@ -525,7 +505,7 @@ const SoramimicPublic = (function(){
 		const orglen = target.length,
 			//Object.keysでは文字列配列が取得できるので、v.lengthも文字列に直してからfilterする
 			//cand = this.getPronunciationVariation(target).filter(v=>{return Object.keys(wordlist).indexOf(String(v.length))>=0}),
-			cand = SoramimicVariables.getPronunciationVariation(target).filter(v=>{return v.length in wordlist}),
+			cand = getPronunciationVariation(target).filter(v=>{return v.length in wordlist}),
 			cand2 = {}
 		let	sims = [],
 			words = []
@@ -561,13 +541,13 @@ const SoramimicPublic = (function(){
 	
 	const soramimi_dp = (text, wordlist, para = {}) => {
 		console.time("dpDef1_1");
-		const param = SoramimicVariables.getFormatedParam(para);
+		const param = getFormatedParam(para);
 		console.timeEnd("dpDef1_1");
 		console.time("dpDef1_2");
 		this.kanaSimilarity = param;
 		console.timeEnd("dpDef1_2");
 		console.time("dpDef1_3");
-		const KANA_SIMILARITY_ = SoramimicVariables.getKanaSimilarity(param);
+		const KANA_SIMILARITY_ = getKanaSimilarity(param);
 		const gs = (wordlist,target,length) => getSimilarWord(KANA_SIMILARITY_, wordlist, target, param, length);
 		console.timeEnd("dpDef1_3");
 		console.time("dpDef1_4");
@@ -783,6 +763,15 @@ const SoramimicPublic = (function(){
 		WORD_LIST_["ORIGINAL"] = loadDatabaseText(text);
 	}
 
+	
+
+
+	const setKanaSimilarity = param => {
+		console.log("set param:",JSON.stringify(param));
+		//this.KANA_SIMILARITY_ = this.getKanaSimilarity(this.KANA_SIMILARITY_BASE_, param);
+		KANA_SIMILARITY_ = SoramimicPublic.getKanaSimilarity(param);
+	}
+
 	//文字列sとtのkanaDist下での置換コストを求める
 	const ld = (kanaDist,s,t) => {
 		if(typeof s === "undefined" ||  typeof t === "undefined")
@@ -819,7 +808,7 @@ const SoramimicPublic = (function(){
 		getVowelSimilarity: ()=>SIMILARITY_.vowel,
 		getConsonantSimilarity: ()=>SIMILARITY_.consonant,
 		getEnglishToKana: ()=>ENGLISH2KANA_,
-		getFormatedParam: param=>SoramimicVariables.getFormatedParam(param),
+		getFormatedParam: param=>getFormatedParam(param),
 		getKanaSimilarity: param=>getKanaSimilarity(param),
 		getYomiAndPhraseBreak: text=>getYomi.withBreak(text),
 		getWordList: ()=>WORD_LIST_,

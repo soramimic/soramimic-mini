@@ -221,7 +221,7 @@ const makeDialog = () => {
 				class: "btn-register",
 				click: function(){
 					var text = $(".ta-original-wordlist").val();
-					soramimic.WORD_LIST_.ORIGINAL = soramimic.loadDatabaseText(text);
+					SoramimicPublic.setWordListOriginal(text); 
 					localStorage.setItem("originalWordlist",text);
 					$(this).dialog("close");
 				}
@@ -302,7 +302,7 @@ $(".btn-send").click(function(){
 	}
 	//ag.SendConversionInfo(text.length,wordfile,JSON.stringify(sendParam));
 	ag.SendConversionInfo(text.length,wordfile,sendParam);
-	const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],param);
+	const result = SoramimicPublic.makeSoramimi(text,SoramimicPublic.getWordList()[wordfile],param);
 	//const result = soramimic.soramimi_dp(text,soramimic.WORD_LIST_[wordfile],{});
 	//const result = soramimi_dp(text,wordlist[wordfile],{"sameVowel":0.8,"wordsNum":20});
 	console.timeEnd("soramimi_dp");
