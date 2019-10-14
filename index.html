@@ -46,6 +46,7 @@ Copyright © 2019 Jiro Shimaya. All rights reserved.
 <script src="js/AjaxUtils.js"></script>
 <script src="js/kuromoji/build/kuromoji.js"></script>
 <script src="js/roma2kana.js"></script>
+<script src="js/variables.js"></script>
 <script src="js/soramimic.js"></script>
 </head>
 <script>
@@ -187,7 +188,6 @@ const getParam = () => {
 
 	param.DUPLICATE = ($("input[name=duplication]:checked").val() == "true");
 
-	param = SoramimicPublic.getFormatedParam(param);
 	console.log("param",param);
 	return param;
 }
@@ -331,6 +331,11 @@ $(".btn-send").click(function(){
 	$(".div-result").html(resultText.join("<br>"));
 	$(".loading2").hide();
 	*/
+});
+
+SoramimicPublic.setOnFinishedLoadingDatabaseFunc(()=>{
+		$(".container-fluid").show();
+		$(".loading").remove();		
 });
 </script>
 </html>
