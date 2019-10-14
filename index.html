@@ -105,6 +105,7 @@ $("div.container-fluid").hide();
 $(".loading").show();
 $(".loading2").hide();
 
+/*
 const getParam = () => {
 
 	let param = {}
@@ -122,68 +123,12 @@ const getParam = () => {
 	console.log("param",param);
 	return param;
 }
+*/
 
-const makeDialog = () => {
-	const div = $("<div class='dialog-original'></div>");
-	div.append("<textarea class='ta-original-wordlist form-control'></textarea>");
-
-
-	div.dialog({
-		autoOpen: false,
-		modal:true,
-		title: "単語リストの登録",
-		width: $(window).width()*0.9,
-		height: $(window).height()*0.9,
-		buttons: [
-			{
-				text: "キャンセル",
-				class: "btn-cancel",
-				click: function(){
-					$(this).dialog("close");
-				}
-			},
-			{
-				text: "登録",
-				class: "btn-register",
-				click: function(){
-					var text = $(".ta-original-wordlist").val();
-					SoramimicPublic.setWordListOriginal(text); 
-					localStorage.setItem("originalWordlist",text);
-					$(this).dialog("close");
-				}
-			},
-		]
-	});
-	const storageKey = "originalWordlist";
-	if(localStorage.getItem(storageKey) === null){
-		const initVal = [];
-		initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
-		initVal.push("#ひとつの単語に複数の読み方を登録可能です");
-		initVal.push("#読み方が一つだけの場合は省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
-		initVal.push("#半角シャープ(#)でコメントアウトできます");
-		initVal.push(loadTextFile("words/nations.txt"));
-		localStorage.setItem(storageKey,initVal.join("\n"));
-	}
-
-	$(".ta-original-wordlist").height("99%");
-	$(".ta-original-wordlist").val(localStorage.getItem(storageKey));
-}
-makeDialog();
-
+/*
 $(".radio-original").click(function(){
 	$(".dialog-original").dialog("open");
 });
-
-$(".ipt-parameter").change(function(){
-	isParamChanged = true;
-	console.log("isParamChanged",isParamChanged);
-});
-$(".ipt-parameter").on("input",function(){
-	const val = $(this).val();
-	$(this).closest(".input-param").find(".param-value").html(val);
-
-})
-
 $(".btn-send").click(function(){
 
 	$(".loading2").show();
@@ -194,12 +139,6 @@ $(".btn-send").click(function(){
 	if(text == ""){
 		return;
 	}
-	/*
-	else if(containAlphabet(text)){
-		alert("【変換不可能文字の検出】使用できるのはひらがな・カタカナ・漢字のみです");
-		return;
-	}
-	*/
 	const wordfile = $("input[name=wordfile]:checked").val();
 
 	const param = getParam();
@@ -210,6 +149,7 @@ $(".btn-send").click(function(){
 	ag.SendConversionInfo(text.length,wordfile,sendParam);
 	const result = SoramimicPublic.makeSoramimi(text,SoramimicPublic.getWordList()[wordfile],param);
 });
+*/
 $(".container-fluid").show();
 $(".loading").remove();		
 

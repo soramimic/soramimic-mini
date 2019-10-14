@@ -77,13 +77,65 @@ const SettingPublic = (function(){
 		baseLabel('POKEMON','ポケモン').appendTo(areaFile);
 		baseLabel('PHYSICIST','物理学者').appendTo(areaFile);
 		
+		//originalリストの登録用ウインドウ
+		const dialogOrignal = (function(){
+			const div = $("<div class='dialog-original'></div>");
+			const input = $("<textarea class='ta-original-wordlist form-control'></textarea>");
+			div.append(input);
+
+			const storageKey = "originalWordlist";
+
+			div.dialog({
+				autoOpen: false,
+				modal:true,
+				title: "単語リストの登録",
+				width: $(window).width()*0.9,
+				height: $(window).height()*0.9,
+				buttons: [
+					{
+						text: "キャンセル",
+						class: "btn-cancel",
+						click: function(){
+							$(this).dialog("close");
+						}
+					},
+					{
+						text: "登録",
+						class: "btn-register",
+						click: function(){
+							var text = input.val();
+							SoramimicPublic.setWordListOriginal(text); 
+							localStorage.setItem(storageKey,text);
+							$(this).dialog("close");
+						}
+					},
+				]
+			});
+			if(localStorage.getItem(storageKey) === null){
+				const initVal = [];
+				initVal.push("#使用する単語とその読みのセットを各行につき一セットずつカンマ(,)区切りで入力してください");
+				initVal.push("#ひとつの単語に複数の読み方を登録可能です");
+				initVal.push("#読み方が一つだけの場合は省略可能です。その場合、システムが自動的に読み方を決定しますが、間違っていることもあります");
+				initVal.push("#半角シャープ(#)でコメントアウトできます");
+				initVal.push(loadTextFile("words/nations.txt"));
+				localStorage.setItem(storageKey,initVal.join("\n"));
+			}
+
+			input.height("99%");
+			input.val(localStorage.getItem(storageKey));
+			
+		})();
+
 		//areaOriginalの設定
 		const labelOriginal = baseLabel("ORIGINAL","自作の単語リストを使用");
 		labelOriginal.appendTo(areaOriginal);
 		labelOriginal.addClass("radio-original");
+		labelOriginal.click(()=>$(".dialog-original").dialog("open"));
+
 		
 		return {
-			appendTo: element=>area.appendTo(element)
+			appendTo: element=>area.appendTo(element),
+			getParam: ()=>$("input[name=wordfile]:checked").val()
 		}
 	})();
 	
@@ -92,7 +144,7 @@ const SettingPublic = (function(){
 		$('<div class="col-xs-4 col-md-2">単語重複</div>').appendTo(area);
 		(function(){
 			const div = $('<div class="col-xs-4 col-md-2">');
-			const lab = $('<label class="radio-inline"><input type="radio" name="duplication" value="true" checked="checked">あり</label>');
+			const lab = $('<label class="radio-inline"><input type="radio" name="duplication" value="true">あり</label>');
 			lab.appendTo(div);
 			div.appendTo(area);
 		})();
@@ -103,7 +155,12 @@ const SettingPublic = (function(){
 			div.appendTo(area);
 		})();
 		return {
-			appendTo: element => area.appendTo(element)
+			appendTo: element => area.appendTo(element),
+			getParam: ()=>{
+				let param = {}
+				param.DUPLICATE = ($("input[name=duplication]:checked").val() == "true");
+				return param;
+			}
 		}
 	})();
 	
@@ -118,6 +175,12 @@ const SettingPublic = (function(){
 			const areaInput = $('<div class="col-xs-6 col-sm-7"></div>');
 			areaInput.appendTo(area);
 			const input = $('<input type="range" class="form-control form-control-range ipt-parameter" name="phrasebreak" min="0" max="100" step="1" value="20">');
+			input.change(function(){
+				isParamChanged = true;
+				console.log("isParamChanged",isParamChanged);
+			});
+			input.on("input",()=>areaValue.html(input.val()));
+
 			input.appendTo(areaInput);
 			const areaValue = $('<div class="col-xs-1 param-value">20</div>');
 			areaValue.appendTo(area);
@@ -135,7 +198,8 @@ const SettingPublic = (function(){
 					for(let v in ['min','max','step','name']){
 						if(v in param)input.attr(v,param[v]);						
 					}
-				}
+				},
+				val: ()=>input.val()
 			}
 		}
 		
@@ -152,12 +216,33 @@ const SettingPublic = (function(){
 		inputWordnum.appendTo(area);
 		inputWordnum.setParam({min:0,max:100,step:1,value:10,name:"phrasebreak"});
 		
+		const getParam = () => {
+			let param = {}
+			//consnant
+			param.SAME_CONSONANT_REWARD = (100-Number(inputConsonant.val()))*0.01;
+			//vowel
+			param.SAME_VOWEL_REWARD = (100-Number(inputVowel.val()))*0.01;
+			//phrasebreak
+			param.SAME_PHRASE_BREAK_REWARD = Number(inputBreak.val())*1;
+			//wordnum
+			param.WORD_NUMBER_PENALTY = Number(inputWordnum.val())*1;
+
+			console.log("param",param);
+			return param;
+		}
+
 		return {
-			appendTo: element=>area.appendTo(element)
+			appendTo: element=>area.appendTo(element),
+			getParam: ()=>getParam()
 		}
 	})();
-	
-	
+		
+	const getParam = () => {
+		let param1 = ParameterSetting.getParam();
+		let param2 = DuplicationSetting.getParam();
+		console.log("param1,2",param1,param2);
+		return Object.assign(param1,param2);
+	}
 	
 	const Converter = (function(){
 		const area = $('<div class="row"></div>');
@@ -167,6 +252,27 @@ const SettingPublic = (function(){
 		input.appendTo(div);
 		const button = $('<button class="btn btn-block btn-primary btn-send">Convert</button>');
 		button.appendTo(div);
+		
+		button.click(function(){
+
+			$(".loading2").show();
+			let text = input.val();
+			console.log(text);
+			text = text.replace(/\r?\n/g, '/');
+			console.log(text);
+			if(text == "")return;
+			const wordfile = WordListSetting.getParam();
+			const param = getParam();
+			console.log("param",param);
+
+			sendParam = {}
+			for(let v of ["SAME_VOWEL_REWARD","SAME_CONSONANT_REWARD","SAME_PHRASE_BREAK_REWARD","WORD_NUMBER_PENALTY"]){
+				sendParam[v] = param[v];
+			}
+			ag.SendConversionInfo(text.length,wordfile,sendParam);
+			const result = SoramimicPublic.makeSoramimi(text,SoramimicPublic.getWordList()[wordfile],param);
+		});
+
 		return {
 			appendTo: element=>area.appendTo(element)
 		}
