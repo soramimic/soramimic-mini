@@ -80,7 +80,7 @@ function App() {
         const similarWordFunc = getSimilarWordCreator(initialParam)
         setGetSimilarWord(() => similarWordFunc)
 
-        // 単語リストの読み込み(soramimi-wordlistsのtidy CSV)
+        // 単語リストの読み込み(soramimic-wordlistsのtidy CSV)
         const getYomiFunc = (word) => getYomi(tokenizerInstance, word)
         utilsRef.current = { getYomiFunc, separateKanaFunc, convertBarFunc }
 

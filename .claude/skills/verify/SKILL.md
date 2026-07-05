@@ -1,9 +1,9 @@
 ---
 name: verify
-description: SoramimicMini の変更をブラウザで実際に動かして確認する手順
+description: soramimic-mini の変更をブラウザで実際に動かして確認する手順
 ---
 
-# SoramimicMini の動作確認
+# soramimic-mini の動作確認
 
 ブラウザ SPA なので、確認は実ブラウザで行う(vitest 通過は CI の代替にすぎない)。
 
