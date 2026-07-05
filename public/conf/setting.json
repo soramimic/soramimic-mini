@@ -1,0 +1,51 @@
+{
+ "wordlist": [
+  {
+   "text": "野球選手",
+   "value": "BASEBALL",
+   "filepath": "wordlists/baseball.csv",
+   "where": "type=family or type=registered or type=full",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "サッカー選手",
+   "value": "FOOTBALL",
+   "filepath": "wordlists/football.csv",
+   "where": "type=family or type=registered or type=full",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "駅名",
+   "value": "STATION",
+   "filepath": "wordlists/stations.csv",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "国名",
+   "value": "NATION",
+   "filepath": "wordlists/nations.csv",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "動物",
+   "value": "SEKITSUI",
+   "filepath": "wordlists/sekitsui.csv",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "ポケモン",
+   "value": "POKEMON",
+   "filepath": "wordlists/pokemon.csv",
+   "dbtype": "tidy"
+  },
+  {
+   "text": "物理学者",
+   "value": "PHYSICIST",
+   "filepath": "wordlists/physicist.csv",
+   "dbtype": "tidy"
+  }
+ ],
+ "yomiApi": {
+  "url": "https://soramimi-yomi-781811236862.asia-northeast1.run.app"
+ }
+}
