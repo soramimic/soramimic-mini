@@ -1,4 +1,4 @@
-// soramimi-wordlists の tidy CSV(id,original,surface,pronunciation,...)を
+// soramimic-wordlists の tidy CSV(id,original,surface,pronunciation,...)を
 // miniのデータベース形式 {音数: [[original, surface, pattern, id], ...]} に変換する。
 // whereクエリのParserは本体(soramimic frontend/src/lib/wordList.js)から移植(ロジック無改変)。
 import { formatText } from './kuromojiUtils';

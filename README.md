@@ -1,11 +1,11 @@
-# SoramimicMini
+# soramimic-mini
 
 空耳単語変換アプリ(React + Vite)。入力した単語の読みに近い単語を、単語リストから探して返す。
 [Soramimic](https://github.com/soramimic/soramimic)(空耳作詞支援システム)のミニ版。
 
 ## 構成
 
-- **単語リスト**: [soramimi-wordlists](https://github.com/soramimic/soramimi-wordlists) を git submodule(`wordlists/`)で参照し、`public/wordlists` の symlink 経由で配信。リストの定義(表示名・whereフィルタ)は `public/conf/setting.json`
+- **単語リスト**: [soramimic-wordlists](https://github.com/soramimic/soramimic-wordlists) を git submodule(`wordlists/`)で参照し、`public/wordlists` の symlink 経由で配信。リストの定義(表示名・whereフィルタ)は `public/conf/setting.json`
 - **読み推定**: [soramimi-yomi](https://github.com/soramimic/soramimi-yomi) の API(Cloud Run)をプログレッシブエンハンスメントで利用。APIが使えるときは英語入力も可。使えないときはブラウザ内の kuromoji.js にフォールバック(オフラインでも動く)
 - **デプロイ**: GitHub Actions(`.github/workflows/deploy.yml`)で master への push 時に GitHub Pages へ
 
