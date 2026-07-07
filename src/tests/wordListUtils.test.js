@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { loadDatabaseCsvText, Parser } from '../utils/wordListUtils';
+import { loadDatabaseCsvText, Parser, buildFilterQueries, defaultFilterSelections } from '../utils/wordListUtils';
 
 // テスト用の単純なスタブ: 1カナ=1要素に分割、変換バリエーションはそのまま1通り
 const separateKana = (yomi) => yomi.split('');
@@ -39,12 +39,65 @@ describe('loadDatabaseCsvText', () => {
     expect(all.map((row) => row[1]).sort()).toEqual(['アーノルド', '山田']);
   });
 
+  it('whereクエリの配列は順に適用される(AND)', () => {
+    const csv2 = [
+      'id,original,surface,pronunciation,type,status',
+      '0,アーノルド,アーノルド,アーノルド,family,current',
+      '1,ヤマダ,ヤマダ,ヤマダ,family,former',
+      '2,クリス,クリス,クリス,given,current',
+    ].join('\n');
+    const db = loadDatabaseCsvText(
+      csv2, ['type=family or type=given', 'status=current'],
+      getYomi, separateKana, convertBar);
+
+    const all = Object.values(db).flat();
+    expect(all.map((row) => row[1]).sort()).toEqual(['アーノルド', 'クリス']);
+  });
+
   it('pronunciationに漢字が残っている行はgetYomiで読みを補う', () => {
     const kanjiCsv = 'id,original,surface,pronunciation\n0,読み,読み,読み';
     const db = loadDatabaseCsvText(kanjiCsv, '', getYomi, separateKana, convertBar);
 
     expect(getYomi).toHaveBeenCalledWith('読み');
     expect(db[2][0][2]).toEqual(['ヨ', 'ミ']);
+  });
+});
+
+describe('フィルター(setting.jsonのfilters定義)', () => {
+  const entry = {
+    value: 'NATION',
+    where: '',
+    filters: [
+      {
+        column: 'status',
+        label: '対象',
+        options: [
+          { value: 'current', label: '現在の国', default: true },
+          { value: 'former', label: '昔の国・旧称', default: false },
+        ],
+      },
+    ],
+  };
+
+  it('defaultFilterSelectionsはdefault:trueの選択肢だけを選ぶ', () => {
+    expect(defaultFilterSelections(entry)).toEqual({ status: ['current'] });
+  });
+
+  it('buildFilterQueriesは選択値をorで結んだクエリを作る', () => {
+    expect(buildFilterQueries(entry, { status: ['current'] }))
+      .toEqual(['status=current']);
+    expect(buildFilterQueries(entry, { status: ['current', 'former'] }))
+      .toEqual(['status=current or status=former']);
+  });
+
+  it('ベースのwhere句があれば先頭に含める', () => {
+    const e = { ...entry, where: 'type=family' };
+    expect(buildFilterQueries(e, { status: ['former'] }))
+      .toEqual(['type=family', 'status=former']);
+  });
+
+  it('選択の無い列はクエリに含めない', () => {
+    expect(buildFilterQueries(entry, {})).toEqual([]);
   });
 });
 
