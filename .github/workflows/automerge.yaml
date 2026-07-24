@@ -1,0 +1,61 @@
+# master向けPRの自動マージ。CI(test など、このPRに付く全チェック)が
+# すべて成功したら、確認したコミットSHAを指定してマージしブランチを削除する。
+# - 除外したいPRには `no-automerge` ラベルを付ける(ドラフトPRも対象外)
+# - 新しいpushが来ると古い待機はキャンセルされ、新SHAで待機し直す
+# - privateリポジトリ+GitHub標準のauto-merge(要ブランチ保護)を使わないための自作
+# (soramimic-wordlists の automerge.yaml を移植。base ブランチのみ変更)
+name: automerge
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  automerge:
+    if: ${{ !github.event.pull_request.draft && !contains(github.event.pull_request.labels.*.name, 'no-automerge') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+      SHA: ${{ github.event.pull_request.head.sha }}
+      BRANCH: ${{ github.event.pull_request.head.ref }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: 他のチェックの完了を待って自動マージ
+        run: |
+          echo "PR #$PR ($SHA) のチェック完了を待機します"
+          for i in $(seq 1 50); do
+            sleep 20
+            runs=$(gh api "repos/$REPO/commits/$SHA/check-runs?per_page=100" \
+              -q '[.check_runs[] | select(.name != "automerge")]')
+            total=$(echo "$runs" | jq 'length')
+            incomplete=$(echo "$runs" | jq '[.[] | select(.status != "completed")] | length')
+            failed=$(echo "$runs" | jq '[.[] | select(.status == "completed"
+              and .conclusion != "success" and .conclusion != "neutral"
+              and .conclusion != "skipped")] | length')
+            echo "checks: total=$total incomplete=$incomplete failed=$failed"
+            if [ "$failed" -gt 0 ]; then
+              echo "$runs" | jq -r '.[] | select(.conclusion != null) | "\(.name): \(.conclusion)"'
+              echo "失敗したチェックがあるためマージしません"
+              exit 0
+            fi
+            if [ "$total" -gt 0 ] && [ "$incomplete" -eq 0 ]; then
+              echo "全チェック成功。マージします"
+              gh api -X PUT "repos/$REPO/pulls/$PR/merge" \
+                -f merge_method=merge -f sha="$SHA"
+              gh api -X DELETE "repos/$REPO/git/refs/heads/$BRANCH" || true
+              exit 0
+            fi
+          done
+          echo "タイムアウト: チェックが完了しませんでした" >&2
+          exit 1
