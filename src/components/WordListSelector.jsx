@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 
-// options: conf/setting.json の wordlist から作った [{ value, text }] のリスト
-const WordListSelector = ({ options, selected, onChange, onOriginalListChange }) => {
+// options: conf/setting.json の wordlist エントリのリスト({ value, text, filters? })
+// filterSelections: リストごとのフィルター選択状態 { NATION: { status: ['current'] } }
+// onFilterChange: (listValue, column, values) => void
+const WordListSelector = ({ options, selected, onChange, onOriginalListChange, filterSelections = {}, onFilterChange }) => {
   const [showModal, setShowModal] = useState(false);
   const [customWordList, setCustomWordList] = useState(() => {
     return localStorage.getItem('originalWordlist') || '';
@@ -35,6 +37,18 @@ const WordListSelector = ({ options, selected, onChange, onOriginalListChange })
     }
   };
 
+  const handleCheckboxChange = (column, optionValue, checked) => {
+    const current = filterSelections[selected]?.[column] || [];
+    const values = checked
+      ? [...current, optionValue]
+      : current.filter((v) => v !== optionValue);
+    onFilterChange(selected, column, values);
+  };
+
+  // 選択中のリストにfiltersがあればチェックボックス群を表示する
+  const selectedEntry = options.find((o) => o.value === selected);
+  const filters = selectedEntry?.filters || [];
+
   return (
     <div className="form-group col-xs-12 radio-wordlist">
       <Form.Label>単語リストの種類</Form.Label>
@@ -66,6 +80,24 @@ const WordListSelector = ({ options, selected, onChange, onOriginalListChange })
           className="radio-original"
         />
       </div>
+
+      {/* 選択中の単語リストの絞り込み(setting.jsonのfilters定義から生成) */}
+      {filters.map((filter) => (
+        <div key={filter.column} className="wordlist-filter mt-1">
+          <span className="me-2 text-muted">{filter.label}:</span>
+          {filter.options.map((option) => (
+            <Form.Check
+              key={option.value}
+              id={`filter-${selected}-${filter.column}-${option.value}`}
+              inline
+              type="checkbox"
+              label={option.label}
+              checked={(filterSelections[selected]?.[filter.column] || []).includes(option.value)}
+              onChange={(e) => handleCheckboxChange(filter.column, option.value, e.target.checked)}
+            />
+          ))}
+        </div>
+      ))}
 
       {/* カスタム単語リスト入力モーダル */}
       <Modal show={showModal} onHide={handleModalClose} size="lg">
