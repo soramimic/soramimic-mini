@@ -99,7 +99,32 @@ export function Parser() {
   };
 }
 
+// フィルター選択(列 -> 選択値の配列)をwhereクエリに変換する。
+// パーサは括弧非対応なので、ベースのwhere句とは別クエリにして逐次適用(AND)する
+export function buildFilterQueries(entry, selections) {
+  const queries = entry.where ? [entry.where] : [];
+  for (const filter of entry.filters || []) {
+    const values = selections?.[filter.column];
+    // 全解除(空配列)は「該当なし」であってクエリ省略ではない。呼び出し側で処理する
+    if (!values || values.length === 0) continue;
+    queries.push(values.map((v) => `${filter.column}=${v}`).join(" or "));
+  }
+  return queries;
+}
+
+// setting.json のfiltersからデフォルトの選択状態を作る
+export function defaultFilterSelections(entry) {
+  const selections = {};
+  for (const filter of entry.filters || []) {
+    selections[filter.column] = filter.options
+      .filter((o) => o.default)
+      .map((o) => o.value);
+  }
+  return selections;
+}
+
 // tidy CSVテキストをデータベース形式に変換する
+// whereQuery: 文字列または文字列の配列(配列は順に適用=AND)
 export function loadDatabaseCsvText(text, whereQuery, getYomi, separateKana, convertBar) {
   if (!text) return {};
 
@@ -108,7 +133,12 @@ export function loadDatabaseCsvText(text, whereQuery, getYomi, separateKana, con
   const header = lines[0].split(",");
   const df = lines.slice(1).map(v => v.split(","));
 
-  const filtered = whereQuery ? Parser().filter(whereQuery, header, df) : df;
+  const queries = (Array.isArray(whereQuery) ? whereQuery : [whereQuery])
+    .filter((q) => q);
+  let filtered = df;
+  for (const q of queries) {
+    filtered = Parser().filter(q, header, filtered);
+  }
 
   const h2i = {};
   header.forEach((h, i) => { h2i[h] = i; });
@@ -142,9 +172,21 @@ export function loadDatabaseCsvText(text, whereQuery, getYomi, separateKana, con
   return result;
 }
 
-// setting.json の wordlist エントリ1件からデータベースを読み込む
-export async function loadDatabaseFromEntry(entry, getYomi, separateKana, convertBar) {
-  const text = await loadTextFile(import.meta.env.BASE_URL + entry.filepath);
+// CSVはフィルター変更のたびに再構築するので、テキストは一度だけ取得する
+const csvTextCache = {};
+
+// setting.json の wordlist エントリ1件からデータベースを読み込む。
+// selections はフィルターの選択状態(列 -> 選択値の配列)。省略時はwhere句のみ
+export async function loadDatabaseFromEntry(entry, getYomi, separateKana, convertBar, selections) {
+  if (!(entry.filepath in csvTextCache)) {
+    csvTextCache[entry.filepath] = await loadTextFile(import.meta.env.BASE_URL + entry.filepath);
+  }
+  const text = csvTextCache[entry.filepath];
   if (!text) return null;
-  return loadDatabaseCsvText(text, entry.where, getYomi, separateKana, convertBar);
+  // どれかのフィルターが全解除なら該当なし
+  if (selections && Object.values(selections).some((v) => v && v.length === 0)) {
+    return {};
+  }
+  const queries = buildFilterQueries(entry, selections);
+  return loadDatabaseCsvText(text, queries, getYomi, separateKana, convertBar);
 }

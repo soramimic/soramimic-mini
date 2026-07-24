@@ -7,15 +7,17 @@ import ConversionForm from './components/ConversionForm'
 import ResultDisplay from './components/ResultDisplay'
 import { initializeKuromoji, getYomi, formatText } from './utils/kuromojiUtils'
 import { loadDatabaseText, loadJsonConfig } from './utils/apiUtils'
-import { loadDatabaseFromEntry } from './utils/wordListUtils'
+import { loadDatabaseFromEntry, defaultFilterSelections } from './utils/wordListUtils'
 import { createYomiApi } from './utils/yomiApi'
 import { setDefaultParameters, createSeparateKana, createConvertBar, createMakeKanaDist, createLdOuter } from './utils/kanaUtils'
 import { createGetSimilarWord, getParamFromSliderValue } from './utils/similarWordUtils'
 
 function App() {
   const [loading, setLoading] = useState(true)
-  const [wordListOptions, setWordListOptions] = useState([])
+  const [wordListEntries, setWordListEntries] = useState([])
   const [wordListType, setWordListType] = useState('')
+  // 単語リストごとのフィルター選択状態 { NATION: { status: ['current'] }, ... }
+  const [filterSelections, setFilterSelections] = useState({})
   const [paramValue, setParamValue] = useState(0.5)
   const [results, setResults] = useState([])
   const [processing, setProcessing] = useState(false)
@@ -85,12 +87,16 @@ function App() {
         utilsRef.current = { getYomiFunc, separateKanaFunc, convertBarFunc }
 
         const entries = setting?.wordlist || []
-        setWordListOptions(entries.map(({ value, text }) => ({ value, text })))
+        setWordListEntries(entries)
 
+        const selections = {}
         const wordlistsObj = {}
         for (const entry of entries) {
-          wordlistsObj[entry.value] = await loadDatabaseFromEntry(entry, getYomiFunc, separateKanaFunc, convertBarFunc)
+          selections[entry.value] = defaultFilterSelections(entry)
+          wordlistsObj[entry.value] = await loadDatabaseFromEntry(
+            entry, getYomiFunc, separateKanaFunc, convertBarFunc, selections[entry.value])
         }
+        setFilterSelections(selections)
 
         // オリジナルリストの初期化
         const storedOriginalList = localStorage.getItem('originalWordlist')
@@ -125,6 +131,18 @@ function App() {
       setGetSimilarWord(() => similarWordFunc)
     }
   }, [paramValue, makeKanaDist, convertBar])
+
+  // フィルターのチェック変更: 選択状態を更新し、そのリストのDBを作り直す
+  const handleFilterChange = useCallback(async (listValue, column, values) => {
+    const entry = wordListEntries.find((e) => e.value === listValue)
+    if (!entry || !utilsRef.current) return
+    const selections = { ...filterSelections[listValue], [column]: values }
+    setFilterSelections((prev) => ({ ...prev, [listValue]: selections }))
+
+    const { getYomiFunc, separateKanaFunc, convertBarFunc } = utilsRef.current
+    const db = await loadDatabaseFromEntry(entry, getYomiFunc, separateKanaFunc, convertBarFunc, selections)
+    setWordlists((prev) => ({ ...prev, [listValue]: db }))
+  }, [wordListEntries, filterSelections])
 
   // オリジナルリストの更新(モーダルで登録されたとき)
   const handleOriginalListChange = useCallback((text) => {
@@ -193,10 +211,12 @@ function App() {
     <div className="container-fluid">
       <div className="row">
         <WordListSelector
-          options={wordListOptions}
+          options={wordListEntries}
           selected={wordListType}
           onChange={setWordListType}
           onOriginalListChange={handleOriginalListChange}
+          filterSelections={filterSelections}
+          onFilterChange={handleFilterChange}
         />
 
         <ParameterSlider

@@ -6,16 +6,33 @@ describe('WordListSelector', () => {
   const mockOnChange = vi.fn();
   const mockOnOriginalListChange = vi.fn();
 
+  const mockOnFilterChange = vi.fn();
+
   // conf/setting.json の wordlist 相当
   const options = [
     { value: 'BASEBALL', text: '野球選手' },
     { value: 'FOOTBALL', text: 'サッカー選手' },
     { value: 'STATION', text: '駅名' },
-    { value: 'NATION', text: '国名' },
+    {
+      value: 'NATION',
+      text: '国名',
+      filters: [
+        {
+          column: 'status',
+          label: '対象',
+          options: [
+            { value: 'current', label: '現在の国', default: true },
+            { value: 'former', label: '昔の国・旧称', default: false },
+          ],
+        },
+      ],
+    },
     { value: 'SEKITSUI', text: '動物' },
     { value: 'POKEMON', text: 'ポケモン' },
     { value: 'PHYSICIST', text: '物理学者' },
   ];
+
+  const filterSelections = { NATION: { status: ['current'] } };
 
   const renderSelector = (selected = 'BASEBALL') =>
     render(
@@ -24,6 +41,8 @@ describe('WordListSelector', () => {
         selected={selected}
         onChange={mockOnChange}
         onOriginalListChange={mockOnOriginalListChange}
+        filterSelections={filterSelections}
+        onFilterChange={mockOnFilterChange}
       />
     );
 
@@ -31,6 +50,7 @@ describe('WordListSelector', () => {
     // テスト前にモックをリセット
     mockOnChange.mockClear();
     mockOnOriginalListChange.mockClear();
+    mockOnFilterChange.mockClear();
     // localStorage のモック
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation((key) => {
       if (key === 'originalWordlist') return 'テスト単語リスト';
@@ -61,6 +81,28 @@ describe('WordListSelector', () => {
     // onChangeが正しい値で呼ばれることを確認
     expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenCalledWith('STATION');
+  });
+
+  it('filtersを持つリストを選択中はチェックボックスが表示される', () => {
+    renderSelector('NATION');
+
+    const current = screen.getByLabelText('現在の国');
+    const former = screen.getByLabelText('昔の国・旧称');
+    expect(current).toBeChecked();
+    expect(former).not.toBeChecked();
+
+    // チェックすると選択値の配列でコールバックが呼ばれる
+    fireEvent.click(former);
+    expect(mockOnFilterChange).toHaveBeenCalledWith('NATION', 'status', ['current', 'former']);
+
+    // 外すと配列から取り除かれる
+    fireEvent.click(current);
+    expect(mockOnFilterChange).toHaveBeenCalledWith('NATION', 'status', []);
+  });
+
+  it('filtersの無いリスト選択中はチェックボックスを表示しない', () => {
+    renderSelector('BASEBALL');
+    expect(screen.queryByLabelText('現在の国')).not.toBeInTheDocument();
   });
 
   it('自作の単語リストを選択するとモーダルが表示される', () => {
