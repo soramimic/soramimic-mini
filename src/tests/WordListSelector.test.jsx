@@ -29,7 +29,21 @@ describe('WordListSelector', () => {
     },
     { value: 'SEKITSUI', text: '動物' },
     { value: 'POKEMON', text: 'ポケモン' },
-    { value: 'PHYSICIST', text: '物理学者' },
+    { value: 'SCIENTIST', text: '科学者' },
+    {
+      value: 'YOUTUBER',
+      text: 'YouTuber',
+      filters: [
+        {
+          column: 'category',
+          label: '種類',
+          options: [
+            { value: 'youtuber', label: 'YouTuber', default: true },
+            { value: 'vtuber', label: 'VTuber', default: true },
+          ],
+        },
+      ],
+    },
   ];
 
   const filterSelections = { NATION: { status: ['current'] } };

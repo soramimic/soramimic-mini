@@ -4,21 +4,64 @@
    "text": "野球選手",
    "value": "BASEBALL",
    "filepath": "wordlists/baseball.csv",
-   "where": "type=family or type=registered or type=full",
-   "dbtype": "tidy"
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "type",
+     "label": "種類",
+     "options": [
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true },
+      { "value": "registered", "label": "登録名", "default": true },
+      { "value": "given", "label": "名前", "default": false },
+      { "value": "nick", "label": "愛称", "default": false }
+     ]
+    }
+   ]
   },
   {
    "text": "サッカー選手",
    "value": "FOOTBALL",
    "filepath": "wordlists/football.csv",
-   "where": "type=family or type=registered or type=full",
-   "dbtype": "tidy"
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "type",
+     "label": "種類",
+     "options": [
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true },
+      { "value": "registered", "label": "登録名", "default": true },
+      { "value": "given", "label": "名前", "default": false }
+     ]
+    },
+    {
+     "column": "category",
+     "label": "役割",
+     "options": [
+      { "value": "player", "label": "選手", "default": true },
+      { "value": "manager", "label": "監督", "default": false },
+      { "value": "mascot", "label": "マスコット", "default": false }
+     ]
+    }
+   ]
   },
   {
    "text": "駅名",
    "value": "STATION",
    "filepath": "wordlists/stations.csv",
-   "dbtype": "tidy"
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "status",
+     "label": "状態",
+     "options": [
+      { "value": "current", "label": "現存", "default": true },
+      { "value": "former", "label": "廃駅", "default": false },
+      { "value": "renamed", "label": "旧駅名", "default": false }
+     ]
+    }
+   ]
   },
   {
    "text": "国名",
@@ -40,7 +83,57 @@
    "text": "動物",
    "value": "SEKITSUI",
    "filepath": "wordlists/sekitsui.csv",
-   "dbtype": "tidy"
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "class",
+     "label": "類",
+     "options": [
+      { "value": "哺乳類", "label": "哺乳類", "default": true },
+      { "value": "鳥類", "label": "鳥類", "default": true },
+      { "value": "爬虫類", "label": "爬虫類", "default": true },
+      { "value": "両生類", "label": "両生類", "default": true },
+      { "value": "魚類", "label": "魚類", "default": true },
+      { "value": "NA", "label": "不明", "default": true }
+     ]
+    },
+    {
+     "column": "extinct",
+     "label": "絶滅",
+     "options": [
+      { "value": "no", "label": "現生", "default": true },
+      { "value": "yes", "label": "絶滅種", "default": true }
+     ]
+    }
+   ]
+  },
+  {
+   "text": "植物",
+   "value": "PLANT",
+   "filepath": "wordlists/plant.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "class",
+     "label": "分類",
+     "options": [
+      { "value": "双子葉", "label": "双子葉", "default": true },
+      { "value": "単子葉", "label": "単子葉", "default": true },
+      { "value": "裸子植物", "label": "裸子植物", "default": true },
+      { "value": "シダ植物", "label": "シダ植物", "default": true },
+      { "value": "コケ植物", "label": "コケ植物", "default": true },
+      { "value": "藻類", "label": "藻類", "default": true }
+     ]
+    },
+    {
+     "column": "extinct",
+     "label": "絶滅",
+     "options": [
+      { "value": "no", "label": "現生", "default": true },
+      { "value": "yes", "label": "絶滅種", "default": true }
+     ]
+    }
+   ]
   },
   {
    "text": "ポケモン",
@@ -66,10 +159,104 @@
    ]
   },
   {
-   "text": "物理学者",
-   "value": "PHYSICIST",
-   "filepath": "wordlists/physicist.csv",
-   "dbtype": "tidy"
+   "text": "科学者",
+   "value": "SCIENTIST",
+   "filepath": "wordlists/scientist.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "era",
+     "label": "時代",
+     "options": [
+      { "value": "古代", "label": "古代", "default": true },
+      { "value": "中世", "label": "中世", "default": true },
+      { "value": "近世", "label": "近世", "default": true },
+      { "value": "近代", "label": "近代", "default": true },
+      { "value": "現代", "label": "現代", "default": true },
+      { "value": "NA", "label": "不明", "default": true }
+     ]
+    }
+   ]
+  },
+  {
+   "text": "YouTuber",
+   "value": "YOUTUBER",
+   "filepath": "wordlists/youtuber.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "category",
+     "label": "種類",
+     "options": [
+      { "value": "youtuber", "label": "YouTuber", "default": true },
+      { "value": "vtuber", "label": "VTuber", "default": true }
+     ]
+    },
+    {
+     "column": "type",
+     "label": "名前の形",
+     "options": [
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "given", "label": "名前", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true }
+     ]
+    }
+   ]
+  },
+  {
+   "text": "架空の科学者",
+   "value": "FICTIONAL_SCIENTIST",
+   "filepath": "wordlists/fictional_scientist.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "type",
+     "label": "種類",
+     "options": [
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "given", "label": "名前", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true }
+     ]
+    }
+   ]
+  },
+  {
+   "text": "架空アニメ(ファンタジー)",
+   "value": "FICTIONAL_ANIME_CHARACTER",
+   "filepath": "wordlists/fictional_anime_character.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "type",
+     "label": "種類",
+     "options": [
+      { "value": "call", "label": "呼び名", "default": true },
+      { "value": "nick", "label": "愛称", "default": true },
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "given", "label": "名前", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true }
+     ]
+    }
+   ]
+  },
+  {
+   "text": "架空アニメ(日常系)",
+   "value": "FICTIONAL_DAILY_ANIME_CHARACTER",
+   "filepath": "wordlists/fictional_daily_anime_character.csv",
+   "dbtype": "tidy",
+   "filters": [
+    {
+     "column": "type",
+     "label": "種類",
+     "options": [
+      { "value": "call", "label": "呼び名", "default": true },
+      { "value": "nick", "label": "愛称", "default": true },
+      { "value": "family", "label": "名字", "default": true },
+      { "value": "given", "label": "名前", "default": true },
+      { "value": "full", "label": "フルネーム", "default": true }
+     ]
+    }
+   ]
   }
  ],
  "yomiApi": {
